@@ -1,0 +1,12 @@
+body::-webkit-scrollbar {
+  display: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar in Webkit browsers like Chrome and Safari */
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* Hides scrollbar in Internet Explorer and Edge */
+  scrollbar-width: none; /* Hides scrollbar in Firefox */
+}
