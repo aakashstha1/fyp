@@ -6,7 +6,7 @@ import ModeToggle from "@/ModeToggle";
 function Navbar() {
   return (
     <div className="border-b dark:bg-gray-700">
-      <div className="max-w-7xl mx-auto flex items-center justify-between py-3">
+      <div className="max-w-7xl mx-auto  flex items-center justify-between py-3">
         {/* Right  */}
         <div className="">
           <Link to={"/"}>
