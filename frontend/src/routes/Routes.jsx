@@ -8,8 +8,8 @@ import Signup from "@/pages/Signup";
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DocEditor from "@/pages/Docs/DocEditor";
+import Container from "@/pages/Whiteboard/container";
 
-import Container from "../components/container/container";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -22,7 +22,7 @@ function AppRoutes() {
           <Route path="my-docs" element={<MyDoc />} />
           <Route path="my-docs/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
-          <Route path="container" element={<Container />} />
+          <Route path="my-board" element={<Container />} />
         </Route>
       </Routes>
     </BrowserRouter>

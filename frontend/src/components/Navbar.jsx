@@ -35,6 +35,9 @@ function Navbar() {
           <NavLink to="/courses" className={navLinkClasses}>
             Courses
           </NavLink>
+          <NavLink to="/my-board" className={navLinkClasses}>
+            Whiteboard
+          </NavLink>
         </div>
 
         {/* Right - Auth Buttons and Theme Toggle */}
