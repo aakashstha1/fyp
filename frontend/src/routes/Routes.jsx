@@ -1,0 +1,23 @@
+import Layout from "@/layout/Layout";
+import Home from "@/pages/Home";
+import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
+import React from "react";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+import Container from "../components/container/container";
+function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Layout />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/container" element={<Container />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
+}
+
+export default AppRoutes;
