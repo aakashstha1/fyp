@@ -1,7 +1,4 @@
-import "./style.css";
-
-
-import NoteCanvas from "../board/Board";
+import NoteCanvas from "./Board";
 function Container() {
   return (
     <>
