@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 const CanvasBoard = () => {
   const canvasRef = useRef(null);
@@ -49,6 +50,14 @@ const CanvasBoard = () => {
     setIsTextMode(!isTextMode);
     setIsErasing(false);
   };
+  const saveAsPNG = () => {
+    const canvas = canvasRef.current;
+    const dataURL = canvas.toDataURL("image/png");
+    const link = document.createElement("a");
+    link.href = dataURL;
+    link.download = "draw.png";
+    link.click();
+  };
 
   return (
     <div style={{ padding: "20px" }}>
@@ -80,6 +89,9 @@ const CanvasBoard = () => {
         onMouseLeave={stopDrawing}
         style={{ border: "1px solid black", cursor: "crosshair" }}
       />
+      <Button variant="outline" onClick={saveAsPNG} className="mt-4">
+        Save as PNG
+      </Button>
     </div>
   );
 };
