@@ -5,14 +5,15 @@ import Signup from "@/pages/Signup";
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 
+import Container from "../components/container/container";
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
+          <Route path="/container" element={<Container />} />
         </Route>
       </Routes>
     </BrowserRouter>
