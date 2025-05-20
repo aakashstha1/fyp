@@ -1,30 +1,30 @@
+import { useAuth } from "@/contexts/AuthContext";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 function Login() {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+
   const [form, setForm] = useState({
     email: "",
     password: "",
   });
 
-  const navigate = useNavigate();
-
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (form.email === "" || form.password === "") {
-      toast.error("Please enter both email and password.");
-      return;
+    try {
+      const res = await login(form);
+      toast.success(res?.message || "Logged In Successfully");
+      navigate("/");
+    } catch (error) {
+      toast.error(error.message || "Failed to login!");
     }
-
-    console.log("Login info:", form);
-    toast.success("Login successful!");
-    navigate("/");
   };
 
   return (
@@ -33,7 +33,9 @@ function Login() {
         onSubmit={handleSubmit}
         className="bg-gray-100 dark:bg-gray-800 w-full max-w-sm p-4 sm:p-6 rounded-lg shadow-md text-gray-900 dark:text-white"
       >
-        <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-center">Login</h2>
+        <h2 className="text-xl sm:text-2xl font-semibold mb-4 text-center">
+          Login
+        </h2>
 
         <div className="space-y-4">
           <input
@@ -60,7 +62,10 @@ function Login() {
           />
 
           <div className="text-right">
-            <Link to="/forgot-password" className="text-sm text-blue-500 hover:underline">
+            <Link
+              to="/forgot-password"
+              className="text-sm text-blue-500 hover:underline"
+            >
               Forgot password?
             </Link>
           </div>
