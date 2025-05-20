@@ -5,7 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 const API_URL = "http://localhost:8000/api";
 function Signup() {
-  const [isloading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -85,9 +85,9 @@ function Signup() {
 
         <button
           type="submit"
-          className="w-full mt-5 bg-blue-600 hover:bg-blue-700 transition p-3 rounded text-white font-medium text-sm"
+          className="w-full flex items-center justify-center mt-5 bg-blue-600 hover:bg-blue-700 transition p-3 rounded text-white font-medium text-sm"
         >
-          {isloading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Sign Up"}
+          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Sign Up"}
         </button>
 
         <p className="text-sm text-center mt-4">

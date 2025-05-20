@@ -1,46 +1,37 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
 import { CreateDocCard, DocCard } from "./DocCard";
 
+const API_URL = "http://localhost:8000/api";
+
 export default function MyDoc() {
-  const docs = [
-    {
-      id: "1",
-      title: "Project Plan 2025",
-      updatedAt: "2025-05-18",
-      preview:
-        "This document outlines the project plan for the upcoming year...",
-    },
-    {
-      id: "2",
-      title: "Meeting Notes - April",
-      updatedAt: "2025-04-30",
-      preview:
-        "Summary of the main points discussed during the April meeting...",
-    },
-    {
-      id: "3",
-      title: "Marketing Strategy",
-      updatedAt: "2025-05-10",
-      preview: "Key tactics and goals for the marketing team...",
-    },
-    {
-      id: "4",
-      title: "User Research Findings",
-      updatedAt: "2025-05-01",
-      preview: "Insights gathered from recent user interviews and surveys...",
-    },
-    {
-      id: "5",
-      title: "Budget Report Q1",
-      updatedAt: "2025-03-31",
-      preview: "Overview of financial performance in the first quarter...",
-    },
-  ];
+  const [docs, setDocs] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDocs = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/doc/my-docs`, {
+          withCredentials: true, // send JWT cookie
+        });
+        setDocs(res.data.docs);
+      } catch (err) {
+        console.error("Error fetching docs:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDocs();
+  }, []);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-6 gap-8 p-4">
       <CreateDocCard />
-      {docs.map((doc, index) => (
-        <DocCard key={index} {...doc} />
+      {docs.map((doc) => (
+        <DocCard key={doc._id} {...doc} id={doc._id} />
       ))}
     </div>
   );

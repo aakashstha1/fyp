@@ -5,21 +5,25 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeftCircle, Save } from "lucide-react";
 import TextEditor from "./TextEditor";
 
+const API_URL = "http://localhost:8000/api";
+
 function DocEditor() {
   const { docId } = useParams();
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
-  // Fetch the document on mount
   useEffect(() => {
     const fetchDoc = async () => {
       try {
-        const res = await axios.get(`/api/my-docs/${docId}`);
+        const res = await axios.get(`${API_URL}/doc/${docId}`, {
+          withCredentials: true,
+        });
         setTitle(res.data.doc.title);
         setContent(res.data.doc.content);
       } catch (err) {
         console.error(err);
+        alert("Failed to fetch document");
       }
     };
 
@@ -28,7 +32,11 @@ function DocEditor() {
 
   const handleSave = async () => {
     try {
-      await axios.put(`/api/my-docs/${docId}`, { title, content });
+      await axios.put(
+        `${API_URL}/doc/${docId}`,
+        { title, content },
+        { withCredentials: true }
+      );
       alert("Document saved.");
     } catch (err) {
       console.error(err);
