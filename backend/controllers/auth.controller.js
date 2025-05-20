@@ -21,12 +21,15 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
     });
+    const { password: pwd, ...rest } = user._doc;
 
-    res.status(201).json({ message: "User registered successfully", user });
+    res
+      .status(201)
+      .json({ message: "Account created successfully", user: rest });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Registration failed", error: error.message });
+      .json({ message: "Failed to create account!", error: error.message });
   }
 };
 

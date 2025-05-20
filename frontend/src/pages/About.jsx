@@ -79,3 +79,40 @@ function About() {
 }
 
 export default About;
+
+// About Us
+// Empowering Learning, Anywhere and Anytime
+// Welcome to [Your Platform Name], where education meets innovation. We are an online learning platform dedicated to making quality education accessible, engaging, and affordable for everyone—whether you're a student, a working professional, or a lifelong learner.
+
+// Our Mission
+// To empower individuals through accessible, high-quality, and flexible online education that fuels personal and professional growth.
+
+// What We Offer
+// Expert-Led Courses: Learn from industry professionals and experienced educators across a wide range of subjects—from tech and business to arts and wellness.
+
+// Interactive Learning: Dive into hands-on projects, quizzes, discussions, and real-world case studies.
+
+// Anytime Access: Learn at your own pace, on any device, from anywhere in the world.
+
+// Certifications: Earn certificates that validate your skills and help boost your career.
+
+// Why Choose Us?
+// ✅ Personalized Learning Paths
+// Courses tailored to your goals, pace, and interests.
+
+// ✅ Community Support
+// Connect with peers, instructors, and mentors for guidance and motivation.
+
+// ✅ Affordable Education
+// High-quality content without high costs. Free and premium options available.
+
+// ✅ Constantly Evolving
+// We continuously update and expand our content library to match industry trends.
+
+// Our Vision
+// To become a global hub for learning that bridges skill gaps and creates opportunities for all.
+
+// Join Us on the Journey
+// Thousands of learners have already started upgrading their skills with [Your Platform Name]. Whether you're exploring a new hobby or leveling up your career, we're here to support your learning journey every step of the way.
+
+// Let’s Learn. Grow. Succeed — Together.
