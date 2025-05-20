@@ -43,14 +43,14 @@ function Navbar() {
           <NavLink to="/" className={navLinkClasses}>
             Home
           </NavLink>
-          <NavLink to="/my-learning" className={navLinkClasses}>
-            My Learning
+          <NavLink to="/about" className={navLinkClasses}>
+            About
           </NavLink>
-          {
-            currentUser && <NavLink to="/my-docs" className={navLinkClasses}>
-            My Docs
-          </NavLink>
-          }
+          {currentUser && (
+            <NavLink to="/my-docs" className={navLinkClasses}>
+              My Docs
+            </NavLink>
+          )}
           <NavLink to="/courses" className={navLinkClasses}>
             Courses
           </NavLink>
