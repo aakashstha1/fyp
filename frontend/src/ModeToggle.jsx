@@ -14,7 +14,7 @@ function ModeToggle() {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild>
+      <DropdownMenuTrigger className="focus:outline-none">
         <div
           className="cursor-pointer relative inline-flex items-center justify-center h-10 w-10 border rounded-md focus:outline-none"
           role="button"
