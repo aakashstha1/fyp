@@ -21,7 +21,7 @@ export const drawController = async (req, res) => {
 
     // Save draw data
     const newDraw = new Draw({
-      file,
+      file: file.filename,
       user: user._id, // assuming 'user' is a reference field in Draw model
     });
 
@@ -29,7 +29,7 @@ export const drawController = async (req, res) => {
 
     return res.status(201).json({
       message: "Drawing saved successfully",
-      draw: newDraw,
+      data: newDraw,
     });
   } catch (error) {
     console.error("Error saving drawing:", error);

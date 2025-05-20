@@ -9,6 +9,7 @@ import userRoutes from "./routes/user.route.js";
 import adminRoutes from "./routes/admin.route.js";
 // import drawRoutes from "./routes/draw.route.js";
 import docRoutes from "./routes/doc.route.js";
+
 dotenv.config();
 
 const app = express();
@@ -21,12 +22,13 @@ app.use(
 );
 app.use(cookieParser());
 app.use(express.json());
-app.use(express.urlencoded({ extends: true }));
+app.use(express.urlencoded({ extended: true }));
 
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/doc", docRoutes);
+app.use("/api/draw", drawRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
