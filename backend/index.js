@@ -22,10 +22,10 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extends: true }));
 
-app.use("/api/auth/", authRoutes);
-app.use("/api/user/", userRoutes);
-app.use("/api/admin/", adminRoutes);
-app.use("/api/doc/", docRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/doc", docRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;
