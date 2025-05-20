@@ -1,9 +1,9 @@
 // CreateDocCard.jsx
 import { Plus } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export function CreateDocCard() {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
 
   // const handleCreateDoc = async () => {
   //   try {
