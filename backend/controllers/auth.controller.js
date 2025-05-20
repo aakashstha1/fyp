@@ -21,12 +21,15 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
     });
+    const { password: pwd, ...rest } = user._doc;
 
-    res.status(201).json({ message: "User registered successfully", user });
+    res
+      .status(201)
+      .json({ message: "Account created successfully", user: rest });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Registration failed", error: error.message });
+      .json({ message: "Failed to create account!", error: error.message });
   }
 };
 
@@ -53,9 +56,28 @@ export const login = async (req, res) => {
       }
     );
 
-    // Send token (optionally in a cookie)
-    res.status(200).json({ message: "Login successful", token, user });
+    const { password: pwd, ...rest } = user._doc;
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        sameSite: "Strict",
+        maxAge: 24 * 60 * 60 * 1000, // 1 day
+      })
+      .status(200)
+      .json({ success: true, message: "Login successful", user: rest });
   } catch (error) {
-    res.status(500).json({ message: "Login failed", error: error.message });
+    res
+      .status(500)
+      .json({ success: false, message: "Login failed", error: error.message });
   }
+};
+
+export const logout = (_, res) => {
+  res
+    .clearCookie("token", {
+      sameSite: "Strict",
+      // secure: process.env.NODE_ENV === "production",
+    })
+    .status(200)
+    .json({ message: "Logged out successfully" });
 };

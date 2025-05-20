@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.route("/create-doc").post(verifyToken, createDoc);
 router.route("/my-docs").get(verifyToken, getMyDocs);
-router.route("/my-docs/:docId").put(verifyToken, updateDoc);
+// router.route("/my-docs/:docId").put(verifyToken, updateDoc);
 
 export default router;
