@@ -5,7 +5,7 @@ function TextEditor({ content, setContent }) {
   const editor = useRef(null);
 
   const config = {
-    height: 600,
+    height: 650,
     readonly: false,
     placeholder: "Start writing your document...",
   };
