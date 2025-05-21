@@ -9,6 +9,7 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DocEditor from "@/pages/Docs/DocEditor";
 import Container from "@/pages/Whiteboard/container";
+import Profile from "@/pages/Profile";
 
 function AppRoutes() {
   return (
@@ -23,6 +24,8 @@ function AppRoutes() {
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Container />} />
+          <Route path="profile" element={<Profile/>} />
+
         </Route>
       </Routes>
     </BrowserRouter>

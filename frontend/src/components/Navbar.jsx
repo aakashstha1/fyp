@@ -73,7 +73,7 @@ function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-30">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <NavLink to="profile"><DropdownMenuItem>Profile</DropdownMenuItem></NavLink>
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>
