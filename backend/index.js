@@ -7,7 +7,7 @@ import { ConnectDB } from "./db/conn.js";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import adminRoutes from "./routes/admin.route.js";
-import drawRoutes from "./routes/draw.route.js";
+// import drawRoutes from "./routes/draw.route.js";
 import docRoutes from "./routes/doc.route.js";
 dotenv.config();
 
