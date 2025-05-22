@@ -17,6 +17,7 @@ import InstructorReq from "@/pages/admin/InstructorReq";
 import Profile from "@/pages/Profile";
 import InstructorReqDetail from "@/pages/admin/InstructorReqDetail";
 import UserList from "@/pages/admin/UserList";
+import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 
 function AppRoutes() {
   return (
@@ -33,7 +34,8 @@ function AppRoutes() {
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Container />} />
-          <Route path="profile" element={<Profile/>} />
+          <Route path="profile" element={<Profile />} />
+          <Route path="apply-for-instructor" element={<ApplyInstructor />} />
         </Route>
         //Admin routes
         <Route path="/admin" element={<AdminSidebar />}>
