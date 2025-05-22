@@ -47,9 +47,14 @@ function Navbar() {
             About
           </NavLink>
           {currentUser && (
-            <NavLink to="/my-docs" className={navLinkClasses}>
-              My Docs
-            </NavLink>
+            <>
+              <NavLink to="/my-docs" className={navLinkClasses}>
+                My Docs
+              </NavLink>
+              <NavLink to="/quiz" className={navLinkClasses}>
+                Quiz
+              </NavLink>
+            </>
           )}
           <NavLink to="/courses" className={navLinkClasses}>
             Courses

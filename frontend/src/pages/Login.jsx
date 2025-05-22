@@ -21,7 +21,13 @@ function Login() {
     try {
       const res = await login(form);
       toast.success(res?.message || "Logged In Successfully");
-      navigate("/");
+      console.log(res.user.role);
+      const userRole = res?.user?.role;
+      if (userRole === "admin") {
+        navigate("/admin");
+      } else {
+        navigate("/");
+      }
     } catch (error) {
       toast.error(error.message || "Failed to login!");
     }
