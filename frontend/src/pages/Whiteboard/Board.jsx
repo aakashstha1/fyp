@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import axios from "axios";
 
 const CanvasBoard = () => {
   const canvasRef = useRef(null);
@@ -7,6 +8,32 @@ const CanvasBoard = () => {
   const [isErasing, setIsErasing] = useState(false);
   const [isTextMode, setIsTextMode] = useState(false);
   const [textInput, setTextInput] = useState("");
+
+  const uploadImage = async () => {
+    const canvas = canvasRef.current;
+
+    canvas.toBlob(async (blob) => {
+      const formData = new FormData();
+      formData.append("image", blob, "drawing.png");
+
+      try {
+        const response = await axios.post(
+          "http://localhost:8000/api/draw/1",
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
+        alert("Image uploaded successfully!");
+        console.log(response.data);
+      } catch (error) {
+        console.error("Image upload failed:", error);
+        alert("Failed to upload image.");
+      }
+    }, "image/png");
+  };
 
   const startDrawing = (e) => {
     if (isTextMode) {
@@ -89,8 +116,8 @@ const CanvasBoard = () => {
         onMouseLeave={stopDrawing}
         style={{ border: "1px solid black", cursor: "crosshair" }}
       />
-      <Button variant="outline" onClick={saveAsPNG} className="mt-4">
-        Save as PNG
+      <Button variant="outline" onClick={uploadImage} className="mt-4">
+      upload to server
       </Button>
     </div>
   );
