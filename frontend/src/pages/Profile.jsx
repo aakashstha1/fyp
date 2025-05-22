@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Info, PenLine } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useAuth } from "@/contexts/AuthContext";
 const user = {
   name: "John Doe",
   email: "john@example.com",
@@ -27,21 +28,23 @@ const user = {
 function Profile() {
   const underlineInputClass =
     "border-b border-gray-400 border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none focus:ring-0 focus:border-none";
-
+  const { currentUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
+  const [name, setName] = useState(currentUser.name);
+  const [email, setEmail] = useState(currentUser.email);
   const [gender, setGender] = useState(user.gender);
   const [contact, setContact] = useState(user.contact);
-  const [role, setRole] = useState(user.role);
-  const [file, setFile] = useState(null);
+  const [role, setRole] = useState(
+    currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)
+  );
+  // const [file, setFile] = useState(null);
   const [img, setImg] = useState(user.imageUrl);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
-    setFile(selectedFile);
+    // setFile(selectedFile);
     const imageUrl = URL.createObjectURL(selectedFile);
     setImg(imageUrl);
   };
@@ -66,14 +69,15 @@ function Profile() {
         <CardHeader>
           <div className="flex items-center justify-between w-full">
             <div>
-              <CardTitle>Profile</CardTitle>
+              <CardTitle className="text-xl font-bold">Profile</CardTitle>
               <CardDescription>
-                Update your personal information below.
+                Update your personal information and remember to save your
+                changes.
               </CardDescription>
             </div>
 
-            {user.role === "enrollee" &&
-              (user.verificationStatus === "pending" ? (
+            {currentUser.role === "enrollee" &&
+              (currentUser.verificationStatus === "pending" ? (
                 <p
                   className="flex items-center gap-2 text-yellow-900 bg-yellow-100 p-3 rounded-md text-sm font-medium"
                   role="alert"
@@ -83,9 +87,11 @@ function Profile() {
                   complete the verification. Thank you for your patience.
                 </p>
               ) : (
-                <Button size="sm" variant="outline">
-                  Apply as Instructor
-                </Button>
+                <Link to={"/apply-for-instructor"}>
+                  <Button size="sm" variant="outline">
+                    Apply as Instructor
+                  </Button>
+                </Link>
               ))}
           </div>
         </CardHeader>
@@ -94,23 +100,25 @@ function Profile() {
           <form onSubmit={handleSubmit}>
             <div className="grid md:grid-cols-3 gap-6">
               {/* Left: Avatar */}
-              <div className="col-span-1 flex flex-col items-center justify-start gap-4">
-                <Avatar className="h-[150px] w-[150px] border-2 border-gray-100">
-                  <AvatarImage
-                    src={img}
-                    alt="profile"
-                    className="object-cover"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
+              <div className="col-span-1 flex flex-col items-center justify-start gap-4 relative">
+                <div className="relative">
+                  <Avatar className="h-[150px] w-[150px] border-2 border-gray-100">
+                    <AvatarImage
+                      src={img}
+                      alt="profile"
+                      className="object-cover"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
 
-                <button
-                  type="button"
-                  onClick={triggerFileSelect}
-                  className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700"
-                >
-                  <PenLine size={18} />
-                </button>
+                  {/* Pen button positioned on top-right of avatar */}
+                  <button
+                    onClick={triggerFileSelect}
+                    className="absolute bottom-2 right-2 bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700 cursor-pointer z-10"
+                  >
+                    <PenLine size={18} />
+                  </button>
+                </div>
 
                 <input
                   type="file"
