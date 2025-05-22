@@ -1,187 +1,219 @@
-import React, { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Info, PenLine } from "lucide-react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+const user = {
+  name: "John Doe",
+  email: "john@example.com",
+  contact: "9800000000",
+  role: "enrollee",
+  gender: "male",
+  isVerified: false,
+  verificationStatus: "pending",
+  imageUrl: "https://example.com/profile.jpg",
+};
+function Profile() {
+  const underlineInputClass =
+    "border-b border-gray-400 border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none focus:ring-0 focus:border-none";
 
-const Profile = () => {
-  const [editMode, setEditMode] = useState(false);
-  const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "johndoe@example.com",
-    role: "Enrolee",
-    bio: "Passionate about crafting beautiful and accessible UIs.",
-    imageUrl: "https://i.pravatar.cc/300?img=4",
-  });
+  const navigate = useNavigate();
+  const fileInputRef = useRef(null);
 
-  const [editedProfile, setEditedProfile] = useState({ ...profile });
+  const [name, setName] = useState(user.name);
+  const [email, setEmail] = useState(user.email);
+  const [gender, setGender] = useState(user.gender);
+  const [contact, setContact] = useState(user.contact);
+  const [role, setRole] = useState(user.role);
+  const [file, setFile] = useState(null);
+  const [img, setImg] = useState(user.imageUrl);
 
-  const handleChange = (e) => {
-    setEditedProfile({ ...editedProfile, [e.target.name]: e.target.value });
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+    const imageUrl = URL.createObjectURL(selectedFile);
+    setImg(imageUrl);
   };
 
-  const handleSave = () => {
-    setProfile(editedProfile);
-    setEditMode(false);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log({ name, email, gender, contact, role, img });
+    alert("Form submitted (frontend only)");
+  };
+
+  const handleCancel = () => {
+    navigate(-1);
+  };
+
+  const triggerFileSelect = () => {
+    fileInputRef.current?.click();
   };
 
   return (
-    <div className="min-h-[calc(100vh-150px)] flex items-center justify-center bg-white dark:bg-gray-900 px-4 py-10">
-      <Card className="w-full max-w-xl p-6 shadow-xl rounded-3xl bg-white dark:bg-gray-800 transition-all duration-500">
-        <CardContent className="flex flex-col sm:flex-row items-center sm:items-start gap-8">
-          {/* Left side: Profile Picture */}
-          <div className="flex flex-col items-center relative min-w-[130px]">
-            <Avatar className="h-32 w-32 border-4 border-white shadow-md">
-              <AvatarImage
-                src={editMode ? editedProfile.imageUrl : profile.imageUrl}
-                alt="Profile"
-              />
-              <AvatarFallback className="text-4xl">
-                {(editMode ? editedProfile.name : profile.name)[0]}
-              </AvatarFallback>
-            </Avatar>
-
-            {editMode && (
-              <Input
-                name="imageUrl"
-                value={editedProfile.imageUrl}
-                onChange={handleChange}
-                placeholder="Image URL"
-                className="mt-3 text-sm"
-              />
-            )}
-
-            {!editMode && (
-              <Button
-                size="sm"
-                variant="outline"
-                className="mt-3"
-                onClick={() => {
-                  setEditMode(true);
-                  setEditedProfile(profile);
-                }}
-              >
-                Edit
-              </Button>
-            )}
-          </div>
-
-          {/* Right side: Profile Info */}
-          <div className="flex-1 w-full">
-            {/* Name */}
-            <div className="flex items-center mb-3">
-              <label className="w-20 text-sm font-medium text-gray-600 dark:text-gray-300">
-                Name:
-              </label>
-              {editMode ? (
-                <Input
-                  name="name"
-                  value={editedProfile.name}
-                  onChange={handleChange}
-                  className="flex-1"
-                />
-              ) : (
-                <p className="text-lg font-semibold text-gray-800 dark:text-white">
-                  {profile.name}
-                </p>
-              )}
+    <div className="max-w-7xl mx-auto mt-8">
+      <Card className="w-full rounded-2xl shadow-xl">
+        <CardHeader>
+          <div className="flex items-center justify-between w-full">
+            <div>
+              <CardTitle>Profile</CardTitle>
+              <CardDescription>
+                Update your personal information below.
+              </CardDescription>
             </div>
 
-            {/* Email (not editable) */}
-            <div className="flex items-center mb-3">
-              <label className="w-20 text-sm font-medium text-gray-600 dark:text-gray-300">
-                Email:
-              </label>
-              <p className="text-gray-600 dark:text-gray-300 flex-1">{profile.email}</p>
-            </div>
-
-            {/* Role */}
-            <div className="flex items-center mb-3">
-              <label className="w-20 text-sm font-medium text-gray-600 dark:text-gray-300">
-                Role:
-              </label>
-              {editMode ? (
-                <div className="flex flex-col flex-1">
-                  <Select
-                    value={editedProfile.role}
-                    onValueChange={(value) =>
-                      setEditedProfile({ ...editedProfile, role: value })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select role" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Enrolee">Enrolee</SelectItem>
-                      <SelectItem value="Instructor">Instructor</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  {editedProfile.role === "Instructor" && (
-                    <p className="text-xs text-indigo-600 dark:text-indigo-300 mt-1">
-                      Requested for Instructor
-                    </p>
-                  )}
-                </div>
-              ) : (
-                <div className="flex flex-col flex-1">
-                  <p className="italic text-purple-600 dark:text-purple-400">
-                    {profile.role}
-                  </p>
-                  {profile.role === "Instructor" && (
-                    <p className="text-xs text-indigo-600 dark:text-indigo-300 mt-1">
-                      Requested for Instructor
-                    </p>
-                  )}
-                </div>
-              )}
-            </div>
-
-            {/* Bio (same line, responsive) */}
-            <div className="flex flex-col sm:flex-row items-center mb-3">
-              <label className="w-20 text-sm font-medium text-gray-600 dark:text-gray-300 mb-1 sm:mb-0">
-                Bio:
-              </label>
-              {editMode ? (
-                <Textarea
-                  name="bio"
-                  value={editedProfile.bio}
-                  onChange={handleChange}
-                  rows={1}
-                  className="flex-1 resize-none min-h-[38px]"
-                />
-              ) : (
-                <p className="text-gray-700 dark:text-gray-200 flex-1">{profile.bio}</p>
-              )}
-            </div>
-
-            {/* Buttons */}
-            {editMode && (
-              <div className="flex justify-end gap-2 mt-4">
-                <Button size="sm" onClick={handleSave}>
-                  Save
-                </Button>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => setEditMode(false)}
+            {user.role === "enrollee" &&
+              (user.verificationStatus === "pending" ? (
+                <p
+                  className="flex items-center gap-2 text-yellow-900 bg-yellow-100 p-3 rounded-md text-sm font-medium"
+                  role="alert"
                 >
-                  Cancel
+                  <Info size={16} aria-hidden="true" />
+                  Your request is under process. It will take up to 48 hours to
+                  complete the verification. Thank you for your patience.
+                </p>
+              ) : (
+                <Button size="sm" variant="outline">
+                  Apply as Instructor
                 </Button>
-              </div>
-            )}
+              ))}
           </div>
+        </CardHeader>
+
+        <CardContent>
+          <form onSubmit={handleSubmit}>
+            <div className="grid md:grid-cols-3 gap-6">
+              {/* Left: Avatar */}
+              <div className="col-span-1 flex flex-col items-center justify-start gap-4">
+                <Avatar className="h-[150px] w-[150px] border-2 border-gray-100">
+                  <AvatarImage
+                    src={img}
+                    alt="profile"
+                    className="object-cover"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+
+                <button
+                  type="button"
+                  onClick={triggerFileSelect}
+                  className="bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700"
+                >
+                  <PenLine size={18} />
+                </button>
+
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </div>
+
+              {/* Right: Form Fields */}
+              <div className="col-span-2 grid gap-5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="name">Name</Label>
+                    <Input
+                      id="name"
+                      value={name}
+                      placeholder="Your name..."
+                      onChange={(e) => setName(e.target.value)}
+                      className={underlineInputClass}
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      value={email}
+                      placeholder="Your email..."
+                      onChange={(e) => setEmail(e.target.value)}
+                      readOnly
+                      className={`${underlineInputClass} select-none  cursor-not-allowed`}
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="contact">Contact</Label>
+                    <Input
+                      id="contact"
+                      value={contact}
+                      placeholder="Contact number..."
+                      onChange={(e) => setContact(e.target.value)}
+                      className={underlineInputClass}
+                    />
+                  </div>
+
+                  <div className="flex flex-col space-y-1.5">
+                    <Label htmlFor="role">Role</Label>
+                    <Input
+                      id="role"
+                      value={role}
+                      placeholder="e.g. admin, student, instructor"
+                      onChange={(e) => setRole(e.target.value)}
+                      readOnly
+                      className={`${underlineInputClass} select-none  cursor-not-allowed`}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-col space-y-3">
+                  <Label htmlFor="gender">Gender</Label>
+                  <RadioGroup
+                    id="gender"
+                    name="gender"
+                    value={gender}
+                    className="flex gap-6"
+                    onValueChange={setGender}
+                  >
+                    {["female", "male", "other"].map((g) => (
+                      <div key={g} className="flex items-center space-x-2">
+                        <RadioGroupItem value={g} id={g} />
+                        <Label htmlFor={g}>
+                          {g.charAt(0).toUpperCase() + g.slice(1)}
+                        </Label>
+                      </div>
+                    ))}
+                  </RadioGroup>
+                </div>
+              </div>
+            </div>
+          </form>
         </CardContent>
+        <CardFooter className="flex flex-col gap-2 md:flex-row md:justify-end">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={handleCancel}
+            className="w-full md:w-auto"
+          >
+            Cancel
+          </Button>
+          <Button
+            type="submit"
+            className="w-full md:w-auto"
+            onClick={handleSubmit}
+          >
+            Save
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );
-};
+}
 
 export default Profile;
