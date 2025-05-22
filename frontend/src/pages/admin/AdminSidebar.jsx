@@ -10,18 +10,29 @@ import {
   User,
 } from "lucide-react";
 import React from "react";
-import { Link, NavLink, Outlet } from "react-router-dom";
-// import { toast } from "sonner";
-
+import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+const API_URL = "http://localhost:8000/api";
 function AdminSidebar() {
-  //   const navigate = useNavigate();
-  const { currentUser } = useAuth();
+  const navigate = useNavigate();
+  const { currentUser, logout } = useAuth();
   const navLinkClasses = ({ isActive }) =>
     `flex items-center gap-3 p-2 rounded-md transition-all duration-200 ${
       isActive
         ? "bg-blue-100 text-blue-600 font-semibold"
         : "text-gray-600 hover:bg-gray-200 hover:text-gray-900"
     }`;
+
+  const logoutHandler = async () => {
+    try {
+      const res = logout();
+      toast.success(res?.data?.message || "Logged out succesfully");
+      navigate("/login");
+    } catch (error) {
+      console.log(error);
+      toast.success(error?.response?.data?.message || "Failed to logout");
+    }
+  };
 
   return (
     <div className="flex">
@@ -88,7 +99,7 @@ function AdminSidebar() {
           {/* Logout Button */}
           <Button
             variant="destructive"
-            // onClick={logoutHandler}
+            onClick={logoutHandler}
             className="w-full"
           >
             <LogOut size={22} />

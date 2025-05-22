@@ -15,6 +15,8 @@ import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminSidebar from "@/pages/admin/AdminSidebar";
 import InstructorReq from "@/pages/admin/InstructorReq";
 import Profile from "@/pages/Profile";
+import InstructorReqDetail from "@/pages/admin/InstructorReqDetail";
+import UserList from "@/pages/admin/UserList";
 
 function AppRoutes() {
   return (
@@ -37,8 +39,12 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminSidebar />}>
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="instructor-requests" element={<InstructorReq />} />
+          <Route
+            path="instructor-requests/:reqId"
+            element={<InstructorReqDetail />}
+          />
 
-          {/* <Route path="users" element={<UserList />} /> */}
+          <Route path="users" element={<UserList />} />
         </Route>
       </Routes>
     </BrowserRouter>
