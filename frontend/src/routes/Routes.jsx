@@ -14,6 +14,7 @@ import QuestionsLayout from "@/pages/quiz/QuestionsLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminSidebar from "@/pages/admin/AdminSidebar";
 import InstructorReq from "@/pages/admin/InstructorReq";
+import Profile from "@/pages/Profile";
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Container />} />
+          <Route path="profile" element={<Profile/>} />
         </Route>
         //Admin routes
         <Route path="/admin" element={<AdminSidebar />}>
