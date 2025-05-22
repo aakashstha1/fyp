@@ -5,15 +5,17 @@ import { Outlet, useLocation } from "react-router-dom";
 
 function Layout() {
   const location = useLocation();
-  const isEditorPage = location.pathname.startsWith("/editor");
+  const isFullScreenPage =
+    location.pathname.startsWith("/editor") ||
+    location.pathname.startsWith("/my-board");
 
   return (
     <div className="min-h-screen flex flex-col">
-      {!isEditorPage && <Navbar />}
+      {!isFullScreenPage && <Navbar />}
       <main className="flex-grow">
         <Outlet />
       </main>
-      {!isEditorPage && <Footer />}
+      {!isFullScreenPage && <Footer />}
     </div>
   );
 }

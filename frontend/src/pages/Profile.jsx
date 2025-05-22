@@ -64,7 +64,7 @@ function Profile() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto mt-8">
+    <div className="max-w-6xl mx-auto mt-8">
       <Card className="w-full rounded-2xl shadow-xl">
         <CardHeader>
           <div className="flex items-center justify-between w-full">

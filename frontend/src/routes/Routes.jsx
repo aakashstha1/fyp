@@ -8,7 +8,6 @@ import Signup from "@/pages/Signup";
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DocEditor from "@/pages/Docs/DocEditor";
-import Container from "@/pages/Whiteboard/container";
 import Quiz from "@/pages/quiz/Quiz";
 import QuestionsLayout from "@/pages/quiz/QuestionsLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
@@ -18,6 +17,7 @@ import Profile from "@/pages/Profile";
 import InstructorReqDetail from "@/pages/admin/InstructorReqDetail";
 import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
+import Board from "@/pages/Whiteboard/Board";
 
 function AppRoutes() {
   return (
@@ -33,7 +33,7 @@ function AppRoutes() {
           <Route path="quiz-start" element={<QuestionsLayout />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
-          <Route path="my-board" element={<Container />} />
+          <Route path="my-board" element={<Board />} />
           <Route path="profile" element={<Profile />} />
           <Route path="apply-for-instructor" element={<ApplyInstructor />} />
         </Route>
