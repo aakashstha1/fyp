@@ -9,7 +9,11 @@ import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DocEditor from "@/pages/Docs/DocEditor";
 import Container from "@/pages/Whiteboard/container";
-import Profile from "@/pages/Profile";
+import Quiz from "@/pages/quiz/Quiz";
+import QuestionsLayout from "@/pages/quiz/QuestionsLayout";
+import AdminDashboard from "@/pages/admin/AdminDashboard";
+import AdminSidebar from "@/pages/admin/AdminSidebar";
+import InstructorReq from "@/pages/admin/InstructorReq";
 
 function AppRoutes() {
   return (
@@ -21,11 +25,18 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
+          <Route path="quiz" element={<Quiz />} />
+          <Route path="quiz-start" element={<QuestionsLayout />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Container />} />
-          <Route path="profile" element={<Profile/>} />
+        </Route>
+        //Admin routes
+        <Route path="/admin" element={<AdminSidebar />}>
+          <Route path="dashboard" element={<AdminDashboard />} />
+          <Route path="instructor-requests" element={<InstructorReq />} />
 
+          {/* <Route path="users" element={<UserList />} /> */}
         </Route>
       </Routes>
     </BrowserRouter>

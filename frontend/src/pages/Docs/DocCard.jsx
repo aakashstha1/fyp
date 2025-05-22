@@ -87,7 +87,7 @@ export function DocCard({ title, updatedAt, preview, id, onDelete }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button data-no-nav>
-                <MoreVertical size={15} />
+                <MoreVertical size={18} />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-30">
