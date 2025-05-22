@@ -47,9 +47,14 @@ function Navbar() {
             About
           </NavLink>
           {currentUser && (
-            <NavLink to="/my-docs" className={navLinkClasses}>
-              My Docs
-            </NavLink>
+            <>
+              <NavLink to="/my-docs" className={navLinkClasses}>
+                My Docs
+              </NavLink>
+              <NavLink to="/quiz" className={navLinkClasses}>
+                Quiz
+              </NavLink>
+            </>
           )}
           <NavLink to="/courses" className={navLinkClasses}>
             Courses
@@ -73,7 +78,7 @@ function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-30">
-                <DropdownMenuItem>Profile</DropdownMenuItem>
+                <NavLink to="profile"><DropdownMenuItem>Profile</DropdownMenuItem></NavLink>
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>
