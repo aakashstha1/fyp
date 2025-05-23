@@ -18,6 +18,7 @@ import InstructorReqDetail from "@/pages/admin/InstructorReqDetail";
 import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
+import Cources from "@/pages/Cources";
 
 function AppRoutes() {
   return (
@@ -30,6 +31,7 @@ function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
           <Route path="quiz" element={<Quiz />} />
+           <Route path="courses" element={<Cources/>} />
           <Route path="quiz-start" element={<QuestionsLayout />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
