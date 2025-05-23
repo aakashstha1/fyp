@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Toggle } from "@/components/ui/toggle";
@@ -16,6 +16,26 @@ const Board = () => {
   const [tool, setTool] = useState("pen");
   const [penColor, setPenColor] = useState("black");
   const [eraserSize, setEraserSize] = useState(20);
+
+  // Resize canvas to match its CSS size
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const resizeCanvas = () => {
+        const parent = canvas.parentElement;
+        const style = getComputedStyle(parent);
+        const width = parseInt(style.width, 10);
+        const height = parseInt(style.height, 10);
+
+        canvas.width = width;
+        canvas.height = height;
+      };
+
+      resizeCanvas();
+      window.addEventListener("resize", resizeCanvas);
+      return () => window.removeEventListener("resize", resizeCanvas);
+    }
+  }, []);
 
   const getOffsetCoords = (e) => {
     const canvas = canvasRef.current;
@@ -89,7 +109,7 @@ const Board = () => {
 
       <CardContent>
         <div className="flex items-center justify-between mb-4">
-          <div className="flex flex-wrap items-center gap-4 ">
+          <div className="flex flex-wrap items-center gap-4">
             <Toggle
               pressed={tool === "pen"}
               onPressedChange={() => setTool("pen")}
@@ -120,6 +140,7 @@ const Board = () => {
                 ></button>
               ))}
             </div>
+
             {tool === "eraser" && (
               <div className="flex items-center gap-2">
                 <label htmlFor="eraserSize" className="text-sm">
@@ -146,16 +167,16 @@ const Board = () => {
           </div>
         </div>
 
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={350}
-          onMouseDown={startDrawing}
-          onMouseMove={draw}
-          onMouseUp={stopDrawing}
-          onMouseLeave={stopDrawing}
-          className="border border-gray-300 rounded-md w-full cursor-crosshair bg-white"
-        />
+        <div className="relative w-full h-[350px] border border-gray-300 rounded-md bg-white">
+          <canvas
+            ref={canvasRef}
+            onMouseDown={startDrawing}
+            onMouseMove={draw}
+            onMouseUp={stopDrawing}
+            onMouseLeave={stopDrawing}
+            className="absolute top-0 left-0 w-full h-full cursor-crosshair"
+          />
+        </div>
       </CardContent>
     </Card>
   );

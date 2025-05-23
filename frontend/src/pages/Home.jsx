@@ -256,7 +256,7 @@ function Home() {
               Courses
             </Button>
           </Link>
-          <Link to="/whiteboard">
+          <Link to="/my-board">
             <Button
               variant="secondary"
               className="w-full text-lg py-4 rounded-lg border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white transition"
