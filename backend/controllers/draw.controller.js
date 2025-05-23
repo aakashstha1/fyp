@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 
 export const drawController = async (req, res) => {
   try {
-    const userId = req.userId; // Extracted from auth middleware
+    const userId = req.user.userId; // Extracted from auth middleware
     const file = req.file;
 
     if (!file) {
@@ -28,7 +28,7 @@ export const drawController = async (req, res) => {
 
     // Create and save draw
     const newDraw = new Draw({
-      file: file.filename,
+      file: file.path, // use file.path to get Cloudinary URL
       user: user._id,
     });
 

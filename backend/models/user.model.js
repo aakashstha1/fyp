@@ -25,6 +25,12 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    documents: {
+      citizenshipFront: { type: String },
+      citizenshipBack: { type: String },
+      resume: { type: String },
+      educationPdf: { type: String },
+    },
     verificationStatus: {
       type: String,
       enum: ["none", "pending", "approved", "rejected"],

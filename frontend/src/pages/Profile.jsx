@@ -31,6 +31,7 @@ function Profile() {
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
+  console.log(currentUser);
 
   const [name, setName] = useState(currentUser.name);
   const [email, setEmail] = useState(currentUser.email);
@@ -56,7 +57,7 @@ function Profile() {
   };
 
   const handleCancel = () => {
-    navigate(-1);
+    navigate("/");
   };
 
   const triggerFileSelect = () => {
