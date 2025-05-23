@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 const API_URL = "http://localhost:8000/api";
@@ -53,9 +54,26 @@ export const AuthContextProvider = ({ children }) => {
     }
   }, [currentUser]);
 
+  const refreshUser = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.get(`${API_URL}/user/profile`, {
+        withCredentials: true,
+      });
+      setCurrentUser(res.data.user);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+    } catch (error) {
+      const message = error.response?.data?.message || "Failed to refresh user";
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
-      value={{ currentUser, login, logout, loading, error }}
+      value={{ currentUser, login, logout, loading, error, refreshUser }}
     >
       {children}
     </AuthContext.Provider>

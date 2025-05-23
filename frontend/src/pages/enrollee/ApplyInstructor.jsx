@@ -4,18 +4,21 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Plus, FileText } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-
+import { toast } from "sonner";
+import axios from "axios";
+import { useAuth } from "@/contexts/AuthContext";
+const API_URL = "http://localhost:8000/api";
 function ApplyInstructor() {
   const navigate = useNavigate();
   const [frontImage, setFrontImage] = useState(null);
   const [backImage, setBackImage] = useState(null);
   const [educationPdf, setEducationPdf] = useState(null);
-  const [experiencePdf, setExperiencePdf] = useState(null);
-
+  const [resumePdf, setResumePdf] = useState(null);
+  const { refreshUser } = useAuth();
   const frontRef = useRef(null);
   const backRef = useRef(null);
   const eduRef = useRef(null);
-  const expRef = useRef(null);
+  const resRef = useRef(null);
 
   const handleImageChange = (e, setFunc) => {
     const file = e.target.files?.[0];
@@ -67,6 +70,46 @@ function ApplyInstructor() {
       </div>
     </div>
   );
+  const handleSubmit = async () => {
+    if (
+      !frontRef.current?.files[0] ||
+      !backRef.current?.files[0] ||
+      !resumePdf ||
+      !educationPdf
+    ) {
+      toast.error("All files are required!");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("citizenshipFront", frontRef.current.files[0]);
+    formData.append("citizenshipBack", backRef.current.files[0]);
+    formData.append("resume", resumePdf);
+    formData.append("educationPdf", educationPdf);
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/user/request-instructor`,
+        formData,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      toast.success(
+        response.data?.message || "Instructor role request submitted."
+      );
+      await refreshUser();
+      navigate("/profile");
+    } catch (error) {
+      console.error(error);
+      toast.error(error.response?.data?.message || "Submission failed.");
+    }
+  };
 
   return (
     <Card className="max-w-5xl mx-auto my-8">
@@ -113,6 +156,22 @@ function ApplyInstructor() {
         </div>
 
         <div className="flex items-center gap-8">
+          {/* Resume  (PDF) */}
+          <div className="space-y-2 w-full">
+            <Label>Resume (PDF)</Label>
+            <PdfBox
+              file={resumePdf}
+              onClick={() => resRef.current?.click()}
+              label="Select Resume"
+            />
+            <input
+              type="file"
+              accept="application/pdf"
+              ref={resRef}
+              onChange={(e) => handlePdfChange(e, setResumePdf)}
+              className="hidden"
+            />
+          </div>
           {/* Education Certificate (PDF) */}
           <div className="space-y-2 w-full">
             <Label>Educational Certificate (PDF)</Label>
@@ -129,30 +188,13 @@ function ApplyInstructor() {
               className="hidden"
             />
           </div>
-
-          {/* Experience Certificate (PDF) */}
-          <div className="space-y-2 w-full">
-            <Label>Experience Certificate (PDF)</Label>
-            <PdfBox
-              file={experiencePdf}
-              onClick={() => expRef.current?.click()}
-              label="Select Experience Certificate"
-            />
-            <input
-              type="file"
-              accept="application/pdf"
-              ref={expRef}
-              onChange={(e) => handlePdfChange(e, setExperiencePdf)}
-              className="hidden"
-            />
-          </div>
         </div>
 
         <div className=" flex items-center justify-end gap-2">
           <Button variant={"outline"} onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button type="submit">Submit</Button>
+          <Button onClick={handleSubmit}>Submit</Button>
         </div>
       </CardContent>
     </Card>
