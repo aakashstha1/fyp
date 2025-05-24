@@ -16,7 +16,7 @@ const storage = new CloudinaryStorage({
   params: async (req, file) => ({
     folder: "instructor_docs",
     resource_type: "auto",
-    format: file.mimetype.split("/")[1], // e.g., jpg, pdf
+    format: file.mimetype.split("/")[1],
     public_id: `${Date.now()}-${file.originalname.split(".")[0]}`,
   }),
 });

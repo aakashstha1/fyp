@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import Request from "../models/request.model.js";
 
 export const getUser = async (req, res) => {
   try {
@@ -26,7 +27,7 @@ export const requestInstructorRole = async (req, res) => {
       req.files || {};
 
     if (!citizenshipFront || !citizenshipBack || !resume || !educationPdf) {
-      return res.status(400).json({ message: "All fields are required!" });
+      return res.status(400).json({ message: "All documents are required!" });
     }
 
     const user = await User.findById(userId);
@@ -36,21 +37,50 @@ export const requestInstructorRole = async (req, res) => {
       return res.status(400).json({ message: "You are already an instructor" });
     }
 
-    user.documents = {
-      citizenshipFront: citizenshipFront[0].path,
-      citizenshipBack: citizenshipBack[0].path,
-      resume: resume[0].path,
-      educationPdf: educationPdf[0].path,
-    };
-    user.verificationStatus = "pending";
+    const existingRequest = await Request.findOne({ user: userId }).sort({
+      createdAt: -1,
+    });
 
-    await user.save();
+    if (existingRequest) {
+      if (existingRequest.verificationStatus === "pending") {
+        return res
+          .status(400)
+          .json({ message: "You already have a pending request" });
+      }
 
-    res.status(200).json({ message: "Instructor role request submitted" });
+      if (existingRequest.verificationStatus === "rejected") {
+        const timeSinceRejection =
+          Date.now() - new Date(existingRequest.rejectionDate).getTime();
+        const aDay = 24 * 60 * 60 * 1000;
+
+        if (timeSinceRejection < aDay) {
+          return res
+            .status(400)
+            .json({ message: "Please wait 24 hours before reapplying" });
+        }
+      }
+    }
+
+    const newRequest = new Request({
+      user: userId,
+      verificationStatus: "pending",
+      documents: {
+        frontImage: citizenshipFront[0].path,
+        backImage: citizenshipBack[0].path,
+        resumePdf: resume[0].path,
+        qualificationsPdf: educationPdf[0].path,
+      },
+    });
+
+    await newRequest.save();
+
+    res
+      .status(200)
+      .json({ message: "Instructor request submitted successfully" });
   } catch (error) {
-    console.error(error);
+    console.error("Request error:", error);
     res
       .status(500)
-      .json({ message: "Error requesting role", error: error.message });
+      .json({ message: "Error submitting request", error: error.message });
   }
 };
