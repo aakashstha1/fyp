@@ -8,7 +8,7 @@ import Signup from "@/pages/Signup";
 import React from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DocEditor from "@/pages/Docs/DocEditor";
-import Quiz from "@/pages/quiz/Quiz";
+import Quiz from "@/pages/quiz/AddQuestionForm";
 import QuestionsLayout from "@/pages/quiz/QuestionsLayout";
 import AdminDashboard from "@/pages/admin/AdminDashboard";
 import AdminSidebar from "@/pages/admin/AdminSidebar";
