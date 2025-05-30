@@ -3,7 +3,7 @@ import Question from "../../models/quizeModel/question.model.js";
 
 export const questionAdd = async (req, res) => {
   try {
-    const { userId, questionText, options, correctAnswer, category } = req.body;
+    const { userId, questionText, options, correctAnswer } = req.body;
     if (!userId) {
       return res.status(400).json({
         message: "please Login first",
@@ -16,7 +16,7 @@ export const questionAdd = async (req, res) => {
       });
     }
 
-    if (!questionText || !options || !correctAnswer || !category) {
+    if (!questionText || !options || !correctAnswer ) {
       return res.status(403).json({
         message: "Please Enter a Valid Quize Question",
       });
@@ -27,14 +27,13 @@ export const questionAdd = async (req, res) => {
       questionText,
       options,
       correctAnswer,
-      category,
     });
     await newQuestion.save();
     return res.status(201).json({
       message: "Successfully uploded questions",
       questionText,
       options,
-      category,
+      
     });
   } catch (error) {
     console.error("Error saving drawing:", error);
@@ -73,7 +72,6 @@ export const viewQuize = async (req, res) => {
       message: "Quiz questions fetched successfully",
       questions,
     });
-
   } catch (error) {
     console.error("Error fetching quiz questions:", error);
     return res.status(500).json({
@@ -81,4 +79,3 @@ export const viewQuize = async (req, res) => {
     });
   }
 };
-

@@ -29,7 +29,7 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
-          <Route path="quiz" element={<Quiz />} />
+
           <Route path="quiz-start" element={<QuestionsLayout />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />

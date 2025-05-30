@@ -11,7 +11,6 @@ export default function AddQuestionForm({ userId }) {
   const [questionText, setQuestionText] = useState("");
   const [options, setOptions] = useState(["", ""]);
   const [correctAnswer, setCorrectAnswer] = useState("");
-  const [category, setCategory] = useState("");
   const [loading, setLoading] = useState(false);
 
   const addOptionField = () => {
@@ -27,12 +26,7 @@ export default function AddQuestionForm({ userId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !questionText ||
-      options.some((opt) => !opt) ||
-      !correctAnswer ||
-      !category
-    ) {
+    if (!questionText || options.some((opt) => !opt) || !correctAnswer) {
       toast.error("Please fill in all fields.");
       return;
     }
@@ -54,7 +48,6 @@ export default function AddQuestionForm({ userId }) {
           questionText,
           options,
           correctAnswer,
-          category,
         }),
       });
 
@@ -114,15 +107,6 @@ export default function AddQuestionForm({ userId }) {
               value={correctAnswer}
               onChange={(e) => setCorrectAnswer(e.target.value)}
               placeholder="Must match one of the options"
-            />
-          </div>
-
-          <div>
-            <Label>Category</Label>
-            <Input
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              placeholder="e.g. Science, History"
             />
           </div>
 
