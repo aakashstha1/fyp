@@ -1,107 +1,119 @@
-import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import React from "react";
+import { FaChalkboardTeacher, FaLightbulb, FaGlobe, FaUsers, FaLaptopCode, FaAward } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
-const sections = [
-  {
-    title: "About Us",
-    shortDesc: "Built by learners for learners.",
-    fullDesc:
-      "  Our e-learning platform was developed by students and educators at Godawari College with the mission to democratize education. We strive to make quality learning resources accessible to all, regardless of location or background, by leveraging digital technology that bridges the gap between traditional classrooms and modern educational needs.",
+const aboutData = {
+  hero: {
+    title: "Empowering Education for Everyone",
+    subtitle:
+      "We provide accessible, practical, and high-quality courses designed by experts to help you thrive in the digital world.",
+    image:
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=800&q=80",
   },
-  {
-    title: "Our Vision",
-    shortDesc: "Bridging tradition and technology.",
-    fullDesc:
-      "  We envision a future where education transcends physical boundaries, enabling every learner in Nepal and beyond to access comprehensive, personalized, and culturally relevant digital content. By combining Godawari College’s academic excellence with innovative e-learning tools, we aim to empower lifelong learners to achieve their full potential anytime, anywhere.",
-  },
-  {
+  mission: {
     title: "Our Mission",
-    shortDesc: "Accessible & meaningful education.",
-    fullDesc:
-      "  Our mission is to deliver engaging, interactive, and high-quality educational experiences tailored to diverse learner needs. We focus on user-friendly interfaces, multimedia content, and community-driven learning that fosters collaboration, critical thinking, and practical skill development in an inclusive digital environment.",
+    description:
+      "To democratize education by connecting learners with expert educators, delivering engaging and practical content that prepares you for real-world challenges.",
   },
-];
+  values: [
+    {
+      icon: <FaChalkboardTeacher className="text-blue-600 w-12 h-12" />,
+      title: "Educator-Driven Content",
+      description:
+        "Courses are designed and curated by industry professionals and educators with deep expertise.",
+    },
+    {
+      icon: <FaLightbulb className="text-yellow-500 w-12 h-12" />,
+      title: "Innovative & Interactive",
+      description:
+        "We use quizzes, projects, and multimedia content to make learning immersive and enjoyable.",
+    },
+    {
+      icon: <FaGlobe className="text-green-500 w-12 h-12" />,
+      title: "Accessible Anywhere",
+      description:
+        "Learn on your schedule, from any device, anywhere in the world.",
+    },
+    {
+      icon: <FaUsers className="text-purple-600 w-12 h-12" />,
+      title: "Community & Support",
+      description:
+        "Join a growing community of learners to share knowledge, collaborate, and get help.",
+    },
+    {
+      icon: <FaLaptopCode className="text-indigo-500 w-12 h-12" />,
+      title: "Up-to-Date Tech",
+      description:
+        "Stay current with courses on latest technologies, programming languages, and tools.",
+    },
+    {
+      icon: <FaAward className="text-red-500 w-12 h-12" />,
+      title: "Certifications & Career Growth",
+      description:
+        "Earn certificates that showcase your skills and boost your career prospects.",
+    },
+  ],
+  cta: {
+    title: "Join thousands of learners worldwide",
+    description: "Start your learning journey with us today and unlock new opportunities.",
+  },
+};
 
-function About() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [displayedText, setDisplayedText] = useState("");
-
-  useEffect(() => {
-    const fullText = sections[selectedIndex].fullDesc;
-    let i = 0;
-    setDisplayedText("");
-    const interval = setInterval(() => {
-      setDisplayedText((prev) => prev + fullText.charAt(i));
-      i++;
-      if (i >= fullText.length) clearInterval(interval);
-    }, 15);
-
-    return () => clearInterval(interval);
-  }, [selectedIndex]);
-
+export default function About() {
   return (
-    <div className="min-h-[calc(100vh-150px)] w-full bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-4 flex flex-col">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row md:space-x-10">
-        {/* Left Side: Cards */}
-        <motion.div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:w-1/2" layout>
-          {sections.map(({ title, shortDesc }, i) => (
-            <motion.div
-              key={i}
-              role="button"
-              tabIndex={0}
-              onClick={() => {
-                if (i !== selectedIndex) setSelectedIndex(i);
-              }}
-              onKeyDown={(e) => {
-                if ((e.key === "Enter" || e.key === " ") && i !== selectedIndex) {
-                  setSelectedIndex(i);
-                }
-              }}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: i * 0.1 }}
-              whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.12)" }}
-              className={`relative rounded-xl p-6 sm:p-8 cursor-pointer transition-all
-                ${
-                  selectedIndex === i
-                    ? "bg-blue-600 text-white shadow-lg"
-                    : "bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-300"
-                }`}
-            >
-              <h3 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3">{title}</h3>
-              <p className="text-sm sm:text-base leading-relaxed">{shortDesc}</p>
-
-              {/* Underline bar */}
-              {selectedIndex === i && (
-                <motion.div
-                  layoutId="underline"
-                  className="absolute left-6 right-6 bottom-4 h-1 bg-white rounded-full"
-                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                />
-              )}
-            </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Right Side: Typing Effect Bubble */}
-        <div className="w-full md:w-1/2 mt-8 md:mt-0 overflow-y-auto max-h-[calc(100vh-200px)]">
-          <motion.div
-            key={selectedIndex}
-            initial={{ opacity: 0, x: 30 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.4 }}
-            className="bg-blue-600 dark:bg-blue-800 text-white rounded-2xl p-6 sm:p-8 shadow-lg max-w-full mx-auto whitespace-pre-wrap leading-relaxed text-base sm:text-lg select-text"
-          >
-            <h2 className="text-2xl sm:text-3xl font-semibold mb-4 sm:mb-6">
-              {sections[selectedIndex].title}
-            </h2>
-            <p>{displayedText}</p>
-          </motion.div>
+    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen px-6 py-16 max-w-7xl mx-auto">
+      {/* Hero Section */}
+      <section className="flex flex-col md:flex-row items-center md:items-start gap-12">
+        <div className="md:w-1/2 space-y-6">
+          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
+            {aboutData.hero.title}
+          </h1>
+          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300">
+            {aboutData.hero.subtitle}
+          </p>
+          <Button className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition">
+            Explore Courses
+          </Button>
         </div>
-      </div>
+        <div className="md:w-1/2">
+          <img
+            src={aboutData.hero.image}
+            alt="Empowering Education"
+            className="rounded-lg shadow-lg w-full object-cover max-h-96"
+          />
+        </div>
+      </section>
+
+      {/* Mission Section */}
+      <section className="mt-20 max-w-3xl mx-auto text-center">
+        <h2 className="text-3xl font-bold mb-4">{aboutData.mission.title}</h2>
+        <p className="text-gray-700 dark:text-gray-300 text-lg leading-relaxed">
+          {aboutData.mission.description}
+        </p>
+      </section>
+
+      {/* Values / Features Grid */}
+      <section className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
+        {aboutData.values.map(({ icon, title, description }, idx) => (
+          <div
+            key={idx}
+            className="flex flex-col items-center text-center p-6 bg-gray-100 dark:bg-gray-800 rounded-xl shadow-md hover:shadow-lg transition"
+          >
+            <div className="mb-4">{icon}</div>
+            <h3 className="text-xl font-semibold mb-2">{title}</h3>
+            <p className="text-gray-700 dark:text-gray-300">{description}</p>
+          </div>
+        ))}
+      </section>
+
+      {/* CTA Section */}
+      <section className="mt-20 bg-blue-600 rounded-xl p-12 text-center text-white max-w-4xl mx-auto">
+        <h2 className="text-4xl font-bold mb-6">{aboutData.cta.title}</h2>
+        <p className="mb-8 text-lg max-w-xl mx-auto">{aboutData.cta.description}</p>
+        <Button className="px-10 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition">
+          Get Started Now
+        </Button>
+      </section>
     </div>
   );
 }
-
-export default About;

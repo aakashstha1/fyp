@@ -19,6 +19,7 @@ import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 import Cources from "@/pages/Cources";
+import Chat from "@/pages/Chat";
 
 function AppRoutes() {
   return (
@@ -37,6 +38,7 @@ function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Board />} />
           <Route path="profile" element={<Profile />} />
+          <Route path="chat" element={<Chat />} />
           <Route path="apply-for-instructor" element={<ApplyInstructor />} />
         </Route>
         //Admin routes
