@@ -72,7 +72,7 @@ function AdminSidebar() {
               <User size={22} />
               <h1 className="text-base">Users</h1>
             </NavLink>
-            <NavLink to="/quiz-start" className={navLinkClasses}>
+            <NavLink to="Add-Quiz" className={navLinkClasses}>
               <ClipboardList size={22} />
               <h1 className="text-base">Quizes</h1>
             </NavLink>

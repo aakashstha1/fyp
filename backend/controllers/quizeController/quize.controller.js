@@ -16,7 +16,7 @@ export const questionAdd = async (req, res) => {
       });
     }
 
-    if (!questionText || !options || !correctAnswer ) {
+    if (!questionText || !options || !correctAnswer) {
       return res.status(403).json({
         message: "Please Enter a Valid Quize Question",
       });
@@ -33,7 +33,6 @@ export const questionAdd = async (req, res) => {
       message: "Successfully uploded questions",
       questionText,
       options,
-      
     });
   } catch (error) {
     console.error("Error saving drawing:", error);

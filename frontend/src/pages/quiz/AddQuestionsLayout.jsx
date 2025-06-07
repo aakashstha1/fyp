@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 
 import { useAuth } from "@/contexts/AuthContext";
 import AddQuestionForm from "./AddQuestionForm";
-function QuestionsLayout() {
+function AddQuestionsLayout() {
   const { currentUser } = useAuth();
   return (
     <>
@@ -10,4 +10,4 @@ function QuestionsLayout() {
     </>
   );
 }
-export default QuestionsLayout;
+export default AddQuestionsLayout;
