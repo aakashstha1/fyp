@@ -19,6 +19,7 @@ import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 import QuizViewer from "@/pages/quiz/QuizViewer";
 import AddQuestionsLayout from "@/pages/quiz/AddQuestionsLayout";
+import ForumView from "@/pages/Forum/ForumView";
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -37,6 +38,9 @@ function AppRoutes() {
           <Route path="profile" element={<Profile />} />
           <Route path="apply-for-instructor" element={<ApplyInstructor />} />
           <Route path="ViewQuestion" element={<QuizViewer />} />
+          
+          <Route path="forumView" element={<ForumView />} />
+
         </Route>
         //Admin routes
         <Route path="/admin" element={<AdminSidebar />}>
