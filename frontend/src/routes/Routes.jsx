@@ -48,7 +48,7 @@ function AppRoutes() {
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="instructor-requests" element={<InstructorReq />} />
           <Route
-            path="instructor-requests/:reqId"
+            path="instructor-request/:reqId"
             element={<InstructorReqDetail />}
           />
 
