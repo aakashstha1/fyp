@@ -25,6 +25,7 @@ import Chat from "@/pages/Chat";
 import QuizViewer from "@/pages/quiz/QuizViewer";
 import AddQuestionsLayout from "@/pages/quiz/AddQuestionsLayout";
 import ForumView from "@/pages/Forum/ForumView";
+import Leaderboard from "@/pages/quiz/LeaderBoard";
 
 function AppRoutes() {
   return (
@@ -37,8 +38,8 @@ function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
 
-          <Route path="quiz" element={<Quiz />} />
-           <Route path="courses" element={<Cources/>} />
+        
+          <Route path="courses" element={<Cources/>} />
           
 
 
@@ -51,7 +52,8 @@ function AppRoutes() {
           <Route path="chat" element={<Chat />} />
           <Route path="apply-for-instructor" element={<ApplyInstructor />} />
           <Route path="ViewQuestion" element={<QuizViewer />} />
-          
+          <Route path="/leaderboard" element={<Leaderboard />} />
+
           <Route path="forumView" element={<ForumView />} />
 
         </Route>

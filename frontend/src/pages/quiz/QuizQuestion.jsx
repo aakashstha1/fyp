@@ -1,7 +1,7 @@
 import React from "react";
 import QuizOption from "./QuizOption";
 
-function QuizQuestion({ question, index }) {
+function QuizQuestion({ question, index, onAnswer }) {
   return (
     <div className="bg-gray-800 p-4 rounded-lg">
       <h4 className="text-white font-semibold">
@@ -14,6 +14,7 @@ function QuizQuestion({ question, index }) {
             option={opt}
             name={`question_${index}`}
             id={`q${index}_opt${i}`}
+            onChange={() => onAnswer(opt)} // when user selects this option
           />
         ))}
       </ul>

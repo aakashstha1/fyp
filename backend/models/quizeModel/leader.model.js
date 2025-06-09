@@ -5,10 +5,6 @@ const leaderboardSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Category",
-  },
   score: {
     type: Number,
   },

@@ -1,11 +1,18 @@
 import React from "react";
 
-function QuizOption({ option, name, id }) {
+function QuizOption({ option, name, id, onChange }) {
   return (
     <li>
-      <input type="radio" id={id} name={name} value={option} className="mr-2" />
-      <label htmlFor={id} className="text-white">
-        {option}
+      <label className="text-white cursor-pointer flex items-center space-x-2">
+        <input
+          type="radio"
+          name={name}
+          id={id}
+          value={option}
+          onChange={onChange}
+          className="form-radio text-blue-500"
+        />
+        <span>{option}</span>
       </label>
     </li>
   );
