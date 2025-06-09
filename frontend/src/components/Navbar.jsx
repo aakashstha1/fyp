@@ -59,6 +59,9 @@ function Navbar() {
           <NavLink to="/courses" className={navLinkClasses}>
             Courses
           </NavLink>
+          <NavLink to="/forumView" className={navLinkClasses}>
+            Forum
+          </NavLink>
           <NavLink to="/my-board" className={navLinkClasses}>
             Whiteboard
           </NavLink>
@@ -78,7 +81,9 @@ function Navbar() {
                 </Avatar>
               </DropdownMenuTrigger>
               <DropdownMenuContent className="w-30">
-                <NavLink to="profile"><DropdownMenuItem>Profile</DropdownMenuItem></NavLink>
+                <NavLink to="profile">
+                  <DropdownMenuItem>Profile</DropdownMenuItem>
+                </NavLink>
                 <DropdownMenuItem onClick={handleLogout}>
                   Logout
                 </DropdownMenuItem>
