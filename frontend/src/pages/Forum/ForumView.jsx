@@ -4,15 +4,15 @@ import React, { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 function ForumView() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [threads, setThreads] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [threads, setThreads] = useState([]);
 
   useEffect(() => {
     if (successMessage || errorMessage) {
@@ -30,23 +30,22 @@ function ForumView() {
     setSuccessMessage("");
     setErrorMessage("");
 
-    // Simulate network request
     setTimeout(() => {
       try {
-        const mockResponse = {
+        const newThread = {
           id: Date.now(),
           title,
           content,
           author: "demo-user",
           createdAt: new Date().toISOString(),
         };
-
-        setThreads((prev) => [mockResponse, ...prev]);
+        setThreads((prev) => [newThread, ...prev]);
         setTitle("");
         setContent("");
-        setSuccessMessage("Your thread was successfully posted!");
-      } catch (err) {
-        setErrorMessage("Failed to post the thread. Please try again.");
+        setSuccessMessage("Thread posted successfully!");
+        setShowModal(false); // Close modal after success
+      } catch (error) {
+        setErrorMessage("Failed to post. Try again.");
       } finally {
         setLoading(false);
       }
@@ -54,54 +53,67 @@ function ForumView() {
   };
 
   return (
-    <div className="p-4">
-      <Card className="max-w-2xl mx-auto shadow-lg border border-muted p-4 mt-6">
-        <CardHeader>
-          <CardTitle className="text-xl">Start a Discussion</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <Input
-              placeholder="Enter thread title"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              disabled={loading}
-              required
-            />
-            <Textarea
-              placeholder="What's on your mind?"
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              rows={5}
-              disabled={loading}
-              required
-            />
-            <Button type="submit" disabled={loading}>
-              {loading ? "Posting..." : "Post Thread"}
-            </Button>
+    <div className="p-4 relative min-h-screen bg-gray-50">
+      {/* Floating Create Post Button */}
+      <Button
+        onClick={() => setShowModal(true)}
+        className="fixed bottom-6 right-6 p-4 rounded-full shadow-lg bg-blue-600 text-white hover:bg-blue-700"
+      >
+        Create Post
+      </Button>
 
-            {/* Inline messages */}
-            {successMessage && (
-              <p className="text-green-600 font-medium">{successMessage}</p>
-            )}
-            {errorMessage && (
-              <p className="text-red-600 font-medium">{errorMessage}</p>
-            )}
-          </form>
-        </CardContent>
-      </Card>
+      {/* Modal Form */}
+      {showModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
+            <button
+              onClick={() => setShowModal(false)}
+              className="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+            >
+              ×
+            </button>
+            <h2 className="text-xl font-semibold mb-4">Create a New Thread</h2>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <Input
+                placeholder="Thread title"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                disabled={loading}
+                required
+              />
+              <Textarea
+                placeholder="What's on your mind?"
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                rows={5}
+                disabled={loading}
+                required
+              />
+              <Button type="submit" disabled={loading} className="w-full">
+                {loading ? "Posting..." : "Post Thread"}
+              </Button>
+              {successMessage && (
+                <p className="text-green-600">{successMessage}</p>
+              )}
+              {errorMessage && (
+                <p className="text-red-600">{errorMessage}</p>
+              )}
+            </form>
+          </div>
+        </div>
+      )}
 
-      {/* Posted Threads Displayed Below Form */}
-      <div className="mt-6 space-y-4 max-w-2xl mx-auto">
+      {/* Posted Threads */}
+      <div className="mt-8 max-w-2xl mx-auto space-y-4">
         {threads.map((thread) => (
           <div
             key={thread.id}
-            className="p-4 border rounded shadow-sm bg-white"
+            className="bg-white p-4 rounded shadow border border-gray-200"
           >
-            <h3 className="font-semibold text-lg mb-1">{thread.title}</h3>
-            <p className="text-sm text-gray-700 mb-2">{thread.content}</p>
-            <span className="text-xs text-gray-500 block">
-              by {thread.author} at{" "}
+            <h3 className="font-semibold text-lg">{thread.title}</h3>
+            <p className="text-sm text-gray-700 mt-1">{thread.content}</p>
+            <span className="text-xs text-gray-500 block mt-2">
+              by {thread.author} on{" "}
               {new Date(thread.createdAt).toLocaleString()}
             </span>
           </div>
@@ -112,3 +124,4 @@ function ForumView() {
 }
 
 export default ForumView;
+  

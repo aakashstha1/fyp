@@ -37,8 +37,8 @@ function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
 
-          <Route path="quiz" element={<Quiz />} />
-           <Route path="courses" element={<Cources/>} />
+        
+          <Route path="courses" element={<Cources/>} />
           
 
 
