@@ -1,96 +1,27 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DataTable from "@/components/DataTable";
-
+import axios from "axios";
+const API_URL = "http://localhost:8000/api";
 function InstructorReq() {
-  const allRequests = [
-    {
-      name: "Aayush Sharma",
-      email: "aayush@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Sita Rai",
-      email: "sita@example.com",
-      contact: "9800000000",
-      status: "approved",
-    },
-    {
-      name: "Ravi Thapa",
-      email: "ravi@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Bina Shrestha",
-      email: "bina@example.com",
-      contact: "9800000000",
-      status: "rejected",
-    },
-    {
-      name: "Kiran Gurung",
-      email: "kiran@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Aayush Sharma",
-      email: "aayush@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Sita Rai",
-      email: "sita@example.com",
-      contact: "9800000000",
-      status: "approved",
-    },
-    {
-      name: "Aayush Sharma",
-      email: "aayush@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Sita Rai",
-      email: "sita@example.com",
-      contact: "9800000000",
-      status: "approved",
-    },
-    {
-      name: "Ravi Thapa",
-      email: "ravi@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Bina Shrestha",
-      email: "bina@example.com",
-      contact: "9800000000",
-      status: "rejected",
-    },
-    {
-      name: "Kiran Gurung",
-      email: "kiran@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Aayush Sharma",
-      email: "aayush@example.com",
-      contact: "9800000000",
-      status: "pending",
-    },
-    {
-      name: "Sita Rai",
-      email: "sita@example.com",
-      contact: "9800000000",
-      status: "approved",
-    },
-  ];
-
+  const [allRequests, setAllRequests] = useState([]); // Store requests data
   const [statusFilter, setStatusFilter] = useState("all");
+
+  // Fetch all requests on mount
+  useEffect(() => {
+    const fetchRequests = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/admin/instructor-requests`, {
+          withCredentials: true,
+        });
+        setAllRequests(res?.data?.requests);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchRequests();
+  }, []);
 
   const filteredRequests =
     statusFilter === "all"

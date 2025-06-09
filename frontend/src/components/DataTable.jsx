@@ -35,48 +35,56 @@ const DataTable = ({ data, showStatus = true, showRole = true }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((user, index) => (
-            <TableRow key={index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>
-                <Avatar>
-                  <AvatarImage src={user.imageUrl || ""} alt={user.name} />
-                  <AvatarFallback>
-                    {user.name?.charAt(0).toUpperCase() || "U"}
-                  </AvatarFallback>
-                </Avatar>
-              </TableCell>
-              <TableCell>{user.name}</TableCell>
-              <TableCell>{user.email}</TableCell>
-              <TableCell>{user.contact}</TableCell>
-              {showRole && (
-                <TableCell className="capitalize">
-                  {user.role || "N/A"}
-                </TableCell>
-              )}
-              {showStatus && (
+          {Array.isArray(data) &&
+            data.length > 0 &&
+            data.map((req, index) => (
+              <TableRow key={index}>
+                <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  <Badge
-                    className={`${
-                      statusColors[user.status] || "bg-gray-300"
-                    } w-[80px]`}
-                  >
-                    {user.status?.charAt(0).toUpperCase() +
-                      user.status?.slice(1) || "N/A"}
-                  </Badge>
+                  <Avatar>
+                    <AvatarImage
+                      src={req?.user.imageUrl || ""}
+                      alt={req?.user.name}
+                    />
+                    <AvatarFallback>
+                      {req?.user.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
+                  </Avatar>
                 </TableCell>
-              )}
-              <TableCell className="text-right space-x-2">
-                <Link to={`/admin/user/${user.id || "123"}`}>
-                  <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
-                    View Detail
-                  </Button>
-                </Link>
-              </TableCell>
-            </TableRow>
-          ))}
+                <TableCell>{req?.user.name}</TableCell>
+                <TableCell>{req?.user.email}</TableCell>
+                <TableCell>{req?.user.contact || "N/A"}</TableCell>
+                {showRole && (
+                  <TableCell className="capitalize">
+                    {req?.user.role || "N/A"}
+                  </TableCell>
+                )}
+                {showStatus && (
+                  <TableCell>
+                    <Badge
+                      className={`${
+                        statusColors[req?.status] || "bg-gray-300"
+                      } w-[80px]`}
+                    >
+                      {req.status
+                        ? req.status.charAt(0).toUpperCase() +
+                          req.status.slice(1)
+                        : "N/A"}
+                    </Badge>
+                  </TableCell>
+                )}
+                <TableCell className="text-right space-x-2">
+                  <Link to={`/admin/instructor-request/${req._id}`}>
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                      View Detail
+                    </Button>
+                  </Link>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
+      {data.length < 0 && <p className="text-center">No data yet.</p>}
     </div>
   );
 };

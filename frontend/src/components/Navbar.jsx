@@ -51,7 +51,7 @@ function Navbar() {
               <NavLink to="/my-docs" className={navLinkClasses}>
                 My Docs
               </NavLink>
-              <NavLink to="/quiz" className={navLinkClasses}>
+              <NavLink to="/quiz-start" className={navLinkClasses}>
                 Quiz
               </NavLink>
             </>

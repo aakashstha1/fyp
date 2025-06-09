@@ -9,7 +9,7 @@ import userRoutes from "./routes/user.route.js";
 import adminRoutes from "./routes/admin.route.js";
 import drawRoutes from "./routes/draw.route.js";
 import docRoutes from "./routes/doc.route.js";
-
+import quize from "./routes/quizeQuestionAdd.route.js";
 dotenv.config();
 
 const app = express();
@@ -29,7 +29,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/doc", docRoutes);
 app.use("/api/draw", drawRoutes);
-
+app.use("/api/quize", quize);
 // Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
