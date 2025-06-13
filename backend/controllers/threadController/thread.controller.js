@@ -22,18 +22,45 @@ export const ThreadPost = async (req, res) => {
     const payload = new Thread({
       title,
       content,
-      userId,   
+      userId,
     });
 
     await payload.save();
 
     return res.status(201).json({
+      thread: payload._id,
       message: "Successfully posted.",
     });
   } catch (error) {
     console.error("Something went wrong", error);
     return res.status(500).json({
       message: "Server error. Please try again later.",
+    });
+  }
+};
+
+export const getAllThreads = async (req, res) => {
+  try {
+    const userId = req.query.userId;
+
+    if (!userId) {
+      return res.status(401).json({ message: " please login first" });
+    }
+
+    const existed = await User.findById(userId);
+    if (!existed) {
+      return res.status(402).json({ message: "UnAuthorized login detected" });
+    }
+    const threads = await Thread.find().populate("userId", "name").sort({
+      createdAt: -1,
+    });
+    res.status(201).json({
+      threads,
+    });
+  } catch (error) {
+    console.log(error + "getAllthreads Error");
+    return res.status(500).json({
+      message: "server side error to get all threads",
     });
   }
 };
