@@ -21,7 +21,6 @@ import Board from "@/pages/Whiteboard/Board";
 import Cources from "@/pages/Cources";
 import Chat from "@/pages/Chat";
 
-
 import QuizViewer from "@/pages/quiz/QuizViewer";
 import AddQuestionsLayout from "@/pages/quiz/AddQuestionsLayout";
 import ForumView from "@/pages/Forum/ForumView";
@@ -38,10 +37,7 @@ function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
 
-        
-          <Route path="courses" element={<Cources/>} />
-          
-
+          <Route path="courses" element={<Cources />} />
 
           <Route path="quiz-start" element={<QuizViewer />} />
 
@@ -55,7 +51,6 @@ function AppRoutes() {
           <Route path="/leaderboard" element={<Leaderboard />} />
 
           <Route path="forumView" element={<ForumView />} />
-
         </Route>
         //Admin routes
         <Route path="/admin" element={<AdminSidebar />}>

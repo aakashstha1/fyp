@@ -1,138 +1,18 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+
 import { Button } from "@/components/ui/button";
+import CreateThread from "./CreateThread";
 
-function ThreadCard({ thread, onComment }) {
-  const [commentText, setCommentText] = useState("");
-
-  const handleComment = (e) => {
-    e.preventDefault();
-    if (!commentText.trim()) return;
-    onComment(thread.id, commentText);
-    setCommentText("");
-  };
-
-  return (
-    <div className="bg-white p-4 rounded shadow border border-gray-200">
-      <h3 className="font-semibold text-lg">{thread.title}</h3>
-      <p className="text-sm text-gray-700 mt-1">{thread.content}</p>
-      <span className="text-xs text-gray-500 block mt-2">
-        by {thread.author} on {new Date(thread.createdAt).toLocaleString()}
-      </span>
-
-      <div className="mt-4 border-t pt-3">
-        <h4 className="text-sm font-semibold mb-2">Comments</h4>
-        {thread.comments.length > 0 ? (
-          <ul className="space-y-2">
-            {thread.comments.map((comment, idx) => (
-              <li
-                key={idx}
-                className="text-sm text-gray-800 bg-gray-100 p-2 rounded"
-              >
-                {comment}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-xs text-gray-500">No comments yet.</p>
-        )}
-
-        <form
-          onSubmit={handleComment}
-          className="mt-2 flex items-center space-x-2"
-        >
-          <Input
-            value={commentText}
-            onChange={(e) => setCommentText(e.target.value)}
-            placeholder="Write a comment..."
-            className="flex-1"
-          />
-          <Button type="submit" className="px-3">
-            Post
-          </Button>
-        </form>
-      </div>
-    </div>
-  );
-}
-
-function CreateThreadModal({
-  onClose,
-  onSubmit,
-  loading,
-  successMessage,
-  errorMessage,
-  title,
-  content,
-  setTitle,
-  setContent,
-}) {
-  return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md relative border border-gray-200">
-        {/* Close Button */}
-        <button
-          onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl"
-        >
-          ×
-        </button>
-
-        {/* Heading */}
-        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
-          Create a New Thread
-        </h2>
-
-        {/* Form */}
-        <form onSubmit={onSubmit} className="space-y-4">
-          <Input
-            placeholder="Thread title"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            disabled={loading}
-            required
-            className="focus-visible:ring-2 focus-visible:ring-blue-500"
-          />
-          <Textarea
-            placeholder="What's on your mind?"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={5}
-            disabled={loading}
-            required
-            className="focus-visible:ring-2 focus-visible:ring-blue-500"
-          />
-
-          <Button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium"
-          >
-            {loading ? "Posting..." : "Post Thread"}
-          </Button>
-
-          {/* Messages */}
-          {successMessage && (
-            <p className="text-green-600 text-sm text-center">
-              {successMessage}
-            </p>
-          )}
-          {errorMessage && (
-            <p className="text-red-600 text-sm text-center">{errorMessage}</p>
-          )}
-        </form>
-      </div>
-    </div>
-  );
-}
-
+import ThreadCard from "./ThreadCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 function ForumView() {
+  const { currentUser } = useAuth();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
   const [threads, setThreads] = useState([
     {
       id: "1",
@@ -177,7 +57,7 @@ function ForumView() {
       return () => clearTimeout(timer);
     }
   }, [successMessage, errorMessage]);
-
+  // Thread handling posting thread
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -187,10 +67,10 @@ function ForumView() {
     setTimeout(() => {
       try {
         const newThread = {
-          id: Date.now().toString(),
+          id: currentUser._id,
           title,
           content,
-          author: "demo-user",
+          author: currentUser.name,
           createdAt: new Date().toISOString(),
           comments: [],
         };
@@ -227,7 +107,7 @@ function ForumView() {
       </Button>
 
       {showModal && (
-        <CreateThreadModal
+        <CreateThread
           onClose={() => setShowModal(false)}
           onSubmit={handleSubmit}
           loading={loading}
@@ -244,6 +124,7 @@ function ForumView() {
         {threads.map((thread) => (
           <ThreadCard
             key={thread.id}
+            currentUser={currentUser}
             thread={thread}
             onComment={handleComment}
           />
