@@ -6,10 +6,13 @@ import { Button } from "@/components/ui/button";
 import CreateThread from "./CreateThread";
 
 import ThreadCard from "./ThreadCard";
+import { useAuth } from "@/contexts/AuthContext";
 
 function ForumView() {
+  const { currentUser } = useAuth();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+
   const [threads, setThreads] = useState([
     {
       id: "1",
@@ -54,7 +57,7 @@ function ForumView() {
       return () => clearTimeout(timer);
     }
   }, [successMessage, errorMessage]);
-
+  // Thread handling posting thread
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
@@ -64,10 +67,10 @@ function ForumView() {
     setTimeout(() => {
       try {
         const newThread = {
-          id: Date.now().toString(),
+          id: currentUser._id,
           title,
           content,
-          author: "demo-user",
+          author: currentUser.name,
           createdAt: new Date().toISOString(),
           comments: [],
         };
@@ -121,6 +124,7 @@ function ForumView() {
         {threads.map((thread) => (
           <ThreadCard
             key={thread.id}
+            currentUser={currentUser}
             thread={thread}
             onComment={handleComment}
           />
