@@ -7,6 +7,7 @@ import CreateThread from "./CreateThread";
 
 import ThreadCard from "./ThreadCard";
 import { useAuth } from "@/contexts/AuthContext";
+import axios from "axios";
 
 function ForumView() {
   const { currentUser } = useAuth();
@@ -49,6 +50,38 @@ function ForumView() {
   const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
+    const fetchThreads = async () => {
+      try {
+        if (!currentUser?._id) return;
+
+        const res = await axios.get(
+          "http://localhost:8000/api/thread/all/threads",
+          {
+            params: {
+              userId: currentUser._id,
+            },
+          }
+        );
+
+        const formattedThreads = res.data.threads.map((thread) => ({
+          id: thread._id,
+          title: thread.title,
+          content: thread.content,
+          author: thread.userId.name,
+          createdAt: thread.createdAt,
+          comments: thread.comments || [],
+        }));
+
+        setThreads(formattedThreads);
+      } catch (error) {
+        console.error("Failed to fetch threads:", error);
+      }
+    };
+
+    fetchThreads();
+  }, [currentUser]);
+
+  useEffect(() => {
     if (successMessage || errorMessage) {
       const timer = setTimeout(() => {
         setSuccessMessage("");
@@ -58,33 +91,30 @@ function ForumView() {
     }
   }, [successMessage, errorMessage]);
   // Thread handling posting thread
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
-    setSuccessMessage("");
-    setErrorMessage("");
 
-    setTimeout(() => {
-      try {
-        const newThread = {
-          id: currentUser._id,
-          title,
-          content,
-          author: currentUser.name,
-          createdAt: new Date().toISOString(),
-          comments: [],
-        };
-        setThreads((prev) => [newThread, ...prev]);
-        setTitle("");
-        setContent("");
-        setSuccessMessage("Thread posted successfully!");
-        setShowModal(false);
-      } catch (error) {
-        setErrorMessage("Failed to post. Try again.");
-      } finally {
-        setLoading(false);
-      }
-    }, 1000);
+    try {
+      setLoading(true);
+      const res = await axios.post("http://localhost:8000/api/thread/create", {
+        userId: currentUser._id,
+        title,
+        content,
+      });
+
+      setTitle("");
+      setContent("");
+      setSuccessMessage(res.data.message || "Thread posted successfully!");
+      setShowModal(false);
+    } catch (err) {
+      console.log(err);
+      setErrorMessage(
+        err?.response?.data?.message ||
+          "Something went wrong cannot Post the thread"
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleComment = (threadId, comment) => {
@@ -121,6 +151,16 @@ function ForumView() {
       )}
 
       <div className="mt-8 max-w-2xl mx-auto space-y-4">
+        {successMessage && (
+          <div className="p-3 bg-green-100 text-green-800 rounded shadow">
+            {successMessage}
+          </div>
+        )}
+        {errorMessage && (
+          <div className="p-3 bg-red-100 text-red-800 rounded shadow">
+            {errorMessage}
+          </div>
+        )}
         {threads.map((thread) => (
           <ThreadCard
             key={thread.id}

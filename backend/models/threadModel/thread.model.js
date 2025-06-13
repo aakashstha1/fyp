@@ -7,15 +7,15 @@ const threadModel = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    threadTitle: {
+    title: {
       type: String,
       required: true,
     },
-    threadContect: {
+    content: {
       type: String,
       required: true,
     },
-    comment: {
+    comments: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Comment",
     },

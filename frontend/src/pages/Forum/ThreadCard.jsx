@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 function ThreadCard({ thread, onComment, currentUser }) {
   const [commentText, setCommentText] = useState("");
@@ -16,6 +17,7 @@ function ThreadCard({ thread, onComment, currentUser }) {
   const handleCommentClick = () => {
     setShowCommentSection((prev) => !prev);
   };
+
 
   return (
     <div className="bg-white p-4 rounded shadow border border-gray-200">
