@@ -16,6 +16,9 @@ import {
   Sheet,
   SheetContent,
   SheetTrigger,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
 } from "@/components/ui/sheet";
 
 function Navbar() {
@@ -25,8 +28,8 @@ function Navbar() {
   const navLinkClasses = ({ isActive }) =>
     `text-base font-medium transition-colors ${
       isActive
-        ? "text-blue-600 dark:text-blue-400 font-semibold"
-        : "text-gray-700 dark:text-gray-300"
+        ? "pl-4 text-blue-600 dark:text-blue-400 font-semibold"
+        : " pl-4 text-gray-700 dark:text-gray-300"
     }`;
 
   const handleLogout = async () => {
@@ -36,7 +39,7 @@ function Navbar() {
   };
 
   const MobileNavLinks = () => (
-    <div className="flex flex-col items-center justify-center space-y-4 mt-8">
+    <div className="flex flex-col items-start  justify-center space-y-4 mt-4">
       <NavLink to="/" className={navLinkClasses}>
         Home
       </NavLink>
@@ -95,7 +98,7 @@ function Navbar() {
   );
 
   return (
-    <div className="border-b dark:bg-gray-700 w-full z-50 fixed top-0 left-0 bg-white dark:bg-gray-700 shadow-sm">
+    <div className="border-b dark:bg-gray-700 w-full z-50 fixed top-0 left-0 bg-white shadow-sm">
       <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
         {/* Logo */}
         <NavLink to="/">
@@ -137,14 +140,11 @@ function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger>
                 <Avatar className="h-10 w-10 mr-2">
-                  <AvatarImage
-                    src="https://github.com/shadcn.png"
-                    alt="@shadcn"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
+                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
+                  <AvatarFallback>U</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-30">
+              <DropdownMenuContent>
                 <NavLink to="/profile">
                   <DropdownMenuItem>Profile</DropdownMenuItem>
                 </NavLink>
@@ -169,10 +169,23 @@ function Navbar() {
         {/* Mobile Hamburger */}
         <div className="lg:hidden">
           <Sheet>
-            <SheetTrigger>
-              <Menu size={24} />
+            <SheetTrigger asChild>
+              <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
+                <Menu size={24} />
+              </button>
             </SheetTrigger>
             <SheetContent side="left" className="w-[250px] sm:w-[300px]">
+              <SheetHeader>
+                <SheetTitle className="text-3xl">
+                  {" "}
+                  <NavLink to="/">
+                    <h1 className="text-2xl font-bold">Logo</h1>
+                  </NavLink>
+                </SheetTitle>
+                <SheetDescription className="sr-only">
+                  Mobile navigation menu
+                </SheetDescription>
+              </SheetHeader>
               <MobileNavLinks />
             </SheetContent>
           </Sheet>
