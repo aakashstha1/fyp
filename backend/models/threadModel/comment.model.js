@@ -2,9 +2,17 @@ import mongoose from "mongoose";
 
 const commentModel = new mongoose.Schema(
   {
-    comments: {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+    },
+    content: {
       type: String,
       required: true,
+    },
+    threadId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Thread",
     },
   },
   {

@@ -4,20 +4,31 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 function ThreadCard({ thread, onComment, currentUser }) {
-  const [commentText, setCommentText] = useState("");
+  const [commentText, setCommentText] = useState(null);
   const [showCommentSection, setShowCommentSection] = useState(false);
 
   const handleComment = (e) => {
     e.preventDefault();
     if (!commentText.trim()) return;
-    onComment(thread.id, commentText);
-    setCommentText("");
+
+    const PostThread = async () => {
+      try {
+        const res = await axios.post(
+          "http://localhost:8000/api/thread/addComment",
+          { content: commentText, userId: currentUser._id, threadId: thread.id }
+        );
+        setCommentText(res.data.comment);
+        console.log(res.data.comment);
+      } catch (error) {}
+      onComment(thread.id, commentText.content);
+      setCommentText("");
+    };
+    PostThread();
   };
 
   const handleCommentClick = () => {
     setShowCommentSection((prev) => !prev);
   };
-
 
   return (
     <div className="bg-white p-4 rounded shadow border border-gray-200">
