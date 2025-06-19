@@ -5,6 +5,7 @@ const commentModel = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
     content: {
       type: String,
@@ -13,11 +14,10 @@ const commentModel = new mongoose.Schema(
     threadId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Thread",
+      required: true,
     },
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model("Comment", commentModel);

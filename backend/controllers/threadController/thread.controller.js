@@ -89,6 +89,7 @@ export const addComment = async (req, res) => {
       threadId,
     });
     await newComment.save();
+    await newComment.populate("userId", "name");
 
     existThread.comments.push(newComment._id);
     await existThread.save();
@@ -129,5 +130,34 @@ export const getComment = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Server error while fetching comments" });
+  }
+};
+// Delete
+export const deleteComment = async (req, res) => {
+  try {
+    const { commentId, userId } = req.body;
+
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    const thread = await Thread.findById(comment.threadId);
+    if (!thread) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+
+    // Check if current user is either the comment owner or thread owner
+    if (
+      comment.userId.toString() !== userId &&
+      thread.userId.toString() !== userId
+    ) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    await Comment.findByIdAndDelete(commentId);
+    return res.status(200).json({ message: "Comment deleted successfully" });
+  } catch (err) {
+    return res.status(500).json({ message: "Server error", error: err });
   }
 };

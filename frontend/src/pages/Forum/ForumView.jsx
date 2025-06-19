@@ -117,15 +117,7 @@ function ForumView() {
     }
   };
 
-  const handleComment = (threadId, comment) => {
-    setThreads((prev) =>
-      prev.map((thread) =>
-        thread.id === threadId
-          ? { ...thread, comments: [...thread.comments, comment] }
-          : thread
-      )
-    );
-  };
+
 
   return (
     <div className="p-4 relative min-h-screen bg-gray-50">
@@ -166,7 +158,7 @@ function ForumView() {
             key={thread.id}
             currentUser={currentUser}
             thread={thread}
-            onComment={handleComment}
+          
           />
         ))}
       </div>

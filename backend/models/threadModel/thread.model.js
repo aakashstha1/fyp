@@ -22,9 +22,7 @@ const threadModel = new mongoose.Schema(
       },
     ],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model("Thread", threadModel);
