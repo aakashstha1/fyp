@@ -10,6 +10,7 @@ export const AuthContextProvider = ({ children }) => {
     JSON.parse(localStorage.getItem("user")) || null
   );
   const [loading, setLoading] = useState(false);
+
   const [error, setError] = useState(null);
 
   const login = async (inputs) => {
@@ -73,7 +74,14 @@ export const AuthContextProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ currentUser, login, logout, loading, error, refreshUser }}
+      value={{
+        currentUser,
+        login,
+        logout,
+        loading,
+        error,
+        refreshUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

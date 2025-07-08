@@ -4,14 +4,14 @@ import Request from "../models/request.model.js";
 export const getUser = async (req, res) => {
   try {
     const userId = req.user.userId;
-
+    const request = await Request.findOne({ user: userId });
     const user = await User.findById(userId).select("-password");
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    res.status(200).json({ user });
+    res.status(200).json({ user, req: request || null });
   } catch (error) {
     console.error(error);
     res

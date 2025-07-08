@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,33 +15,40 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Info, PenLine } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/contexts/AuthContext";
-const user = {
-  name: "John Doe",
-  email: "john@example.com",
-  contact: "9800000000",
-  role: "enrollee",
-  gender: "male",
-  isVerified: false,
-  verificationStatus: "pending",
-  imageUrl: "https://example.com/profile.jpg",
-};
+import axios from "axios";
+const API_URL = "http://localhost:8000/api";
 function Profile() {
   const underlineInputClass =
     "border-b border-gray-400 border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none focus:ring-0 focus:border-none";
   const { currentUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-  console.log(currentUser);
 
   const [name, setName] = useState(currentUser.name);
   const [email, setEmail] = useState(currentUser.email);
-  const [gender, setGender] = useState(user.gender);
-  const [contact, setContact] = useState(user.contact);
+  const [gender, setGender] = useState(currentUser.gender);
+  const [contact, setContact] = useState(currentUser.contact);
   const [role, setRole] = useState(
     currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)
   );
+  const [request, setRequest] = useState("");
   // const [file, setFile] = useState(null);
-  const [img, setImg] = useState(user.imageUrl);
+  const [img, setImg] = useState(currentUser.imageUrl);
+
+  useEffect(() => {
+    const getUserProfile = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/user/profile`, {
+          withCredentials: true,
+        });
+        setRequest(res.data.req);
+        console.log(res);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getUserProfile();
+  }, []);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -49,7 +56,6 @@ function Profile() {
     const imageUrl = URL.createObjectURL(selectedFile);
     setImg(imageUrl);
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log({ name, email, gender, contact, role, img });
@@ -78,7 +84,7 @@ function Profile() {
             </div>
 
             {currentUser.role === "enrollee" &&
-              (currentUser.verificationStatus === "pending" ? (
+              (request.status === "pending" ? (
                 <p
                   className="flex items-center gap-2 text-yellow-900 bg-yellow-100 p-3 rounded-md text-sm font-medium"
                   role="alert"
