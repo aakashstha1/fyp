@@ -1,5 +1,5 @@
 import React from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import ModeToggle from "@/ModeToggle";
 import { useAuth } from "@/contexts/AuthContext";
@@ -10,188 +10,142 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { toast } from "sonner";
-import { Menu } from "lucide-react";
+import { Bell, Brush, Pencil, ShoppingBagIcon } from "lucide-react";
+
 import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet";
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import { toast } from "sonner";
+
+// import { Menu } from "lucide-react";
+// import {
+//   Sheet,
+//   SheetContent,
+//   SheetTrigger,
+//   SheetHeader,
+//   SheetTitle,
+//   SheetDescription,
+// } from "@/components/ui/sheet";
 
 function Navbar() {
+  const location = useLocation();
+  const path = location.pathname;
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
 
-  const navLinkClasses = ({ isActive }) =>
-    `text-base font-medium transition-colors ${
-      isActive
-        ? "pl-4 text-blue-600 dark:text-blue-400 font-semibold"
-        : " pl-4 text-gray-700 dark:text-gray-300"
-    }`;
+  const shouldShowSecondary = !path.startsWith("/dashboard");
+
+  const navLinkClass = ({ isActive }) =>
+    isActive
+      ? "text-blue-600 font-semibold"
+      : "text-gray-500 hover:text-blue-400";
 
   const handleLogout = async () => {
     const res = await logout();
     toast.success(res?.data?.message || "Logged out successfully");
-    navigate("/login");
+    navigate("/");
   };
-
-  const MobileNavLinks = () => (
-    <div className="flex flex-col items-start  justify-center space-y-4 mt-4">
-      <NavLink to="/" className={navLinkClasses}>
-        Home
-      </NavLink>
-      <NavLink to="/about" className={navLinkClasses}>
-        About
-      </NavLink>
-      {currentUser && (
-        <>
-          <NavLink to="/my-docs" className={navLinkClasses}>
-            My Docs
-          </NavLink>
-          <NavLink to="/quiz-start" className={navLinkClasses}>
-            Quiz
-          </NavLink>
-        </>
-      )}
-      <NavLink to="/courses" className={navLinkClasses}>
-        Courses
-      </NavLink>
-      <NavLink to="/forumView" className={navLinkClasses}>
-        Forum
-      </NavLink>
-      <NavLink to="/my-board" className={navLinkClasses}>
-        Whiteboard
-      </NavLink>
-
-      <div className="border-t w-full pt-4 flex flex-col items-center gap-3">
-        {currentUser ? (
-          <>
-            <NavLink to="/profile" className={navLinkClasses}>
-              Profile
-            </NavLink>
-            <Button
-              onClick={handleLogout}
-              variant="destructive"
-              className="w-32"
-            >
-              Logout
-            </Button>
-          </>
-        ) : (
-          <>
-            <NavLink to="/login" className="w-full">
-              <Button className="w-32">Login</Button>
-            </NavLink>
-            <NavLink to="/signup" className="w-full">
-              <Button variant="outline" className="w-32">
-                Signup
-              </Button>
-            </NavLink>
-          </>
-        )}
-        <ModeToggle />
-      </div>
-    </div>
-  );
-
   return (
-    <div className="border-b dark:bg-gray-700 w-full z-50 fixed top-0 left-0 bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto flex items-center justify-between p-4">
-        {/* Logo */}
-        <NavLink to="/">
-          <h1 className="text-2xl font-bold">Logo</h1>
-        </NavLink>
+    <>
+      {/* Main Navbar */}
+      <div className="border-b h-15 flex items-center justify-between px-10">
+        <div className="">LOGO</div>
+        <div className="flex items-center gap-20">
+          <div className="flex space-x-6">
+            <NavLink to="/" className={navLinkClass}>
+              Home
+            </NavLink>
+            <NavLink to="/about" className={navLinkClass}>
+              About
+            </NavLink>
+            <NavLink to="/contact" className={navLinkClass}>
+              Contact
+            </NavLink>
+            <NavLink to="/courses" className={navLinkClass}>
+              Courses
+            </NavLink>
+          </div>
 
-        {/* Desktop Links */}
-        <div className="hidden lg:flex space-x-8 items-center">
-          <NavLink to="/" className={navLinkClasses}>
-            Home
-          </NavLink>
-          <NavLink to="/about" className={navLinkClasses}>
-            About
-          </NavLink>
-          {currentUser && (
-            <>
-              <NavLink to="/my-docs" className={navLinkClasses}>
-                My Docs
-              </NavLink>
-              <NavLink to="/quiz-start" className={navLinkClasses}>
-                Quiz
-              </NavLink>
-            </>
-          )}
-          <NavLink to="/courses" className={navLinkClasses}>
-            Courses
-          </NavLink>
-          <NavLink to="/forumView" className={navLinkClasses}>
-            Forum
-          </NavLink>
-          <NavLink to="/my-board" className={navLinkClasses}>
-            Whiteboard
-          </NavLink>
-        </div>
-
-        {/* Desktop Auth & Mode */}
-        <div className="hidden lg:flex items-center gap-2">
           {currentUser ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Avatar className="h-10 w-10 mr-2">
-                  <AvatarImage src="https://github.com/shadcn.png" alt="User" />
-                  <AvatarFallback>U</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <NavLink to="/profile">
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                </NavLink>
-                <DropdownMenuItem onClick={handleLogout}>
-                  Logout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <div className="flex items-center space-x-6">
+              <Bell className="h-6 w-6" />
+              <ShoppingBagIcon className="h-6 w-6" />
+
+              <Avatar>
+                <AvatarImage src="" alt="@evilrabbit" />
+                <AvatarFallback>ER</AvatarFallback>
+              </Avatar>
+            </div>
           ) : (
-            <>
-              <NavLink to="/login">
-                <Button>Login</Button>
-              </NavLink>
-              <NavLink to="/signup">
-                <Button variant="outline">Signup</Button>
-              </NavLink>
-            </>
+            <div className="flex items-center gap-2">
+              <Link to="/login">
+                <Button variant="outline">Login</Button>
+              </Link>
+              <Link to="/signup">
+                <Button>Sign Up</Button>
+              </Link>
+            </div>
           )}
           <ModeToggle />
         </div>
-
-        {/* Mobile Hamburger */}
-        <div className="lg:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <button className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800">
-                <Menu size={24} />
-              </button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-[250px] sm:w-[300px]">
-              <SheetHeader>
-                <SheetTitle className="text-3xl">
-                  {" "}
-                  <NavLink to="/">
-                    <h1 className="text-2xl font-bold">Logo</h1>
-                  </NavLink>
-                </SheetTitle>
-                <SheetDescription className="sr-only">
-                  Mobile navigation menu
-                </SheetDescription>
-              </SheetHeader>
-              <MobileNavLinks />
-            </SheetContent>
-          </Sheet>
-        </div>
       </div>
-    </div>
+
+      {/* Secondary Navbar (Visible only when logged in) */}
+      {currentUser && shouldShowSecondary && (
+        <div className="mx-auto border-b py-5 flex items-center justify-center gap-6 text-sm text-gray-600">
+          <NavLink to="/dashboard" className={navLinkClass}>
+            Dashboard
+          </NavLink>
+          <NavLink to="/discussion" className={navLinkClass}>
+            Discussion
+          </NavLink>
+          <NavLink to={`/profile/${currentUser._id}`} className={navLinkClass}>
+            Profile
+          </NavLink>
+          <DropdownMenu>
+            <DropdownMenuTrigger className="focus:outline-none">
+              Note
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem>
+                <Pencil /> Write Note
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Brush />
+                Draw Note
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <NavLink to="/my-learning" className={navLinkClass}>
+            My Learning
+          </NavLink>
+          <Dialog>
+            <DialogTrigger asChild>
+              <p className="cursor-pointer hover:text-blue-400">Logout</p>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <DialogHeader>
+                <DialogTitle>Are you sure you wan to logout?</DialogTitle>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button variant="destructive" onClick={handleLogout}>
+                  Logout
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </div>
+      )}
+    </>
   );
 }
 

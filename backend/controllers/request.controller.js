@@ -1,5 +1,5 @@
 import Request from "../models/request.model.js";
-import User from "../models/user.model.js";
+// import User from "../models/user.model.js";
 
 export const getAllRequests = async (req, res) => {
   try {
@@ -35,11 +35,9 @@ export const getReqById = async (req, res) => {
 
 export const approveInstructorRequest = async (req, res) => {
   try {
-    const { requestId } = req.params;
-
-    const request = await InstructorRequest.findById(requestId).populate(
-      "user"
-    );
+    const { reqId } = req.params;
+    const request = await Request.findById(reqId).populate("user");
+    console.log(request);
     if (!request) return res.status(404).json({ message: "Request not found" });
 
     if (request.status !== "pending") {
@@ -61,37 +59,44 @@ export const approveInstructorRequest = async (req, res) => {
   }
 };
 
-// 3. Reject Instructor Request
 export const rejectInstructorRequest = async (req, res) => {
   try {
-    const { requestId } = req.params;
-    const request = await InstructorRequest.findById(requestId);
+    const { reqId } = req.params;
+    const request = await Request.findById(reqId);
     if (!request) return res.status(404).json({ message: "Request not found" });
 
     if (request.status !== "pending") {
       return res.status(400).json({ message: "Request already processed" });
     }
 
-    // Remove document URLs (if stored in cloud, add deletion logic here)
+    // Delete uploaded documents from Cloudinary
+    const documentUrls = Object.values(request.documents || {});
+    for (const url of documentUrls) {
+      await deleteCloudinaryFile(url);
+    }
+
+    // Update the request
     request.documents = {};
     request.status = "rejected";
     request.rejectionDate = new Date();
-
     await request.save();
 
-    res
-      .status(200)
-      .json({ message: "Request rejected. User may reapply in 24 hours." });
+    res.status(200).json({
+      message: "Request rejected. User may reapply in 24 hours.",
+      request,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Rejection failed", error: error.message });
+    res.status(500).json({
+      message: "Rejection failed",
+      error: error.message,
+    });
   }
 };
 
-// 4. Admin fetch all requests
 export const getAllInstructorRequests = async (req, res) => {
   try {
-    const requests = await InstructorRequest.find()
-      .populate("user", "name email role")
+    const requests = await Request.find()
+      .populate("user", "name email role profile")
       .sort({ createdAt: -1 });
 
     res.status(200).json({ requests });

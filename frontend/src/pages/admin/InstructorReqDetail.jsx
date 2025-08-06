@@ -12,9 +12,11 @@ import {
 import { Button } from "@/components/ui/button";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 const API_URL = "http://localhost:8000/api";
 function InstructorReqDetail() {
+  const navigate = useNavigate();
   const { reqId } = useParams();
   const [docs, setDocs] = useState(null);
 
@@ -34,6 +36,36 @@ function InstructorReqDetail() {
     };
     fetchUser();
   }, [reqId]);
+
+  const handleApprove = async () => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/admin/approve/${reqId}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(res?.data?.message);
+      navigate("/admin/instructor-requests");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message);
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/admin/reject/${reqId}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(res?.data?.message);
+      navigate("/admin/instructor-requests");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-6 bg-white dark:bg-gray-800 rounded shadow">
@@ -92,6 +124,7 @@ function InstructorReqDetail() {
         </a>
       </div>
       <div className="flex items-center justify-end gap-2">
+        {/* Approve  */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button className="bg-green-600 hover:bg-green-700">Approve</Button>
@@ -106,12 +139,16 @@ function InstructorReqDetail() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction className="bg-green-600 hover:bg-green-700">
+              <AlertDialogAction
+                onClick={handleApprove}
+                className="bg-green-600 hover:bg-green-700"
+              >
                 Approve
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
+        {/* Reject  */}
         <AlertDialog>
           <AlertDialogTrigger asChild>
             <Button className="bg-red-600 hover:bg-red-700">Reject</Button>
@@ -126,7 +163,10 @@ function InstructorReqDetail() {
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction className="bg-red-600 hover:bg-red-700">
+              <AlertDialogAction
+                onClick={handleReject}
+                className="bg-red-600 hover:bg-red-700"
+              >
                 Reject
               </AlertDialogAction>
             </AlertDialogFooter>
