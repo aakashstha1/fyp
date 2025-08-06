@@ -84,7 +84,7 @@ function Profile() {
             </div>
 
             {currentUser.role === "enrollee" &&
-              (request.status === "pending" ? (
+              (request?.status === "pending" ? (
                 <p
                   className="flex items-center gap-2 text-yellow-900 bg-yellow-100 p-3 rounded-md text-sm font-medium"
                   role="alert"

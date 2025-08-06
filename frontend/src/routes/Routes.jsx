@@ -1,6 +1,5 @@
 import Layout from "@/layout/Layout";
 import About from "@/pages/About";
-import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import MyDoc from "@/pages/Docs/MyDoc";
 // import MyLearning from "@/pages/MyLearning";
@@ -18,13 +17,19 @@ import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 
-import Cources from "@/pages/Cources";
+// import Cources from "@/pages/Cources";
 import Chat from "@/pages/Chat";
 
 import QuizViewer from "@/pages/quiz/QuizViewer";
 import AddQuestionsLayout from "@/pages/quiz/AddQuestionsLayout";
-import ForumView from "@/pages/Forum/ForumView";
+import ForumView from "@/pages/discussionForum/ForumView";
 import Leaderboard from "@/pages/quiz/LeaderBoard";
+import Home from "@/pages/home/Home";
+import Sidebar from "@/pages/instructor/dashboard/Sidebar";
+import Dashboard from "@/pages/instructor/dashboard/Dashboard";
+import CourseTable from "@/pages/instructor/course/CourseTable";
+import AddCourse from "@/pages/instructor/course/AddCourse";
+import EditCourse from "@/pages/instructor/course/EditCourse";
 
 function AppRoutes() {
   return (
@@ -36,21 +41,24 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
-
-          <Route path="courses" element={<Cources />} />
-
+          {/* <Route path="courses" element={<Cources />} /> */}
           <Route path="quiz-start" element={<QuizViewer />} />
-
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Board />} />
-          <Route path="profile" element={<Profile />} />
+          <Route path="profile/:userId" element={<Profile />} />
           <Route path="chat" element={<Chat />} />
           <Route path="apply-for-instructor" element={<ApplyInstructor />} />
           <Route path="ViewQuestion" element={<QuizViewer />} />
-          <Route path="/leaderboard" element={<Leaderboard />} />
+          <Route path="leaderboard" element={<Leaderboard />} />
+          <Route path="discussion" element={<ForumView />} />
 
-          <Route path="forumView" element={<ForumView />} />
+          <Route path="dashboard" element={<Sidebar />}>
+            <Route index element={<Dashboard />} />
+            <Route path="course" element={<CourseTable />} />
+            <Route path="course/create" element={<AddCourse />} />
+            <Route path="course/edit/:courseId" element={<EditCourse />} />
+          </Route>
         </Route>
         //Admin routes
         <Route path="/admin" element={<AdminSidebar />}>
