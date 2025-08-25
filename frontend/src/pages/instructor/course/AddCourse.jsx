@@ -9,85 +9,80 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-// import { useCreateCourseMutation } from "@/features/api/courseApi";
+import axios from "axios";
 import { ChevronLeft, ChevronRight, Loader2, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-// import { toast } from "sonner";
+import { toast } from "sonner";
+
+const API_URL = "http://localhost:8000/api";
 
 function AddCourse() {
   const navigate = useNavigate();
-  const [courseTitle, setCourseTitle] = useState("");
+  const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [tags, setTags] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  //   const [createCourse, { data, isLoading, error, isSuccess }] =
-  //     useCreateCourseMutation();
+  const getSelectedCategory = (value) => setCategory(value);
 
-  const getSelectedCategory = (value) => {
-    setCategory(value);
+  const createCourseHandler = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    try {
+      const inputs = {
+        title,
+        category,
+        tags,
+      };
+
+      const res = await axios.post(`${API_URL}/course/create`, inputs, {
+        withCredentials: true,
+      });
+
+      toast.success(res?.data?.message || "Course created successfully");
+
+      setTitle("");
+      setCategory("");
+      setTags([]);
+
+      navigate(-1);
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Failed to create course!");
+    } finally {
+      setLoading(false);
+    }
   };
 
-  //   const createCourseHandler = async () => {
-  //     // console.log(courseTitle, category, tags);
-  //     if (!courseTitle.trim()) {
-  //       toast.error("Course title is required.");
-  //       return;
-  //     }
-
-  //     if (!category.trim()) {
-  //       toast.error("Category is required.");
-  //       return;
-  //     }
-
-  //     if (!tags.length) {
-  //       toast.error("At least one tag is required.");
-  //       return;
-  //     }
-  //     await createCourse({ courseTitle, tags, category });
-  //     navigate("/admin/course");
-  //   };
-
-  //   useEffect(() => {
-  //     if (isSuccess) {
-  //       toast.success(data?.message || "Course added successfully!");
-  //     }
-  //     if (error) {
-  //       toast.error(error.data?.message || "Failed to add course!");
-  //     }
-  //   }, [isSuccess, error, data?.message]);
-
-  const removeTag = (tagToRemove) => {
+  const removeTag = (tagToRemove) =>
     setTags(tags.filter((tag) => tag !== tagToRemove));
-  };
+
   return (
     <div className="flex-1 mx-10">
       {/* Header */}
       <div className="mb-4">
-        <h1 className="font-bold text-xl">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Delectus,
-          accusamus.
-        </h1>
+        <h1 className="font-bold text-xl">Create a New Course</h1>
         <p className="text-sm text-muted-foreground">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Itaque
-          doloremque quo laboriosam minima eligendi quae officia maiores a in
-          cum!
+          Fill in the details below to add your course.
         </p>
       </div>
 
       {/* Form */}
-      <div className="space-y-4">
+      <form onSubmit={createCourseHandler} className="space-y-4 w-100">
         {/* Title */}
         <div className="space-y-1">
-          <Label htmlFor="courseTitle">Title</Label>
+          <Label htmlFor="title">Title</Label>
           <Input
-            id="courseTitle"
-            name="courseTitle"
+            id="title"
+            name="title"
             type="text"
-            value={courseTitle}
-            onChange={(e) => setCourseTitle(e.target.value)}
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
             placeholder="Your Course Title"
             className="focus-visible:ring-0"
+            required
           />
         </div>
 
@@ -123,6 +118,7 @@ function AddCourse() {
                   type="button"
                   className="ml-2 text-red-500"
                   onClick={() => removeTag(tag)}
+                  aria-label={`Remove ${tag}`}
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -134,7 +130,7 @@ function AddCourse() {
         {/* Category */}
         <div className="space-y-1">
           <Label>Category</Label>
-          <Select onValueChange={getSelectedCategory}>
+          <Select value={category} onValueChange={getSelectedCategory}>
             <SelectTrigger className="w-[240px]">
               <SelectValue placeholder="Select a category" />
             </SelectTrigger>
@@ -159,20 +155,20 @@ function AddCourse() {
 
         {/* Navigation Buttons */}
         <div className="flex items-center gap-3 pt-2">
-          <Button variant="outline" onClick={() => navigate(-1)}>
+          <Button variant="outline" type="button" onClick={() => navigate(-1)}>
             <ChevronLeft className="mr-2 h-4 w-4" />
             Back
           </Button>
-          <Button>
+          <Button type="submit" disabled={loading}>
             Create
-            {/* {isLoading ? (
+            {loading ? (
               <Loader2 className="ml-2 h-4 w-4 animate-spin" />
             ) : (
               <ChevronRight className="ml-2 h-4 w-4" />
-            )} */}
+            )}
           </Button>
         </div>
-      </div>
+      </form>
     </div>
   );
 }
