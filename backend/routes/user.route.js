@@ -3,8 +3,8 @@ import {
   getUser,
   requestInstructorRole,
 } from "../controllers/user.controller.js";
-import upload from "../utils/multer-cloudinary.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
+import upload from "../utils/multer.js";
 
 const router = express.Router();
 router.route("/profile").get(verifyToken, getUser);

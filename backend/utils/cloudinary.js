@@ -1,24 +1,50 @@
 import { v2 as cloudinary } from "cloudinary";
 import dotenv from "dotenv";
-
 dotenv.config();
 
 cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
   api_key: process.env.API_KEY,
   api_secret: process.env.API_SECRET_KEY,
+  cloud_name: process.env.CLOUD_NAME,
 });
 
-// Extract public_id from full Cloudinary URL
-export const extractPublicId = (url) => {
-  const parts = url.split("/");
-  const fileWithExtension = parts[parts.length - 1]; // "timestamp-filename.ext"
-  const publicId = fileWithExtension.split(".")[0]; // Remove file extension
-  return `instructor_docs/${publicId}`;
+export const uploadMedia = async (file) => {
+  try {
+    const uploadResponse = await cloudinary.uploader.upload(file, {
+      resource_type: "auto",
+    });
+    return uploadResponse;
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-// Delete file from Cloudinary
-export const deleteCloudinaryFile = async (url) => {
-  const publicId = extractPublicId(url);
-  return await cloudinary.uploader.destroy(publicId, { resource_type: "auto" });
+// Delete media from cloudinary
+
+export const deleteMedia = async (publicId) => {
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error) {
+    console.log(error);
+  }
 };
+
+// export const deleteVideo = async (publicId) => {
+//   try {
+//     await cloudinary.uploader.destroy(publicId, { resource_type: "video" });
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };
+
+// export const uploadPdf = async (file) => {
+//   try {
+//     const uploadResponse = await cloudinary.uploader.upload(file, {
+//       resource_type: "raw", // Important for PDFs
+//       folder: "pdfs", // Optional: you can organize files under a folder
+//     });
+//     return uploadResponse;
+//   } catch (error) {
+//     console.log(error);
+//   }
+// };

@@ -10,47 +10,50 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import axios from "axios";
 // import { useGetCreatorCourseQuery } from "@/features/api/courseApi";
 import { Edit, Plus, Trash2 } from "lucide-react";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const courses = [
-  {
-    _id: "1",
-    courseTitle: "React for Beginners",
-    category: "web-development",
-    coursePrice: 49.99,
-    isPublished: true,
-  },
-  {
-    _id: "2",
-    courseTitle: "Advanced Python",
-    category: "programming",
-    coursePrice: 59.99,
-    isPublished: false,
-  },
-  {
-    _id: "3",
-    courseTitle: "UI/UX Design Fundamentals",
-    category: "design",
-    coursePrice: null,
-    isPublished: true,
-  },
-];
+import { toast } from "sonner";
 
 function CourseTable() {
   const navigate = useNavigate();
-  //   const { data, isLoading } = useGetCreatorCourseQuery();
+  const [courses, setCourses] = useState([]);
+  // const [loading, setLoading] = useState(false);
+  const API_URL = "http://localhost:8000/api";
 
-  //   if (isLoading) return <CustomLoader />;
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/course/my-courses`, {
+          withCredentials: true,
+        });
+        // console.log(res);
+        setCourses(res.data?.courses);
+      } catch (error) {
+        console.error(error);
+        toast.error(
+          error?.response?.data?.message || "Failed to create course!"
+        );
+      }
+    };
+    fetchCourses();
+  }, []);
+
   return (
     <div>
       <Button className="my-10" onClick={() => navigate("create")}>
         <Plus /> Add New Course
       </Button>
       <Table>
-        <TableCaption>A list of course you have added.</TableCaption>
+        <TableCaption>
+          {courses.length <= 0 ? (
+            <p> No courses added yet</p>
+          ) : (
+            <p> A list of course you have added.</p>
+          )}
+        </TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-100">Title</TableHead>
@@ -66,9 +69,7 @@ function CourseTable() {
         <TableBody>
           {courses.map((course) => (
             <TableRow key={course._id}>
-              <TableCell className="font-medium">
-                {course?.courseTitle}
-              </TableCell>
+              <TableCell className="font-medium">{course?.title}</TableCell>
               <TableCell>
                 {course?.category
                   ?.split("-")

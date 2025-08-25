@@ -18,75 +18,78 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import axios from "axios";
 
-import { X } from "lucide-react";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Loader2, X } from "lucide-react";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "sonner";
 // import { toast } from "sonner";
-const course = [
-  {
-    _id: "1",
-    courseTitle: "React for Beginners",
-    category: "web-development",
-    coursePrice: 49.99,
-    isPublished: true,
-    // lectures: [
-    //   {
-    //     id: 1,
-    //     lectureTitle: "A",
-    //   },
-    // ],
-  },
-];
+
 function CourseTab() {
-  // const params = useParams();
-  // const courseId = params.courseId;
+  const params = useParams();
+  const courseId = params.courseId;
   const navigate = useNavigate();
   const [tags, setTags] = useState([]);
   const [preview, setPreview] = useState(null);
-
+  const API_URL = "http://localhost:8000/api";
+  const [course, setCourse] = useState({});
+  const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({
-    courseTitle: "",
+    title: "",
     subtitle: "",
     // description: "",
     tags: [],
     category: "",
-    coursePrice: "",
-    courseThumbnail: "",
+    price: "",
+    thumbnail: "",
   });
 
-  // useEffect(() => {
-  //   if (courseData?.course) {
-  //     const course = courseData.course;
+  useEffect(() => {
+    const fetchCourse = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/course/detail/${courseId}`, {
+          withCredentials: true,
+        });
 
-  //     setInput({
-  //       courseTitle: course.courseTitle || "",
-  //       subtitle: course.subtitle || "",
-  //       description: course.description || "",
-  //       tags: course.tags || [],
-  //       category: course.category || "",
-  //       coursePrice: course.coursePrice || "",
-  //       courseThumbnail: "",
-  //     });
-  //     setTags(course.tags || []);
-  //   }
-  // }, [courseData]);
+        const fetchedCourse = res?.data?.course;
+        setCourse(fetchedCourse);
 
-  // const publishStatusHandler = async (action) => {
-  //   try {
-  //     const response = await publishCourse({ courseId, query: action });
-  //     if (response?.data) {
-  //       refetch();
-  //       toast.success(response.data.message);
-  //     }
-  //   } catch (error) {
-  //     console.log(error);
-  //     toast.error("Action failed!");
-  //   }
-  // };
+        if (fetchedCourse) {
+          setInput({
+            title: fetchedCourse.title || "",
+            subtitle: fetchedCourse.subtitle || "",
+            tags: fetchedCourse.tags || [],
+            category: fetchedCourse.category || "",
+            price: fetchedCourse.price || "",
+            thumbnail: "",
+          });
+          setTags(fetchedCourse.tags || []);
+        }
+        if (fetchedCourse.thumbnail) {
+          setPreview(fetchedCourse.thumbnail);
+        }
+      } catch (error) {
+        console.error("Error fetching course:", error);
+      }
+    };
 
-  // const [editCourse, { data, isLoading, isSuccess, error }] =
-  //   useEditCourseMutation();
+    fetchCourse();
+  }, [courseId, API_URL]);
+  console.log(course);
+
+  const publishStatusHandler = async () => {
+    // try {
+    //   const response = await publishCourse({ courseId, query: action });
+    //   if (response?.data) {
+    //     refetch();
+    //     toast.success(response.data.message);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   toast.error("Action failed!");
+    // }
+  };
 
   const changeEventHandler = (e) => {
     const { name, value } = e.target;
@@ -101,7 +104,7 @@ function CourseTab() {
   const selectThumbnail = (e) => {
     const file = e.target.files?.[0];
     if (file) {
-      setInput({ ...input, courseThumbnail: file });
+      setInput({ ...input, thumbnail: file });
       const fileReader = new FileReader();
       fileReader.onloadend = () => {
         setPreview(fileReader.result);
@@ -110,37 +113,45 @@ function CourseTab() {
     }
   };
 
-  // const updateCourse = async () => {
-  //   const formData = new FormData();
-  //   formData.append("courseTitle", input.courseTitle);
-  //   formData.append("subtitle", input.subtitle);
-  //   formData.append("description", input.description);
-  //   input.tags.forEach((tag) => {
-  //     formData.append("tags", tag);
-  //   });
-  //   formData.append("category", input.category);
-  //   formData.append("coursePrice", input.coursePrice);
-  //   formData.append("courseThumbnail", input.courseThumbnail);
+  const updateCourse = async () => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("title", input.title);
+      formData.append("subtitle", input.subtitle);
+      input.tags.forEach((tag) => formData.append("tags", tag));
+      formData.append("category", input.category);
+      formData.append("price", input.price);
 
-  //   await editCourse({ formData, courseId });
-  //   // console.log(input);
-  // };
+      if (input.thumbnail) {
+        formData.append("thumbnail", input.thumbnail); // file
+      }
 
-  // useEffect(() => {
-  //   if (isSuccess) {
-  //     toast.success(data?.message || "Course updated!");
-  //   }
-  //   if (error) {
-  //     toast.error(error.data?.message || "Failed to update!");
-  //   }
-  // }, [isSuccess, error, data?.message]);
+      const res = await axios.put(
+        `${API_URL}/course/update/${courseId}`,
+        formData,
+        {
+          withCredentials: true, // ensures cookies (JWT) are sent
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      toast.success(res.data.message || "Course updated!");
+    } catch (error) {
+      console.error("Update error:", error);
+      toast.error(error?.response?.data?.message || "Failed to update course!");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const removeTag = (tagToRemove) => {
     const updatedTags = tags.filter((tag) => tag !== tagToRemove);
     setTags(updatedTags);
     setInput({ ...input, tags: updatedTags }); // <-- sync here too
   };
-  // if (isFetching) return <CustomLoader />;
 
   return (
     <Card>
@@ -153,12 +164,10 @@ function CourseTab() {
           <Button
             variant="outline"
             className="cursor-pointer"
-            // disabled={course.lectures.length === 0}
-            // onClick={() =>
-            //   publishStatusHandler(
-            //     courseData?.course.isPublished ? "false" : "true"
-            //   )
-            // }
+            disabled={!course?.lectures?.length}
+            onClick={() =>
+              publishStatusHandler(course.isPublished ? "false" : "true")
+            }
           >
             {course.isPublished ? "Unpublish" : "Publish"}
           </Button>
@@ -171,8 +180,8 @@ function CourseTab() {
             <Label>Title</Label>
             <Input
               type="text"
-              name="courseTitle"
-              value={input.courseTitle}
+              name="title"
+              value={input.title}
               onChange={changeEventHandler}
               placeholder="Eg. Full Stack Developer"
             />
@@ -247,30 +256,18 @@ function CourseTab() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectGroup>
-                    <SelectItem value="frontend-development">
-                      Frontend Development
+                    <SelectItem value="technology">Technology</SelectItem>
+                    <SelectItem value="information-technology">
+                      Information Technology
                     </SelectItem>
-                    <SelectItem value="backend-development">
-                      Backend Development
+                    <SelectItem value="business">Business</SelectItem>
+                    <SelectItem value="design">Design</SelectItem>
+                    <SelectItem value="language-communication">
+                      Language & Communication
                     </SelectItem>
-                    <SelectItem value="fullstack-development">
-                      Fullstack Development
-                    </SelectItem>
-                    <SelectItem value="mern-stack">MERN Stack</SelectItem>
-                    <SelectItem value="python-development">
-                      Python Development
-                    </SelectItem>
-                    <SelectItem value="reactjs">React.js</SelectItem>
-                    <SelectItem value="nodejs-development">
-                      Node.js Development
-                    </SelectItem>
-                    <SelectItem value="database-management">
-                      Database Management
-                    </SelectItem>
-                    <SelectItem value="cloud-computing">
-                      Cloud Computing
-                    </SelectItem>
-                    <SelectItem value="devops">DevOps</SelectItem>
+                    <SelectItem value="academic">Academic</SelectItem>
+                    <SelectItem value="arts-hobbies">Arts & Hobbies</SelectItem>
+                    <SelectItem value="other">Others</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -279,8 +276,8 @@ function CourseTab() {
               <Label>Price</Label>
               <Input
                 type="number"
-                name="coursePrice"
-                value={input.coursePrice}
+                name="price"
+                value={input.price}
                 onChange={changeEventHandler}
                 placeholder="Eg. 499"
                 className="w-fit"
@@ -296,14 +293,27 @@ function CourseTab() {
               className="w-fit"
             />
             {preview && (
-              <img src={preview} className="w-64 my-2" alt="course" />
+              <img
+                src={preview}
+                className="w-64 my-2 border border-gray"
+                alt="course"
+              />
             )}
           </div>
           <div className="flex justify-end gap-3">
-            <Button variant="outline" onClick={() => navigate("/admin/course")}>
+            <Button variant="outline" onClick={() => navigate(-1)}>
               Cancel
             </Button>
-            <Button>Save</Button>
+            <Button onClick={updateCourse}>
+              {loading ? (
+                <>
+                  <Loader2 />
+                  <p>Saving</p>
+                </>
+              ) : (
+                "Save"
+              )}
+            </Button>
           </div>
         </div>
       </CardContent>
