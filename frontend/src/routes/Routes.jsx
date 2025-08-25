@@ -30,6 +30,7 @@ import Dashboard from "@/pages/instructor/dashboard/Dashboard";
 import CourseTable from "@/pages/instructor/course/CourseTable";
 import AddCourse from "@/pages/instructor/course/AddCourse";
 import EditCourse from "@/pages/instructor/course/EditCourse";
+import StudyContainer from "@/pages/studyCourse/container";
 
 function AppRoutes() {
   return (
@@ -52,7 +53,7 @@ function AppRoutes() {
           <Route path="ViewQuestion" element={<QuizViewer />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="discussion" element={<ForumView />} />
-
+          <Route path="study" element = {<StudyContainer />} />
           <Route path="dashboard" element={<Sidebar />}>
             <Route index element={<Dashboard />} />
             <Route path="course" element={<CourseTable />} />
