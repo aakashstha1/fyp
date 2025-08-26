@@ -29,13 +29,13 @@ export const deleteMedia = async (publicId) => {
   }
 };
 
-// export const deleteVideo = async (publicId) => {
-//   try {
-//     await cloudinary.uploader.destroy(publicId, { resource_type: "video" });
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+export const deleteVideo = async (publicId) => {
+  try {
+    await cloudinary.uploader.destroy(publicId, { resource_type: "video" });
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 // export const uploadPdf = async (file) => {
 //   try {

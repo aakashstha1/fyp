@@ -76,7 +76,7 @@ function CourseTable() {
                   .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                   .join(" ")}
               </TableCell>
-              <TableCell>{course?.coursePrice || "NA"}</TableCell>
+              <TableCell>{course?.price || "NA"}</TableCell>
               <TableCell>{"NA"}</TableCell>
               <TableCell>{"NA"}</TableCell>
               <TableCell>

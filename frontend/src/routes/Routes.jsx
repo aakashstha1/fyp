@@ -30,6 +30,8 @@ import Dashboard from "@/pages/instructor/dashboard/Dashboard";
 import CourseTable from "@/pages/instructor/course/CourseTable";
 import AddCourse from "@/pages/instructor/course/AddCourse";
 import EditCourse from "@/pages/instructor/course/EditCourse";
+import EditLecture from "@/pages/instructor/lecture/EditLecture";
+import CreateLecture from "@/pages/instructor/lecture/CreateLecture";
 
 function AppRoutes() {
   return (
@@ -58,6 +60,15 @@ function AppRoutes() {
             <Route path="course" element={<CourseTable />} />
             <Route path="course/create" element={<AddCourse />} />
             <Route path="course/edit/:courseId" element={<EditCourse />} />
+
+            <Route
+              path="course/edit/:courseId/lecture"
+              element={<CreateLecture />}
+            />
+            <Route
+              path="course/edit/:courseId/lecture/:lectureId"
+              element={<EditLecture />}
+            />
           </Route>
         </Route>
         //Admin routes
