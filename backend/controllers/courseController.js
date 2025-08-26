@@ -34,7 +34,7 @@ export const getPublishedCourse = async (req, res) => {
   try {
     const publishedCourses = await Course.find({ isPublished: true })
       .sort({ createdAt: -1 })
-      .select("title subtitle tags category price thumbnail rating creator")
+      .select("title description tags category price thumbnail rating creator")
       .populate("creator", "name");
 
     return res.status(200).json({
@@ -76,7 +76,7 @@ export const getCourseById = async (req, res) => {
   }
 };
 
-//Get course by Creator Id
+//Get course by Creator Id for creator
 export const getCourseByUserId = async (req, res) => {
   try {
     const userId = req.user.userId;
@@ -96,7 +96,7 @@ export const updateCourse = async (req, res) => {
   try {
     const userId = req.user.userId;
     const { courseId } = req.params;
-    const { title, subtitle, category, tags, price } = req.body;
+    const { title, description, category, tags, price } = req.body;
     const imageFile = req.file;
 
     const course = await Course.findById(courseId);
@@ -112,7 +112,7 @@ export const updateCourse = async (req, res) => {
 
     // Update fields
     course.title = title || course.title;
-    course.subtitle = subtitle || course.subtitle;
+    course.description = description || course.description;
     course.category = category || course.category;
     course.tags = tags || course.tags;
     course.price = price || course.price;
@@ -150,6 +150,31 @@ export const togglePublishCourse = async (req, res) => {
 
     const statusMsg = course.isPublished ? "published" : "unpublished";
     return res.status(200).json({ message: `Course is ${statusMsg}.` });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update status!" });
+  }
+};
+
+//Get single  published course by Id
+export const getPublishedCourseById = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    const course = await Course.findById(courseId)
+      .populate("lectures")
+      .populate("creator", "name")
+      .lean();
+
+    if (!course) {
+      return res.status(404).json({ message: "Course not found!" });
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Course fetched succesfully!", course });
   } catch (error) {
     console.log(error);
     return res

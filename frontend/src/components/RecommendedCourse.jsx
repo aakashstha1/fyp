@@ -5,10 +5,12 @@ import { Button } from "@/components/ui/button";
 import { ChevronsRight, ShoppingCart, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function RecommendedCourse() {
   const [courses, setCourses] = useState([]);
   const API_URL = "http://localhost:8000/api";
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchCourses = async () => {
@@ -53,7 +55,7 @@ function RecommendedCourse() {
                 <span>{course?.creator?.name}</span>
               </div>
               <h2 className="font-semibold text-xl">
-                ${course.price.toFixed(2)}
+                Rs. {course.price.toFixed(2)}
               </h2>
               <div className="flex items-center justify-between">
                 {/* <Badge className={`${levelClassName[course.level]}`}>
@@ -81,8 +83,11 @@ function RecommendedCourse() {
             </CardContent>
 
             <CardFooter>
-              <Button className="w-full cursor-pointer">
-                Course Overview{" "}
+              <Button
+                className="w-full cursor-pointer"
+                onClick={() => navigate(`/course/${course._id}`)}
+              >
+                Course Overview
               </Button>
             </CardFooter>
           </Card>
