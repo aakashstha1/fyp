@@ -76,19 +76,21 @@ function CourseTab() {
 
     fetchCourse();
   }, [courseId, API_URL]);
-  console.log(course);
+  // console.log(course);
 
-  const publishStatusHandler = async () => {
-    // try {
-    //   const response = await publishCourse({ courseId, query: action });
-    //   if (response?.data) {
-    //     refetch();
-    //     toast.success(response.data.message);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   toast.error("Action failed!");
-    // }
+  const publishStatusHandler = async (newStatus) => {
+    try {
+      const res = await axios.patch(
+        `${API_URL}/course/${courseId}?publish=${newStatus}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(res.data.message || "Status updated!");
+      setCourse({ ...course, isPublished: newStatus === "true" });
+    } catch (error) {
+      console.log(error);
+      toast.error("Action failed!");
+    }
   };
 
   const changeEventHandler = (e) => {
@@ -171,7 +173,13 @@ function CourseTab() {
           >
             {course.isPublished ? "Unpublish" : "Publish"}
           </Button>
-          <Button className="cursor-pointer">Go to Lecture</Button>
+
+          <Button
+            className="cursor-pointer"
+            onClick={() => navigate("lecture")}
+          >
+            Go to Lecture
+          </Button>
         </div>
       </CardHeader>
       <CardContent>

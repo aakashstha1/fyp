@@ -12,6 +12,7 @@ import docRoutes from "./routes/doc.route.js";
 import quize from "./routes/quizeQuestionAdd.route.js";
 import threadRoutes from "./routes/thread.route.js";
 import courseRoutes from "./routes/course.route.js";
+
 dotenv.config();
 
 const app = express();
