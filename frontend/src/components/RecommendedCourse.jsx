@@ -1,56 +1,29 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardFooter, CardHeader } from "./ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "./ui/badge";
+// import { Badge } from "./ui/badge";
 import { ChevronsRight, ShoppingCart, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-
-const courseList = [
-  {
-    title: "Full Stack Web Development with MERN",
-    price: 199.99,
-    rating: 4.7,
-    tags: ["JavaScript", "React", "Node.js", "MongoDB", "Express"],
-    level: "Intermediate",
-    thumbnail:
-      "https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg?cs=srgb&dl=pexels-thatguycraig000-1563356.jpg&fm=jpg",
-  },
-  {
-    title: "Introduction to Data Science",
-    price: 149.99,
-    rating: 4.5,
-    tags: ["Python", "Pandas", "NumPy", "Matplotlib", "Jupyter"],
-    level: "Beginner",
-    thumbnail:
-      "https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg?cs=srgb&dl=pexels-thatguycraig000-1563356.jpg&fm=jpg",
-  },
-  {
-    title: "Advanced UI/UX Design",
-    price: 129.0,
-    rating: 4.8,
-    tags: ["Figma", "Wireframing", "Prototyping", "User Research"],
-    level: "Advanced",
-    thumbnail:
-      "https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg?cs=srgb&dl=pexels-thatguycraig000-1563356.jpg&fm=jpg",
-  },
-  {
-    title: "Advanced UI/UX Design",
-    price: 129.0,
-    rating: 4.8,
-    tags: ["Figma", "Wireframing", "Prototyping", "User Research"],
-    level: "Advanced",
-    thumbnail:
-      "https://images.pexels.com/photos/1563356/pexels-photo-1563356.jpeg?cs=srgb&dl=pexels-thatguycraig000-1563356.jpg&fm=jpg",
-  },
-];
-
-const levelClassName = {
-  Beginner: "bg-green-200 text-green-800",
-  Intermediate: "bg-yellow-200 text-yellow-800",
-  Advanced: "bg-red-200 text-red-800",
-};
+import axios from "axios";
 
 function RecommendedCourse() {
+  const [courses, setCourses] = useState([]);
+  const API_URL = "http://localhost:8000/api";
+
+  useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/course/courses`, {
+          withCredentials: true,
+        });
+        console.log(res);
+        setCourses(res?.data?.publishedCourses);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchCourses();
+  }, []);
   return (
     <div className="m-10">
       <div className="flex items-center mb-8 gap-3">
@@ -59,7 +32,7 @@ function RecommendedCourse() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 ">
-        {courseList.map((course, idx) => (
+        {courses.map((course, idx) => (
           <Card key={idx} className="w-full flex flex-col jutify-between">
             <CardHeader>
               <img
@@ -77,22 +50,22 @@ function RecommendedCourse() {
                   <AvatarImage src="https://github.com/shadcn.png" />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
-                <span>Owner name</span>
+                <span>{course?.creator?.name}</span>
               </div>
               <h2 className="font-semibold text-xl">
                 ${course.price.toFixed(2)}
               </h2>
               <div className="flex items-center justify-between">
-                <Badge className={`${levelClassName[course.level]}`}>
+                {/* <Badge className={`${levelClassName[course.level]}`}>
                   {course.level}
-                </Badge>
+                </Badge> */}
 
                 <p className="flex items-center gap-2">
                   <Star
                     className="h-5 w-5 text-amber-500"
                     fill="currentColor"
-                  />{" "}
-                  {course.rating}
+                  />
+                  {course.rating || "N/A"}
                 </p>
               </div>
               <p className="flex flex-wrap gap-2">
@@ -107,17 +80,16 @@ function RecommendedCourse() {
               </p>
             </CardContent>
 
-            <CardFooter className="flex gap-2">
-              <Button className="w-3/4">Buy Now</Button>
-              <Button className="w-1/4 bg-red-600 hover:bg-red-500 ">
-                Add
+            <CardFooter>
+              <Button className="w-full cursor-pointer">
+                Course Overview{" "}
               </Button>
             </CardFooter>
           </Card>
         ))}
       </div>
       <div className="flex items-center justify-center mt-8">
-        <Button variant="ghost">
+        <Button variant="ghost" className="cursor-pointer">
           View more <ChevronsRight />
         </Button>
       </div>

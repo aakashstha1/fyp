@@ -29,7 +29,27 @@ export const createCourse = async (req, res) => {
   }
 };
 
-//Get all course
+// Get all published courses
+export const getPublishedCourse = async (req, res) => {
+  try {
+    const publishedCourses = await Course.find({ isPublished: true })
+      .sort({ createdAt: -1 })
+      .select("title subtitle tags category price thumbnail rating creator")
+      .populate("creator", "name");
+
+    return res.status(200).json({
+      success: true,
+      message: "Fetched published courses successfully",
+      publishedCourses,
+    });
+  } catch (error) {
+    console.error("Get Published Courses Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
 
 //Getcourse by Course Id
 export const getCourseById = async (req, res) => {
@@ -111,5 +131,29 @@ export const updateCourse = async (req, res) => {
   } catch (error) {
     console.error("Error updating course:", error);
     return res.status(500).json({ message: "Server Error" });
+  }
+};
+
+//Publish unpublish logic
+export const togglePublishCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+    const { publish } = req.query;
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found!" });
+    }
+
+    course.isPublished = publish === "true";
+    await course.save();
+
+    const statusMsg = course.isPublished ? "published" : "unpublished";
+    return res.status(200).json({ message: `Course is ${statusMsg}.` });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Failed to update status!" });
   }
 };
