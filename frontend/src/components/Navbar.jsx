@@ -55,7 +55,9 @@ function Navbar() {
     <>
       {/* Main Navbar */}
       <div className="border-b h-15 flex items-center justify-between px-10">
-        <div className="">LOGO</div>
+        <div className="" onClick={() => navigate("/")}>
+          LOGO
+        </div>
         <div className="flex items-center gap-20">
           <div className="flex space-x-6">
             <NavLink to="/" className={navLinkClass}>
@@ -78,7 +80,7 @@ function Navbar() {
               <ShoppingBagIcon className="h-6 w-6" />
 
               <Avatar>
-                <AvatarImage src="" alt="@evilrabbit" />
+                <AvatarImage src={currentUser?.imageUrl} alt="@evilrabbit" />
                 <AvatarFallback>ER</AvatarFallback>
               </Avatar>
             </div>
@@ -113,13 +115,17 @@ function Navbar() {
               Note
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>
-                <Pencil /> Write Note
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Brush />
-                Draw Note
-              </DropdownMenuItem>
+              <NavLink to={"/my-docs"}>
+                <DropdownMenuItem>
+                  <Pencil /> Write Note
+                </DropdownMenuItem>
+              </NavLink>
+              <NavLink to={"/my-board"}>
+                <DropdownMenuItem>
+                  <Brush />
+                  Draw Note
+                </DropdownMenuItem>
+              </NavLink>
             </DropdownMenuContent>
           </DropdownMenu>
           <NavLink to="/my-learning" className={navLinkClass}>
@@ -131,7 +137,7 @@ function Navbar() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Are you sure you wan to logout?</DialogTitle>
+                <DialogTitle>Are you sure you want to logout?</DialogTitle>
               </DialogHeader>
               <DialogFooter>
                 <DialogClose asChild>

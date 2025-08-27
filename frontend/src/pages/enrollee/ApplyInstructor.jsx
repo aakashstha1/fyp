@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Plus, FileText } from "lucide-react";
+import { Plus, FileText, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import axios from "axios";
@@ -19,6 +19,7 @@ function ApplyInstructor() {
   const backRef = useRef(null);
   const eduRef = useRef(null);
   const resRef = useRef(null);
+  const [loading, setLoading] = useState(false);
 
   const handleImageChange = (e, setFunc) => {
     const file = e.target.files?.[0];
@@ -86,17 +87,13 @@ function ApplyInstructor() {
     formData.append("citizenshipBack", backRef.current.files[0]);
     formData.append("resume", resumePdf);
     formData.append("educationPdf", educationPdf);
-
+    setLoading(true);
     try {
       const response = await axios.post(
         `${API_URL}/user/request-instructor`,
         formData,
         {
           withCredentials: true,
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
         }
       );
 
@@ -104,15 +101,17 @@ function ApplyInstructor() {
         response.data?.message || "Instructor role request submitted."
       );
       await refreshUser();
-      navigate("/profile");
+      navigate(-1);
     } catch (error) {
       console.error(error);
       toast.error(error.response?.data?.message || "Submission failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Card className="max-w-5xl mx-auto my-8">
+    <Card className="w-200 mx-auto my-8">
       <CardHeader>
         <CardTitle>Apply as Instructor</CardTitle>
         <p className="text-sm text-muted-foreground">
@@ -194,7 +193,16 @@ function ApplyInstructor() {
           <Button variant={"outline"} onClick={() => navigate(-1)}>
             Cancel
           </Button>
-          <Button onClick={handleSubmit}>Submit</Button>
+          <Button onClick={handleSubmit}>
+            {loading ? (
+              <>
+                <Loader2 className="w=4 h-4 animate-spin" />
+                Submitting
+              </>
+            ) : (
+              "Submit"
+            )}
+          </Button>
         </div>
       </CardContent>
     </Card>
