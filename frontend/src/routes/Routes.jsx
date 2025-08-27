@@ -17,7 +17,7 @@ import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 
-// import Cources from "@/pages/Cources";
+import Cources from "@/Courses";
 import Chat from "@/pages/Chat";
 
 import QuizViewer from "@/pages/quiz/QuizViewer";
@@ -47,7 +47,7 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
-          {/* <Route path="courses" element={<Cources />} /> */}
+          <Route path="courses" element={<Cources />} />
           <Route path="quiz-start" element={<QuizViewer />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
