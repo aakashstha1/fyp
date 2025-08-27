@@ -129,7 +129,7 @@ function Profile() {
                   className="flex items-center gap-2 text-yellow-900 bg-yellow-100 p-3 rounded-md text-sm font-medium"
                   role="alert"
                 >
-                  <Info size={16} aria-hidden="true" />
+                  <Info size={32} aria-hidden="true" />
                   Your request is under process. It will take up to 48 hours to
                   complete the verification. Thank you for your patience.
                 </p>

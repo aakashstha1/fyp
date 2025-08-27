@@ -79,13 +79,13 @@ export const requestInstructorRole = async (req, res) => {
     });
 
     if (existingRequest) {
-      if (existingRequest.verificationStatus === "pending") {
+      if (existingRequest.status === "pending") {
         return res
           .status(400)
           .json({ message: "You already have a pending request" });
       }
 
-      if (existingRequest.verificationStatus === "rejected") {
+      if (existingRequest.status === "rejected") {
         const timeSinceRejection =
           Date.now() - new Date(existingRequest.rejectionDate).getTime();
         const aDay = 24 * 60 * 60 * 1000;
@@ -98,14 +98,19 @@ export const requestInstructorRole = async (req, res) => {
       }
     }
 
+    const frontImage = await uploadMedia(citizenshipFront[0].path);
+    const backImage = await uploadMedia(citizenshipBack[0].path);
+    const resumePdf = await uploadMedia(resume[0].path);
+    const qualificationsPdf = await uploadMedia(educationPdf[0].path);
+
     const newRequest = new Request({
       user: userId,
       verificationStatus: "pending",
       documents: {
-        frontImage: citizenshipFront[0].path,
-        backImage: citizenshipBack[0].path,
-        resumePdf: resume[0].path,
-        qualificationsPdf: educationPdf[0].path,
+        frontImage: frontImage.secure_url,
+        backImage: backImage.secure_url,
+        resumePdf: resumePdf.secure_url,
+        qualificationsPdf: qualificationsPdf.secure_url,
       },
     });
 
