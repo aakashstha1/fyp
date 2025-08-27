@@ -2,12 +2,17 @@ import express from "express";
 import {
   getUser,
   requestInstructorRole,
+  updateProfile,
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import upload from "../utils/multer.js";
 
 const router = express.Router();
 router.route("/profile").get(verifyToken, getUser);
+router
+  .route("/profile/update")
+  .put(verifyToken, upload.single("image"), updateProfile);
+
 router.post(
   "/request-instructor",
   verifyToken,

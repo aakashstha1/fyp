@@ -16,7 +16,7 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    subtitle: {
+    description: {
       type: String,
     },
     price: {
@@ -46,6 +46,14 @@ const courseSchema = new mongoose.Schema(
         ref: "Lecture",
       },
     ],
+    averageRating: {
+      type: Number,
+      default: 0,
+    },
+    ratingsCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
