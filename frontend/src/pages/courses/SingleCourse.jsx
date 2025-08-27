@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
-import { Heart, Lock, Star } from "lucide-react";
+import { Loader2, Lock, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { toast } from "sonner";
@@ -27,6 +27,13 @@ function SingleCourse() {
   const [course, setCourse] = useState({});
   const [lectures, setLectures] = useState([]);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const [averageRating, setAverageRating] = useState(0);
+  const [ratingsCount, setRatingsCount] = useState(0);
 
   const API_URL = "http://localhost:8000/api";
   const { courseId } = useParams();
@@ -58,9 +65,54 @@ function SingleCourse() {
     fetchCourse();
   }, [course, courseId, lectures]);
 
-  const [liked, setLiked] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [hover, setHover] = useState(0);
+  //Fetch average rating
+  const fetchAverageRating = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/rating/${courseId}/average`, {
+        withCredentials: true,
+      });
+      setAverageRating(res.data.averageStars);
+      setRatingsCount(res.data.count);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  useEffect(() => {
+    fetchAverageRating();
+  }, [courseId]);
+
+  //Submit rating
+  const submitRating = async () => {
+    if (rating < 1) {
+      toast.error("Please select rating before submiting!");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${API_URL}/rating/submit`,
+        {
+          courseId: courseId, // replace with the current course ID
+          stars: rating,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      toast.success(res?.data?.message || "Rating submitted");
+      setRating(0);
+      await fetchAverageRating();
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Rating failed");
+      setRating(0);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // const purchased = true;
   return (
     <div className="space-y-10">
@@ -71,21 +123,6 @@ function SingleCourse() {
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
               {/* Title on the left */}
               <h1 className="text-4xl font-bold text-white">{course?.title}</h1>
-
-              {/* React + Rate buttons on the right */}
-
-              {/* Heart */}
-              <div
-                onClick={() => setLiked(!liked)}
-                className={`cursor-pointer transition-all duration-300 ${
-                  liked ? "text-red-500 scale-125" : "text-white scale-100"
-                }`}
-              >
-                <Heart
-                  className="w-6 h-6"
-                  fill={liked ? "currentColor" : "none"}
-                />
-              </div>
             </div>
             <p className="text-gray-400 text-lg mt-4">{course?.description}</p>
           </div>
@@ -110,7 +147,9 @@ function SingleCourse() {
           {/* Rating */}
           <p className="flex items-center gap-2">
             <Star className="h-5 w-5 text-amber-500" fill="currentColor" />
-            <span className="text-white">{course?.rating}</span>
+            <span className="text-white">
+              {averageRating.toFixed(1)} ({ratingsCount})
+            </span>
           </p>
           {/* Instructor */}
           <div className="flex items-center justify-between">
@@ -136,12 +175,13 @@ function SingleCourse() {
                 </Button>
               </div>
 
-              <Dialog>
+              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" className="cursor-pointer">
                     Rate Course
                   </Button>
                 </DialogTrigger>
+
                 <DialogContent>
                   <DialogHeader>
                     <DialogTitle>Rate this Course</DialogTitle>
@@ -149,6 +189,7 @@ function SingleCourse() {
                       How would you rate your experience?
                     </DialogDescription>
                   </DialogHeader>
+
                   <div className="flex justify-center space-x-1 my-4 text-3xl">
                     {[1, 2, 3, 4, 5].map((star) => (
                       <span
@@ -169,9 +210,20 @@ function SingleCourse() {
 
                   <DialogFooter>
                     <Button
-                    // disabled={loading}
+                      onClick={async () => {
+                        await submitRating();
+                        setIsDialogOpen(false); // close dialog after submit
+                      }}
+                      disabled={loading}
                     >
-                      Submit
+                      {loading ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          <p>Submitting</p>
+                        </>
+                      ) : (
+                        "Submit"
+                      )}
                     </Button>
                   </DialogFooter>
                 </DialogContent>

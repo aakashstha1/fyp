@@ -1,5 +1,6 @@
 import User from "../models/user.model.js";
 import Request from "../models/request.model.js";
+import { uploadMedia } from "../utils/cloudinary.js";
 
 export const getUser = async (req, res) => {
   try {
@@ -20,6 +21,42 @@ export const getUser = async (req, res) => {
   }
 };
 
+//Update Profile
+export const updateProfile = async (req, res) => {
+  const userId = req.user.userId;
+  const { name, bio, phone, gender } = req.body;
+  const imageFile = req.file;
+
+  try {
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    if (imageFile) {
+      const uploadResponse = await uploadMedia(imageFile.path);
+      user.imageUrl = uploadResponse.secure_url;
+    }
+
+    user.name = name || user.name;
+    user.gender = gender || user.gender;
+    user.bio = bio || user.bio;
+    user.phone = phone || user.phone;
+
+    await user.save();
+    res.status(200).json({ success: true, message: "Profile updated", user });
+  } catch (error) {
+    console.log("Profile update error:", error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to update profile" });
+  }
+};
+
+//Request for Instructor
 export const requestInstructorRole = async (req, res) => {
   try {
     const userId = req.user.userId;

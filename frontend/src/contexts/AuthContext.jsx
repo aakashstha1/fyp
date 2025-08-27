@@ -81,6 +81,7 @@ export const AuthContextProvider = ({ children }) => {
         loading,
         error,
         refreshUser,
+        setCurrentUser,
       }}
     >
       {children}
