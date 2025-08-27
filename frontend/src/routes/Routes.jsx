@@ -17,7 +17,7 @@ import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 
-// import Cources from "@/pages/Cources";
+import Cources from "@/Courses";
 import Chat from "@/pages/Chat";
 
 import QuizViewer from "@/pages/quiz/QuizViewer";
@@ -30,7 +30,7 @@ import Dashboard from "@/pages/instructor/dashboard/Dashboard";
 import CourseTable from "@/pages/instructor/course/CourseTable";
 import AddCourse from "@/pages/instructor/course/AddCourse";
 import EditCourse from "@/pages/instructor/course/EditCourse";
-import StudyContainer from "@/pages/studyCourse/container";
+import StudyContainer from "@/pages/lectures/lecturesSection";
 
 function AppRoutes() {
   return (
@@ -42,7 +42,7 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
-          {/* <Route path="courses" element={<Cources />} /> */}
+          <Route path="courses" element={<Cources />} />
           <Route path="quiz-start" element={<QuizViewer />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
@@ -53,7 +53,7 @@ function AppRoutes() {
           <Route path="ViewQuestion" element={<QuizViewer />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="discussion" element={<ForumView />} />
-          <Route path="study" element = {<StudyContainer />} />
+          <Route path="study" element={<StudyContainer />} />
           <Route path="dashboard" element={<Sidebar />}>
             <Route index element={<Dashboard />} />
             <Route path="course" element={<CourseTable />} />

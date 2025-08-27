@@ -12,15 +12,15 @@ import MainContent from "./mainContent";
 import StudyTopicList from "./studyCourseTopicsList";
 
 export default function studyContainer() {
-  
+  const [selectedLesson, setSelectedLesson] = useState(null);
 
   return (
     <div className="grid grid-cols-12 h-screen bg-gray-100">
       {/* Sidebar */}
-      <StudyTopicList />
+      <StudyTopicList onSelectLesson={setSelectedLesson} />
 
       {/* Main Content */}
-      <MainContent />
+      <MainContent lesson={selectedLesson} />
 
       {/* Notes Sidebar */}
       <aside className="col-span-3 border-l bg-white p-4">
