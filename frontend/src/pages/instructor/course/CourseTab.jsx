@@ -18,6 +18,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import axios from "axios";
 
 import { Loader2, X } from "lucide-react";
@@ -37,7 +38,7 @@ function CourseTab() {
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState({
     title: "",
-    subtitle: "",
+    description: "",
     // description: "",
     tags: [],
     category: "",
@@ -58,7 +59,7 @@ function CourseTab() {
         if (fetchedCourse) {
           setInput({
             title: fetchedCourse.title || "",
-            subtitle: fetchedCourse.subtitle || "",
+            description: fetchedCourse.description || "",
             tags: fetchedCourse.tags || [],
             category: fetchedCourse.category || "",
             price: fetchedCourse.price || "",
@@ -120,7 +121,7 @@ function CourseTab() {
     try {
       const formData = new FormData();
       formData.append("title", input.title);
-      formData.append("subtitle", input.subtitle);
+      formData.append("description", input.description);
       input.tags.forEach((tag) => formData.append("tags", tag));
       formData.append("category", input.category);
       formData.append("price", input.price);
@@ -194,25 +195,17 @@ function CourseTab() {
               placeholder="Eg. Full Stack Developer"
             />
           </div>
+
           <div className="space-y-1">
-            <Label>Subtitle</Label>
-            <Input
-              type="text"
-              name="subtitle"
-              value={input.subtitle}
-              onChange={changeEventHandler}
-              placeholder="Eg. Become a Full Stack developer "
-            />
-          </div>
-          {/* <div className="space-y-1">
             <Label>Description</Label>
-            <TextEditor input={input} setInput={setInput} />
             <Textarea
               type="text"
-              name="subtitle"
+              name="description"
+              value={input.description}
+              onChange={changeEventHandler}
               placeholder="Give short description about the course... "
             />
-          </div> */}
+          </div>
           <div className="space-y-1">
             <Label>Tags</Label>
             <Input
@@ -315,7 +308,7 @@ function CourseTab() {
             <Button onClick={updateCourse}>
               {loading ? (
                 <>
-                  <Loader2 />
+                  <Loader2 className="w- h-4 animate-spin" />
                   <p>Saving</p>
                 </>
               ) : (

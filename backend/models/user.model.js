@@ -21,14 +21,17 @@ const userSchema = new mongoose.Schema(
       enum: ["enrollee", "instructor", "admin"],
       default: "enrollee",
     },
-    contact: {
+    phone: {
       type: Number,
     },
     gender: {
       type: String,
     },
-    profile: {
-      tyoe: String,
+    imageUrl: {
+      type: String,
+    },
+    bio: {
+      type: String,
     },
     isVerified: {
       type: Boolean,

@@ -12,28 +12,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Link, useNavigate } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Info, PenLine } from "lucide-react";
+import { Info, Loader2, PenLine } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
-const API_URL = "http://localhost:8000/api";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+
 function Profile() {
   const underlineInputClass =
     "border-b border-gray-400 border-t-0 border-l-0 border-r-0 rounded-none focus:outline-none focus:ring-0 focus:border-none";
-  const { currentUser } = useAuth();
+  const { currentUser, setCurrentUser } = useAuth();
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
-
-  const [name, setName] = useState(currentUser.name);
-  const [email, setEmail] = useState(currentUser.email);
-  const [gender, setGender] = useState(currentUser.gender);
-  const [contact, setContact] = useState(currentUser.contact);
+  const [name, setName] = useState(currentUser?.name || "");
+  const [email, setEmail] = useState(currentUser?.email || "");
+  const [gender, setGender] = useState(currentUser?.gender || "");
+  const [phone, setPhone] = useState(currentUser?.phone || "");
+  const [bio, setBio] = useState(currentUser?.bio || "");
   const [role, setRole] = useState(
-    currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)
+    currentUser?.role
+      ? currentUser.role.charAt(0).toUpperCase() + currentUser.role.slice(1)
+      : ""
   );
+  const [img, setImg] = useState(currentUser?.imageUrl || "");
   const [request, setRequest] = useState("");
+  const [loading, setLoading] = useState(false);
   // const [file, setFile] = useState(null);
-  const [img, setImg] = useState(currentUser.imageUrl);
+  const API_URL = "http://localhost:8000/api";
 
   useEffect(() => {
     const getUserProfile = async () => {
@@ -56,10 +62,44 @@ function Profile() {
     const imageUrl = URL.createObjectURL(selectedFile);
     setImg(imageUrl);
   };
-  const handleSubmit = (e) => {
+
+  //Profile Update
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log({ name, email, gender, contact, role, img });
-    alert("Form submitted (frontend only)");
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("phone", phone);
+      formData.append("gender", gender);
+      formData.append("bio", bio);
+
+      // If the user selected a new image
+      if (fileInputRef.current?.files[0]) {
+        formData.append("image", fileInputRef.current.files[0]);
+      }
+
+      const res = await axios.put(`${API_URL}/user/profile/update`, formData, {
+        withCredentials: true,
+      });
+      const updatedUser = res?.data.user;
+      if (updatedUser) {
+        setCurrentUser(updatedUser);
+        setName(updatedUser.name);
+        setPhone(updatedUser.phone);
+        setGender(updatedUser.gender);
+        setBio(updatedUser.bio);
+        setImg(updatedUser.imageUrl);
+      }
+      toast.success(res.data.message || "Profile updated successfully");
+      // Optionally update local auth context
+      // updateCurrentUser(res.data.user);
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Failed to update profile");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCancel = () => {
@@ -89,7 +129,7 @@ function Profile() {
                   className="flex items-center gap-2 text-yellow-900 bg-yellow-100 p-3 rounded-md text-sm font-medium"
                   role="alert"
                 >
-                  <Info size={16} aria-hidden="true" />
+                  <Info size={32} aria-hidden="true" />
                   Your request is under process. It will take up to 48 hours to
                   complete the verification. Thank you for your patience.
                 </p>
@@ -105,13 +145,13 @@ function Profile() {
 
         <CardContent>
           <form onSubmit={handleSubmit}>
-            <div className="grid md:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-4 gap-6">
               {/* Left: Avatar */}
               <div className="col-span-1 flex flex-col items-center justify-start gap-4 relative">
                 <div className="relative">
                   <Avatar className="h-[150px] w-[150px] border-2 border-gray-100">
                     <AvatarImage
-                      src={img}
+                      src={img || currentUser?.imageUrl}
                       alt="profile"
                       className="object-cover"
                     />
@@ -120,6 +160,7 @@ function Profile() {
 
                   {/* Pen button positioned on top-right of avatar */}
                   <button
+                    type="button"
                     onClick={triggerFileSelect}
                     className="absolute bottom-2 right-2 bg-gray-800 p-2 rounded-full text-white hover:bg-gray-700 cursor-pointer z-10"
                   >
@@ -137,7 +178,7 @@ function Profile() {
               </div>
 
               {/* Right: Form Fields */}
-              <div className="col-span-2 grid gap-5">
+              <div className="col-span-3 grid gap-5">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="flex flex-col space-y-1.5">
                     <Label htmlFor="name">Name</Label>
@@ -163,12 +204,12 @@ function Profile() {
                   </div>
 
                   <div className="flex flex-col space-y-1.5">
-                    <Label htmlFor="contact">Contact</Label>
+                    <Label htmlFor="phone">phone</Label>
                     <Input
-                      id="contact"
-                      value={contact}
-                      placeholder="Contact number..."
-                      onChange={(e) => setContact(e.target.value)}
+                      id="phone"
+                      value={phone}
+                      placeholder="phone number..."
+                      onChange={(e) => setPhone(e.target.value)}
                       className={underlineInputClass}
                     />
                   </div>
@@ -184,6 +225,17 @@ function Profile() {
                       className={`${underlineInputClass} select-none  cursor-not-allowed`}
                     />
                   </div>
+                </div>
+                <div className="flex flex-col space-y-1.5">
+                  <Label htmlFor="bio">Bio</Label>
+                  <Textarea
+                    id="bio"
+                    value={bio}
+                    placeholder="Write a short bio..."
+                    onChange={(e) => setBio(e.target.value)}
+                    className={underlineInputClass}
+                    rows={4}
+                  />
                 </div>
 
                 <div className="flex flex-col space-y-3">
@@ -207,25 +259,33 @@ function Profile() {
                 </div>
               </div>
             </div>
+            <div className="flex flex-col gap-2 md:flex-row md:justify-end mt-10">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={handleCancel}
+                className="w-full md:w-auto"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                className="w-full md:w-auto"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <p>Saving</p>
+                  </>
+                ) : (
+                  "Save"
+                )}
+              </Button>
+            </div>
           </form>
         </CardContent>
-        <CardFooter className="flex flex-col gap-2 md:flex-row md:justify-end">
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={handleCancel}
-            className="w-full md:w-auto"
-          >
-            Cancel
-          </Button>
-          <Button
-            type="submit"
-            className="w-full md:w-auto"
-            onClick={handleSubmit}
-          >
-            Save
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
