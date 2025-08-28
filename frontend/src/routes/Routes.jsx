@@ -34,7 +34,7 @@ import EditCourse from "@/pages/instructor/course/EditCourse";
 import EditLecture from "@/pages/instructor/lecture/EditLecture";
 import CreateLecture from "@/pages/instructor/lecture/CreateLecture";
 
-// import StudyContainer from "@/pages/studyCourse/container";
+import StudyContainer from "@/pages/lectures/lecturesSection";
 import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
 
@@ -60,7 +60,7 @@ function AppRoutes() {
           <Route path="ViewQuestion" element={<QuizViewer />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="discussion" element={<ForumView />} />
-          {/* <Route path="study" element={<StudyContainer />} /> */}
+          <Route path="study" element={<StudyContainer />} />
           <Route path="course/:courseId" element={<SingleCourse />} />
           //Instructor Dashboard
           <Route path="dashboard" element={<Sidebar />}>
