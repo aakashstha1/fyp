@@ -13,6 +13,8 @@ import quize from "./routes/quizeQuestionAdd.route.js";
 import threadRoutes from "./routes/thread.route.js";
 import courseRoutes from "./routes/course.route.js";
 import ratingRoutes from "./routes/rating.routes.js";
+// import paymentRoutes from "./routes/payment.route.js";
+import enrollmentRoutes from "./routes/enrollment.route.js";
 
 dotenv.config();
 
@@ -37,6 +39,8 @@ app.use("/api/quize", quize);
 app.use("/api/thread", threadRoutes);
 app.use("/api/course", courseRoutes);
 app.use("/api/rating", ratingRoutes);
+// app.use("/api/payment", paymentRoutes);
+app.use("/api/enroll", enrollmentRoutes);
 
 // Start server
 const PORT = process.env.PORT || 5000;

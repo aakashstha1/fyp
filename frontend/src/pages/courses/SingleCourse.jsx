@@ -14,7 +14,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
 import { Loader2, Lock, Star } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 function SingleCourse() {
@@ -23,6 +23,7 @@ function SingleCourse() {
     Intermediate: "bg-yellow-200 text-yellow-800",
     Advance: "bg-red-200 text-red-800",
   };
+  const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [course, setCourse] = useState({});
   const [lectures, setLectures] = useState([]);
@@ -35,8 +36,12 @@ function SingleCourse() {
   const [averageRating, setAverageRating] = useState(0);
   const [ratingsCount, setRatingsCount] = useState(0);
 
+  // const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  // const [paymentLoading, setPaymentLoading] = useState(false);
+
   const API_URL = "http://localhost:8000/api";
   const { courseId } = useParams();
+  // const ESEWA_PRODUCT_CODE = import.meta.env.VITE_ESEWA_PRODUCT_CODE;
 
   useEffect(() => {
     const fetchCourse = async () => {
@@ -63,7 +68,7 @@ function SingleCourse() {
       }
     };
     fetchCourse();
-  }, [course, courseId, lectures]);
+  }, [courseId]);
 
   //Fetch average rating
   const fetchAverageRating = async () => {
@@ -83,6 +88,11 @@ function SingleCourse() {
 
   //Submit rating
   const submitRating = async () => {
+    if (!isEnrolled) {
+      toast.error("You must be enrolled to rate this course!");
+      return;
+    }
+
     if (rating < 1) {
       toast.error("Please select rating before submiting!");
       return;
@@ -112,6 +122,84 @@ function SingleCourse() {
       setLoading(false);
     }
   };
+
+  //handel enrollement
+  const handleEnrollment = async () => {
+    const payload = {
+      courseId,
+      totalPrice: course.price,
+    };
+    try {
+      const res = await axios.post(`${API_URL}/enroll`, payload, {
+        withCredentials: true,
+      });
+      toast.success(res?.data?.message || "Enrolled succesfully!");
+      navigate(`/course/${courseId}/progress`);
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message || "Failed to enroll!");
+    }
+  };
+
+  //handle Payment
+  // const handlePayment = async () => {
+  //   if (!currentUser) {
+  //     toast.error("You must be logged in to purchase.");
+  //     return;
+  //   }
+
+  //   setPaymentLoading(true);
+  //   setIsPaymentDialogOpen(false); // close dialog
+
+  //   try {
+  //     const res = await axios.post(
+  //       `${API_URL}/payment/initialize-payment`,
+  //       {
+  //         courseId,
+  //         totalPrice: course.price,
+  //         paymentGateway: "esewa",
+  //       },
+  //       { withCredentials: true }
+  //     );
+
+  //     const { payment, purchasedCourseData } = res.data;
+
+  //     // eSewa form submission
+  //     const form = document.createElement("form");
+  //     form.method = "POST";
+  //     form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
+  //     form.target = "_blank";
+
+  //     const fields = {
+  //       amt: course.price,
+  //       psc: "0",
+  //       pdc: "0",
+  //       tAmt: course.price,
+  //       pid: purchasedCourseData._id,
+  //       scd: ESEWA_PRODUCT_CODE,
+  //       su: `${window.location.origin}/payment-success`,
+  //       fu: `${window.location.origin}/payment-failure`,
+  //     };
+
+  //     Object.entries(fields).forEach(([key, value]) => {
+  //       const input = document.createElement("input");
+  //       input.type = "hidden";
+  //       input.name = key;
+  //       input.value = value;
+  //       form.appendChild(input);
+  //     });
+
+  //     document.body.appendChild(form);
+  //     form.submit();
+  //   } catch (err) {
+  //     console.error(err);
+  //     toast.error(
+  //       err?.response?.data?.message || "Payment initialization failed"
+  //     );
+  //   } finally {
+  //     setPaymentLoading(false);
+  //   }
+  // };
 
   // const purchased = true;
   return (
@@ -170,64 +258,109 @@ function SingleCourse() {
                 <h1 className="text-white font-semibold text-xl">
                   Rs. {course?.price || "N/A"}
                 </h1>
-                <Button variant="outline" className="cursor-pointer">
+                {/*<Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() => {
+                    if (isEnrolled) {
+                      navigate(`/course-progress/${courseId}`);
+                    } else {
+                      setIsPaymentDialogOpen(true);
+                    }
+                  }}
+                >
+                  {isEnrolled ? "Go to Lessons" : "Enroll Now"}
+                </Button>
+                */}
+
+                <Button
+                  variant="outline"
+                  className="cursor-pointer"
+                  onClick={() =>
+                    isEnrolled
+                      ? navigate(`/course/${courseId}/progress`)
+                      : handleEnrollment()
+                  }
+                >
                   {isEnrolled ? "Go to Lessons" : "Enroll Now"}
                 </Button>
               </div>
 
-              <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="cursor-pointer">
-                    Rate Course
-                  </Button>
-                </DialogTrigger>
+              {isEnrolled && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="cursor-pointer">
+                      Rate Course
+                    </Button>
+                  </DialogTrigger>
 
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Rate this Course</DialogTitle>
+                      <DialogDescription>
+                        How would you rate your experience?
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <div className="flex justify-center space-x-1 my-4 text-3xl">
+                      {[1, 2, 3, 4, 5].map((star) => (
+                        <span
+                          key={star}
+                          onClick={() => setRating(star)}
+                          onMouseEnter={() => setHover(star)}
+                          onMouseLeave={() => setHover(0)}
+                          className={`cursor-pointer transition ${
+                            (hover || rating) >= star
+                              ? "text-yellow-400"
+                              : "text-gray-300"
+                          }`}
+                        >
+                          <Star fill="currentColor" />
+                        </span>
+                      ))}
+                    </div>
+
+                    <DialogFooter>
+                      <Button
+                        onClick={async () => {
+                          await submitRating();
+                          setIsDialogOpen(false); // close dialog after submit
+                        }}
+                        disabled={loading}
+                      >
+                        {loading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            <p>Submitting</p>
+                          </>
+                        ) : (
+                          "Submit"
+                        )}
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              )}
+
+              {/* <Dialog
+                open={isPaymentDialogOpen}
+                onOpenChange={setIsPaymentDialogOpen}
+              >
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Rate this Course</DialogTitle>
+                    <DialogTitle>Complete Your Enrollment</DialogTitle>
                     <DialogDescription>
-                      How would you rate your experience?
+                      Click below to pay with eSewa.
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="flex justify-center space-x-1 my-4 text-3xl">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <span
-                        key={star}
-                        onClick={() => setRating(star)}
-                        onMouseEnter={() => setHover(star)}
-                        onMouseLeave={() => setHover(0)}
-                        className={`cursor-pointer transition ${
-                          (hover || rating) >= star
-                            ? "text-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      >
-                        <Star fill="currentColor" />
-                      </span>
-                    ))}
-                  </div>
-
-                  <DialogFooter>
-                    <Button
-                      onClick={async () => {
-                        await submitRating();
-                        setIsDialogOpen(false); // close dialog after submit
-                      }}
-                      disabled={loading}
-                    >
-                      {loading ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                          <p>Submitting</p>
-                        </>
-                      ) : (
-                        "Submit"
-                      )}
+                  <div className="flex flex-col gap-4 mt-4">
+                    <Button onClick={handlePayment} disabled={paymentLoading}>
+                      {paymentLoading ? "Processing..." : "Pay with eSewa"}
                     </Button>
-                  </DialogFooter>
+                  </div>
                 </DialogContent>
-              </Dialog>
+              </Dialog> */}
             </div>
           </div>
         </div>

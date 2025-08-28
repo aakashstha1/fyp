@@ -36,6 +36,7 @@ import CreateLecture from "@/pages/instructor/lecture/CreateLecture";
 
 // import StudyContainer from "@/pages/studyCourse/container";
 import SingleCourse from "@/pages/courses/SingleCourse";
+import MyLearning from "@/pages/courses/MyLearning";
 
 function AppRoutes() {
   return (
@@ -47,6 +48,7 @@ function AppRoutes() {
           <Route path="signup" element={<Signup />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
+          <Route path="my-learning" element={<MyLearning />} />
           <Route path="courses" element={<Cources />} />
           <Route path="quiz-start" element={<QuizViewer />} />
           <Route path="editor/:docId" element={<DocEditor />} />
