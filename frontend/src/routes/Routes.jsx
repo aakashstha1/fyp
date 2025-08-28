@@ -34,8 +34,7 @@ import EditCourse from "@/pages/instructor/course/EditCourse";
 import EditLecture from "@/pages/instructor/lecture/EditLecture";
 import CreateLecture from "@/pages/instructor/lecture/CreateLecture";
 
-import StudyContainer from "@/pages/studyCourse/container";
-
+import StudyContainer from "@/pages/lectures/lecturesSection";
 
 function AppRoutes() {
   return (

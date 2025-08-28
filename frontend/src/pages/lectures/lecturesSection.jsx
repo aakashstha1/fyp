@@ -1,17 +1,9 @@
 import { useState } from "react";
-import {
-  PlayCircle,
-  FileText,
-  MessageCircle,
-  CheckCircle,
-  Download,
-  Share2,
-  ThumbsUp,
-} from "lucide-react";
+
 import MainContent from "./mainContent";
 import StudyTopicList from "./studyCourseTopicsList";
 
-export default function studyContainer() {
+export default function StudyContainer() {
   const [selectedLesson, setSelectedLesson] = useState(null);
 
   return (
