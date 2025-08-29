@@ -99,7 +99,11 @@ function RecommendedCourse() {
       </div>
 
       <div className="flex items-center justify-center mt-8">
-        <Button variant="ghost" className="cursor-pointer">
+        <Button
+          variant="ghost"
+          className="cursor-pointer"
+          onClick={() => navigate("/courses")}
+        >
           View more <ChevronsRight />
         </Button>
       </div>
