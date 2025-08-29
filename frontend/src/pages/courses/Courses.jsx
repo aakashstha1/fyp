@@ -3,16 +3,23 @@ import CourseFilter from "./CourseFilter";
 import CourseCard from "./CourseCard";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
+
+import { useLocation } from "react-router-dom";
+
 import { useDebounce } from "use-debounce";
 
 const COURSES_PER_PAGE = 16;
 
 function Courses() {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const initialSearch = params.get("search") || "";
+
+  const [searchText, setSearchText] = useState(initialSearch);
   const [courses, setCourses] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [searchText, setSearchText] = useState("");
   const [sortBy, setSortBy] = useState("price");
   const [order, setOrder] = useState("desc");
   const [category, setCategory] = useState("all");

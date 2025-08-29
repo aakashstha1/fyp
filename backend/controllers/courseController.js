@@ -207,7 +207,7 @@ export const getSearchedCourses = async (req, res) => {
     if (category !== "all") {
       filter.category = category;
     }
-    console.log(filter);
+    // console.log(filter);
 
     // Build sort
     let sort = {};
