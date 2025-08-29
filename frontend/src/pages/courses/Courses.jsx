@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import CourseFilter from "./CourseFilter";
 import CourseCard from "./CourseCard";
 import axios from "axios";
 import { Skeleton } from "@/components/ui/skeleton";
+
 import { useLocation } from "react-router-dom";
+
+import { useDebounce } from "use-debounce";
 
 const COURSES_PER_PAGE = 16;
 
@@ -20,7 +23,7 @@ function Courses() {
   const [sortBy, setSortBy] = useState("price");
   const [order, setOrder] = useState("desc");
   const [category, setCategory] = useState("all");
-
+  const [debouncedSearch] = useDebounce(searchText, 700);
   const [loading, setLoading] = useState(false);
 
   const API_URL = "http://localhost:8000/api";
@@ -29,10 +32,11 @@ function Courses() {
     const fetchCourses = async () => {
       try {
         setLoading(true);
+
         const res = await axios.get(`${API_URL}/course/filter-course`, {
           withCredentials: true,
           params: {
-            search: searchText,
+            search: debouncedSearch,
             sortBy,
             order,
             category,
@@ -43,6 +47,13 @@ function Courses() {
 
         setCourses(res.data.courses || []);
         setTotalPages(res.data.totalPages || 1);
+
+        if (!res.data.courses) {
+          const defaultCourses = await axios.get(`${API_URL}/course/courses`, {
+            withCredentials: true,
+          });
+          setCourses(defaultCourses.data.publishedCourses || []);
+        }
       } catch (error) {
         console.log(error);
       } finally {
@@ -51,8 +62,23 @@ function Courses() {
     };
 
     fetchCourses();
-  }, [searchText, sortBy, order, category, currentPage]);
+  }, [debouncedSearch, sortBy, order, category, currentPage]);
 
+  const paginationButtons = useMemo(
+    () =>
+      Array.from({ length: totalPages }, (_, i) => (
+        <button
+          key={i}
+          onClick={() => setCurrentPage(i + 1)}
+          className={`px-3 py-1 border rounded ${
+            currentPage === i + 1 ? "bg-gray-800 text-white" : ""
+          }`}
+        >
+          {i + 1}
+        </button>
+      )),
+    [totalPages, currentPage]
+  );
   return (
     <div className="flex flex-col p-8 gap-5 ">
       <div className="flex gap-5">
@@ -87,8 +113,8 @@ function Courses() {
                     <Skeleton className="h-10 w-full mt-3" />
                   </div>
                 ))
-              : courses.map((course, idx) => (
-                  <CourseCard key={idx} course={course} />
+              : courses.map((course) => (
+                  <CourseCard key={course._id} course={course} />
                 ))}
           </div>
 
@@ -102,19 +128,7 @@ function Courses() {
               >
                 Prev
               </button>
-
-              {Array.from({ length: totalPages }, (_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={`px-3 py-1 border rounded ${
-                    currentPage === i + 1 ? "bg-gray-800 text-white" : ""
-                  }`}
-                >
-                  {i + 1}
-                </button>
-              ))}
-
+              {paginationButtons}
               <button
                 disabled={currentPage === totalPages}
                 onClick={() => setCurrentPage((prev) => prev + 1)}
