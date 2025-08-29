@@ -6,6 +6,7 @@ import {
   getCourseByUserId,
   getPublishedCourse,
   getPublishedCourseById,
+  getSearchedCourses,
   togglePublishCourse,
   updateCourse,
 } from "../controllers/courseController.js";
@@ -23,6 +24,8 @@ const router = express.Router();
 
 router.route("/create").post(verifyToken, createCourse);
 router.route("/courses").get(verifyToken, getPublishedCourse);
+router.route("/filter-course").get(getSearchedCourses);
+
 router.route("/published-course/:courseId").get(getPublishedCourseById);
 
 router.route("/my-courses").get(verifyToken, getCourseByUserId);

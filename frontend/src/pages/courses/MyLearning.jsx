@@ -18,6 +18,7 @@ function MyLearning() {
       const res = await axios.get(`${API_URL}/enroll/enrolled-courses`, {
         withCredentials: true,
       });
+      
 
       setCourses(res?.data?.enrolledCourses);
     };
