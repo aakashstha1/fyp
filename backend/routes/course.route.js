@@ -23,7 +23,7 @@ import upload from "../utils/multer.js";
 const router = express.Router();
 
 router.route("/create").post(verifyToken, createCourse);
-router.route("/courses").get(verifyToken, getPublishedCourse);
+router.route("/courses").get(verifyToken, getPublishedCourse); //do we need to login to view availabel courses??
 router.route("/filter-course").get(getSearchedCourses);
 
 router.route("/published-course/:courseId").get(getPublishedCourseById);
