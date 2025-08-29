@@ -117,8 +117,6 @@ function ForumView() {
     }
   };
 
-
-
   return (
     <div className="p-4 relative min-h-screen bg-gray-50">
       <Button
@@ -158,11 +156,20 @@ function ForumView() {
             key={thread.id}
             currentUser={currentUser}
             thread={thread}
-          
           />
         ))}
       </div>
     </div>
+    // <div className="flex border-2 flex-col gap-5 p-20">
+    //   <div className="flex items-center gap-3 ">
+    //     <div className="size-20 rounded-4xl border-2"></div>
+    //     <div>
+    //       <div className="">{"Aabhushan Dhakal"}</div>
+    //       <div className="">{"2028/05/04"}</div>
+    //     </div>
+    //   </div>
+    //   <div>{"Contents"}</div>
+    // </div>
   );
 }
 
