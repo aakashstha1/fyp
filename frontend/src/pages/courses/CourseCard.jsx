@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Star } from "lucide-react";
+import { Star, Users } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,11 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 
-const levelClassName = {
-  Beginner: "bg-green-200 text-green-800",
-  Intermediate: "bg-yellow-200 text-yellow-800",
-  Advanced: "bg-red-200 text-red-800",
-};
+// const levelClassName = {
+//   Beginner: "bg-green-200 text-green-800",
+//   Intermediate: "bg-yellow-200 text-yellow-800",
+//   Advanced: "bg-red-200 text-red-800",
+// };
 
 function CourseCard({ course }) {
   const [isEnrolled, setIsEnrolled] = useState(false);
@@ -44,7 +44,7 @@ function CourseCard({ course }) {
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
             <AvatarImage
-              src={course.creator?.avatar || "https://github.com/shadcn.png"}
+              src={course.creator?.imageUrl || "https://github.com/shadcn.png"}
             />
             <AvatarFallback>IN</AvatarFallback>
           </Avatar>
@@ -55,15 +55,18 @@ function CourseCard({ course }) {
 
         <h2 className="font-semibold">${course.price?.toFixed(2) || "N/A"}</h2>
 
-        <div className="flex items-center justify-between">
-          <Badge
+        <div className="flex items-center justify-between py-2">
+          {/* <Badge
             className={`text-xs px-2 ${levelClassName[course.level] || ""}`}
           >
             {course.level || "N/A"}
+          </Badge> */}
+          <Badge className={"text-xs px-2"}>
+            <Users /> {course?.enrolledStudents.length || "0"}
           </Badge>
           <p className="flex items-center gap-1 text-xs">
             <Star className="h-4 w-4 text-amber-500" fill="currentColor" />
-            {course.rating || "N/A"}
+            {course?.averageRating.toFixed(1) || "N/A"}
           </p>
         </div>
 

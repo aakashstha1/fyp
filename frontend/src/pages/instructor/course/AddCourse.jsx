@@ -142,11 +142,7 @@ function AddCourse() {
                 </SelectItem>
                 <SelectItem value="business">Business</SelectItem>
                 <SelectItem value="design">Design</SelectItem>
-                <SelectItem value="language-communication">
-                  Language & Communication
-                </SelectItem>
-                <SelectItem value="academic">Academic</SelectItem>
-                <SelectItem value="arts-hobbies">Arts & Hobbies</SelectItem>
+                <SelectItem value="marketing">Marketing</SelectItem>
                 <SelectItem value="other">Others</SelectItem>
               </SelectGroup>
             </SelectContent>

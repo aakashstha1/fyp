@@ -34,7 +34,6 @@ export const getPublishedCourse = async (req, res) => {
   try {
     const publishedCourses = await Course.find({ isPublished: true })
       .sort({ createdAt: -1 })
-      .select("title description tags category price thumbnail rating creator")
       .populate("creator", "name");
 
     return res.status(200).json({
@@ -180,5 +179,58 @@ export const getPublishedCourseById = async (req, res) => {
     return res
       .status(500)
       .json({ success: false, message: "Failed to update status!" });
+  }
+};
+
+//get Searched Courses
+export const getSearchedCourses = async (req, res) => {
+  try {
+    const {
+      search = "",
+      category = "all",
+      sortBy = "price",
+      order = "desc",
+      page = 1,
+      limit = 16,
+    } = req.query;
+
+    const skip = (page - 1) * limit;
+
+    // Build filter
+    const filter = { isPublished: true };
+    if (search) {
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } }, // search in title
+        { tags: { $regex: search, $options: "i" } }, // search in tags
+      ];
+    }
+    if (category !== "all") {
+      filter.category = category;
+    }
+    console.log(filter);
+
+    // Build sort
+    let sort = {};
+    if (sortBy === "price") sort.price = order === "asc" ? 1 : -1;
+    else if (sortBy === "rating") sort.averageRating = order === "asc" ? 1 : -1;
+
+    // Query courses
+    const courses = await Course.find(filter)
+      .sort(sort)
+      .skip(Number(skip))
+      .limit(Number(limit));
+
+    const total = await Course.countDocuments(filter);
+
+    res.status(200).json({
+      success: true,
+      totalCourses: total,
+      currentPage: Number(page),
+      totalPages: Math.ceil(total / limit),
+      courses,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
   }
 };

@@ -17,7 +17,6 @@ import UserList from "@/pages/admin/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 
-import Cources from "@/Courses";
 import Chat from "@/pages/Chat";
 
 import QuizViewer from "@/pages/quiz/QuizViewer";
@@ -37,6 +36,7 @@ import CreateLecture from "@/pages/instructor/lecture/CreateLecture";
 import StudyContainer from "@/pages/lectures/lecturesSection";
 import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
+import Courses from "@/pages/courses/Courses";
 
 function AppRoutes() {
   return (
@@ -49,7 +49,7 @@ function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
           <Route path="my-learning" element={<MyLearning />} />
-          <Route path="courses" element={<Cources />} />
+          <Route path="courses" element={<Courses />} />
           <Route path="quiz-start" element={<QuizViewer />} />
           <Route path="editor/:docId" element={<DocEditor />} />
           <Route path="about" element={<About />} />
