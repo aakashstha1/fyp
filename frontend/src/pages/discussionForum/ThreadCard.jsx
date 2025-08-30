@@ -85,7 +85,7 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
       date.getDate() === yesterday.getDate() &&
       date.getMonth() === yesterday.getMonth() &&
       date.getFullYear() === yesterday.getFullYear();
-    if (latest) return "Latest";
+   
     if (isToday) return "Today";
     if (isYesterday) return "Yesterday";
 
