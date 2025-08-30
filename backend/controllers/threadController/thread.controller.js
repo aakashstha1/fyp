@@ -156,6 +156,10 @@ export const deleteComment = async (req, res) => {
     }
 
     await Comment.findByIdAndDelete(commentId);
+    thread.comments = thread.comments.filter(
+      (cId) => cId.toString() !== commentId
+    );
+    await thread.save();
     return res.status(200).json({ message: "Comment deleted successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Server error", error: err });

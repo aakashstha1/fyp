@@ -2,6 +2,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import axios from "axios";
+import { Delete } from "lucide-react";
+import { Share2, MessageCircle, MessageSquareOff } from "lucide-react";
 
 function ThreadCard({ thread, currentUser }) {
   const [commentText, setCommentText] = useState("");
@@ -40,7 +42,6 @@ function ThreadCard({ thread, currentUser }) {
     }
     setShowCommentSection((prev) => !prev);
   };
-
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete("http://localhost:8000/api/thread/deleteComment", {
@@ -59,74 +60,107 @@ function ThreadCard({ thread, currentUser }) {
     }
   };
 
+  const handleShare = () => {
+    navigator.clipboard.writeText(window.location.href);
+    alert("Link copied to clipboard!");
+  };
+
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md border border-gray-200">
-      <h3 className="text-xl font-bold text-gray-800">{thread.title}</h3>
-      <p className="text-gray-700 mt-2">{thread.content}</p>
-      <div className="text-sm text-gray-500 mt-1">
-        by <span className="font-medium">{thread.author}</span> ·{" "}
-        {new Date(thread.createdAt).toLocaleString()}
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+      {/* Thread Header */}
+      <div className="flex items-center p-4 border-b border-gray-100">
+        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+          {thread.author?.[0] || "U"}
+        </div>
+        <div className="ml-3">
+          <p className="font-semibold text-gray-800">{thread.author}</p>
+          <p className="text-xs text-gray-500">
+            {new Date(thread.createdAt).toLocaleString()}
+          </p>
+        </div>
       </div>
 
-      <div className="mt-6 border-t pt-4">
-        <Button onClick={handleCommentClick} variant="outline">
-          {showCommentSection ? "Hide Comments" : "View/Add Comments"}
+      {/* Thread Content */}
+      <div className="p-4">
+        <h3 className="text-lg font-bold text-gray-900 mb-2">{thread.title}</h3>
+        <p className="text-gray-700">{thread.content}</p>
+      </div>
+
+      {/* Action Buttons */}
+      <div className="px-4 pb-4 border-t border-gray-100 flex gap-3">
+        <Button
+          variant="outline"
+          className="flex-1 flex items-center justify-center gap-2"
+          onClick={handleCommentClick}
+        >
+          <MessageCircle size={18} />
+          {comments.length}
         </Button>
+        <Button
+          variant="outline"
+          className="flex-1 flex items-center justify-center gap-2"
+          onClick={handleShare}
+        >
+          <Share2 size={18} />
+        </Button>
+      </div>
 
-        {showCommentSection && (
-          <div className="mt-4">
-            <h4 className="text-md font-semibold mb-2 text-gray-800">
-              Comments
-            </h4>
-
-            {comments.length > 0 ? (
-              <ul className="space-y-3 max-h-60 overflow-y-auto pr-1">
-                {comments.map((comment) => (
-                  <li
-                    key={comment._id}
-                    className="bg-gray-100 rounded-lg p-3 text-sm shadow-sm relative"
-                  >
-                    <p className="text-gray-800">{comment.content}</p>
-                    <div className="text-xs text-gray-500 mt-1">
-                      — {comment.userId?.name || "Anonymous"} ·{" "}
-                      {new Date(comment.createdAt).toLocaleString()}
+      {/* Comment Section */}
+      {showCommentSection && (
+        <div className="px-4 pb-4 space-y-4">
+          {comments.length > 0 ? (
+            <ul className="space-y-3 max-h-60 overflow-y-auto pr-2">
+              {comments.map((comment) => (
+                <li
+                  key={comment._id}
+                  className="bg-gray-50 rounded-lg p-3 shadow-sm relative"
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium text-sm">
+                      {comment.userId?.name?.[0] || "U"}
                     </div>
-
+                    <div className="flex-1">
+                      <div className="text-xs text-gray-500 mt-1">
+                        {comment.userId?.name || "Anonymous"} <br />
+                        {new Date(comment.createdAt).toLocaleString()}
+                      </div>
+                      <p className="text-gray-800">{comment.content}</p>
+                    </div>
                     {(currentUser._id === comment.userId?._id ||
                       currentUser._id === thread.userId) && (
                       <button
+                        title="Delete"
                         onClick={() => handleDeleteComment(comment._id)}
-                        className="absolute top-2 right-2 text-red-500 text-xs hover:underline"
                       >
-                        Delete
+                        <Delete />
                       </button>
                     )}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-sm text-gray-500 italic">
-                No comments yet. Be the first!
-              </p>
-            )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-sm text-gray-500 italic">
+              No comments yet. Be the first!
+            </p>
+          )}
 
-            <form
-              onSubmit={handleComment}
-              className="mt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-2"
-            >
-              <Input
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Write a comment..."
-                className="flex-1"
-              />
-              <Button type="submit" className="px-4 py-2">
-                Post
-              </Button>
-            </form>
-          </div>
-        )}
-      </div>
+          <form
+            onSubmit={handleComment}
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2"
+          >
+            <Input
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Write a comment..."
+              className="flex-1"
+            />
+            <Button type="submit" className="px-4 py-2">
+              Post
+            </Button>
+          </form>
+        </div>
+      )}
     </div>
   );
 }
