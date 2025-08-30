@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const CourseDataTable = ({ data }) => {
   return (
@@ -34,15 +33,13 @@ const CourseDataTable = ({ data }) => {
               <TableRow key={course._id || index}>
                 <TableCell>{index + 1}</TableCell>
                 <TableCell>
-                  <Avatar>
-                    <AvatarImage
+                  <div className="w-12 h-8 overflow-hidden rounded-sm">
+                    <img
                       src={course.thumbnail || ""}
                       alt={course.title}
+                      className="w-full h-full object-cover"
                     />
-                    <AvatarFallback>
-                      {course.title?.charAt(0) || "C"}
-                    </AvatarFallback>
-                  </Avatar>
+                  </div>
                 </TableCell>
                 <TableCell>{course.title}</TableCell>
                 <TableCell>{course.category || "N/A"}</TableCell>
@@ -56,7 +53,7 @@ const CourseDataTable = ({ data }) => {
                 </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Link to={`/admin/course/${course._id}`}>
-                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700">
+                    <Button size="sm" className="bg-blue-600 hover:bg-blue-700 ">
                       View Detail
                     </Button>
                   </Link>
