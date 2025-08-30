@@ -19,6 +19,7 @@ function InstructorReqDetail() {
   const navigate = useNavigate();
   const { reqId } = useParams();
   const [docs, setDocs] = useState(null);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -30,6 +31,7 @@ function InstructorReqDetail() {
           }
         );
         setDocs(res?.data?.request?.documents);
+        setRole(res?.data?.request?.user?.role);
       } catch (error) {
         console.log(error);
       }
@@ -56,6 +58,21 @@ function InstructorReqDetail() {
     try {
       const res = await axios.put(
         `${API_URL}/admin/reject/${reqId}`,
+        {},
+        { withCredentials: true }
+      );
+      toast.success(res?.data?.message);
+      navigate("/admin/instructor-requests");
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message);
+    }
+  };
+
+  const handleDemote = async () => {
+    try {
+      const res = await axios.put(
+        `${API_URL}/admin/demote/${reqId}`,
         {},
         { withCredentials: true }
       );
@@ -124,54 +141,98 @@ function InstructorReqDetail() {
         </a>
       </div>
       <div className="flex items-center justify-end gap-2">
-        {/* Approve  */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button className="bg-green-600 hover:bg-green-700">Approve</Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Approve Instructor Request</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to approve this instructor application?
-                This user will be granted instructor privileges.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleApprove}
-                className="bg-green-600 hover:bg-green-700"
-              >
-                Approve
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-        {/* Reject  */}
-        <AlertDialog>
-          <AlertDialogTrigger asChild>
-            <Button className="bg-red-600 hover:bg-red-700">Reject</Button>
-          </AlertDialogTrigger>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Reject Instructor Request</AlertDialogTitle>
-              <AlertDialogDescription>
-                Are you sure you want to reject this instructor application?
-                This action cannot be undone.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleReject}
-                className="bg-red-600 hover:bg-red-700"
-              >
-                Reject
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-2">
+          {role === "instructor" && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button className="bg-yellow-600 hover:bg-yellow-700  cursor-pointer">
+                  Demote
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Demote Instructor</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Are you sure you want to demote this instructor back to an
+                    enrolled user? They will lose all instructor privileges.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDemote}
+                    className="bg-yellow-600 hover:bg-yellow-700  cursor-pointer"
+                  >
+                    Demote
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          {role === "enrollee" && (
+            <>
+              {/* Approve */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="bg-green-600 hover:bg-green-700  cursor-pointer">
+                    Approve
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Approve Instructor Request
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to approve this instructor
+                      application? This user will be granted instructor
+                      privileges.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleApprove}
+                      className="bg-green-600 hover:bg-green-700  cursor-pointer"
+                    >
+                      Approve
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              {/* Reject */}
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button className="bg-red-600 hover:bg-red-700 cursor-pointer">
+                    Reject
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>
+                      Reject Instructor Request
+                    </AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to reject this instructor
+                      application? This action cannot be undone.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleReject}
+                      className="bg-red-600 hover:bg-red-700 cursor-pointer"
+                    >
+                      Reject
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

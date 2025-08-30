@@ -16,6 +16,7 @@ const RequestSchema = new mongoose.Schema(
     },
 
     rejectionDate: { type: Date },
+    expiresAt: { type: Date },
   },
   {
     timestamps: true,

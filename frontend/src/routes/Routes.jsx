@@ -13,7 +13,7 @@ import AdminSidebar from "@/pages/admin/AdminSidebar";
 import InstructorReq from "@/pages/admin/InstructorReq";
 import Profile from "@/pages/Profile";
 import InstructorReqDetail from "@/pages/admin/InstructorReqDetail";
-import UserList from "@/pages/admin/UserList";
+import UserList from "@/pages/admin/userData/UserList";
 import ApplyInstructor from "@/pages/enrollee/ApplyInstructor";
 import Board from "@/pages/Whiteboard/Board";
 
@@ -37,6 +37,7 @@ import StudyContainer from "@/pages/lectures/lecturesSection";
 import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
 import Courses from "@/pages/courses/Courses";
+import CourseList from "@/pages/admin/courseData/CourseList";
 
 function AppRoutes() {
   return (
@@ -84,13 +85,14 @@ function AppRoutes() {
         <Route path="/admin" element={<AdminSidebar />}>
           <Route path="Add-Quiz" element={<AddQuestionsLayout />} />
           <Route path="dashboard" element={<AdminDashboard />} />
-          <Route path="instructor-requests" element={<InstructorReq />} />
+          <Route path="instructor-request" element={<InstructorReq />} />
           <Route
             path="instructor-request/:reqId"
             element={<InstructorReqDetail />}
           />
 
           <Route path="users" element={<UserList />} />
+          <Route path="courses" element={<CourseList />} />
         </Route>
       </Routes>
     </BrowserRouter>

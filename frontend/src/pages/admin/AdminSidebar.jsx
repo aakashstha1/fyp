@@ -60,7 +60,7 @@ function AdminSidebar() {
               <LayoutDashboard size={22} />
               <h1 className="text-base">Dashboard</h1>
             </NavLink>
-            <NavLink to="instructor-requests" className={navLinkClasses}>
+            <NavLink to="instructor-request" className={navLinkClasses}>
               <LayoutList size={22} />
               <h1 className="text-base">Instructor Requests</h1>
             </NavLink>

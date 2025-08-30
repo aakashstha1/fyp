@@ -21,6 +21,7 @@ function CourseTable() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   // const [loading, setLoading] = useState(false);
+  
   const API_URL = "http://localhost:8000/api";
 
   useEffect(() => {
@@ -77,8 +78,8 @@ function CourseTable() {
                   .join(" ")}
               </TableCell>
               <TableCell>{course?.price || "NA"}</TableCell>
-              <TableCell>{"NA"}</TableCell>
-              <TableCell>{"NA"}</TableCell>
+              <TableCell>{course?.enrolledStudents.length || "0"}</TableCell>
+              <TableCell>{course?.averageRating.toFixed(1) || "0.0"}</TableCell>
               <TableCell>
                 <Badge
                   className={`text-white py-1 rounded-md font-semibold border-1 border-gray-100 outline-1 w-20 text-center ${
