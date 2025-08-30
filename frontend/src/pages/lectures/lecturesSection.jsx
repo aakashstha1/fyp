@@ -15,7 +15,7 @@ export default function StudyContainer() {
       <MainContent lesson={selectedLesson} />
 
       {/* Notes Sidebar */}
-      <aside className="col-span-3 border-l bg-white p-4">
+      {/* <aside className="col-span-3 border-l bg-white p-4">
         <h2 className="font-semibold mb-3">Notes</h2>
         <ul className="text-sm text-gray-600 space-y-2 mb-4">
           <li>➕ Click “Save Note” below the video</li>
@@ -25,7 +25,7 @@ export default function StudyContainer() {
         <button className="w-full py-2 bg-indigo-600 text-white rounded-lg">
           Add a note
         </button>
-      </aside>
+      </aside> */}
     </div>
   );
 }

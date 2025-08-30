@@ -46,6 +46,11 @@ const courseSchema = new mongoose.Schema(
         ref: "Lecture",
       },
     ],
+    assignment: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Assignment",
+      default: null,
+    },
     averageRating: {
       type: Number,
       default: 0,

@@ -20,10 +20,16 @@ import {
 } from "../controllers/lecture.controller.js";
 
 import upload from "../utils/multer.js";
+import {
+  createAssignment,
+  getCourseAssignment,
+  removeAssignment,
+  updateAssignment,
+} from "../controllers/assignment.controller.js";
 const router = express.Router();
 
 router.route("/create").post(verifyToken, createCourse);
-router.route("/courses").get(verifyToken, getPublishedCourse); //do we need to login to view availabel courses??
+router.route("/courses").get(getPublishedCourse); //do we need to login to view availabel courses??
 router.route("/filter-course").get(getSearchedCourses);
 
 router.route("/published-course/:courseId").get(getPublishedCourseById);
@@ -47,5 +53,23 @@ router.route("/lecture/:lectureId/").get(verifyToken, getLectureById);
 router
   .route("/:courseId/lecture/:lectureId")
   .delete(verifyToken, removeLecture);
+
+//Assignment
+router
+  .route("/:courseId/assignment/create")
+  .post(verifyToken, upload.single("file"), createAssignment);
+
+// Edit assignment
+router
+  .route("/:courseId/assignment/update")
+  .put(verifyToken, upload.single("file"), updateAssignment);
+
+// Remove assignment
+router
+  .route("/:courseId/assignment/remove")
+  .delete(verifyToken, removeAssignment);
+
+// Get assignment for course
+router.route("/:courseId/assignment").get(verifyToken, getCourseAssignment);
 
 export default router;

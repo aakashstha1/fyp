@@ -147,7 +147,17 @@ function EditLecture() {
 
   return (
     <div className="flex-1">
-      <h1 className="text-2xl font-semibold mb-6">Edit Lecture</h1>
+      <div className="flex items-center gap-3 mb-6">
+        <button
+          onClick={() => navigate(-1)}
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+        >
+          <ChevronLeft className="w-5 h-5 text-gray-800 dark:text-gray-200" />
+        </button>
+        <h1 className="text-2xl font-semibold tracking-tight">
+          Edit Course Lecture
+        </h1>
+      </div>
 
       <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-4">
         {/* Lecture Title */}
@@ -213,7 +223,7 @@ function EditLecture() {
         {/* Buttons */}
         <div className="flex items-center gap-3 pt-4">
           <Button variant="outline" onClick={() => navigate(-1)}>
-            <ChevronLeft className="mr-2 h-4 w-4" /> Back
+            <ChevronLeft className="mr-2 h-4 w-4" /> Cancel
           </Button>
           <Button
             onClick={updateLectureHandler}

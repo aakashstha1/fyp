@@ -26,12 +26,22 @@ function CreateLecture() {
   const [mediaProgress, setMediaProgress] = useState(false);
   const [isPreviewFree, setIsPreviewFree] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const [assignmentTitle, setAssignmentTitle] = useState("");
+  const [assignmentFile, setAssignmentFile] = useState(null);
+  const [assignmentUploading, setAssignmentUploading] = useState(false);
+  const [assignmentProgress, setAssignmentProgress] = useState(0);
+
+  const [removingLectureId, setRemovingLectureId] = useState(null);
+  const [removingAssignment, setRemovingAssignment] = useState(false);
+
   const navigate = useNavigate();
 
   const API_URL = "http://localhost:8000/api";
   const { courseId } = useParams();
 
   const [lectures, setLectures] = useState([]);
+  const [assignment, setAssignment] = useState("");
 
   // Fetch course lectures
   useEffect(() => {
@@ -47,7 +57,23 @@ function CreateLecture() {
         console.error(error);
       }
     };
+    const fetchAssignment = async () => {
+      try {
+        const res = await axios.get(
+          `${API_URL}/course/${courseId}/assignment`,
+          {
+            withCredentials: true,
+          }
+        );
+        if (res.data.success) {
+          setAssignment(res.data.assignment);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     fetchLectures();
+    fetchAssignment();
   }, [courseId]);
 
   // Upload Video
@@ -129,6 +155,7 @@ function CreateLecture() {
   // Remove lecture
   const removeLectureHandler = async (lectureId) => {
     try {
+      setRemovingLectureId(lectureId); // Start loader for this lecture
       await axios.delete(`${API_URL}/course/${courseId}/lecture/${lectureId}`, {
         withCredentials: true,
       });
@@ -137,6 +164,8 @@ function CreateLecture() {
     } catch (error) {
       console.error(error);
       toast.error("Failed to remove lecture!");
+    } finally {
+      setRemovingLectureId(null); // Stop loader
     }
   };
 
@@ -144,95 +173,294 @@ function CreateLecture() {
     navigate(`${id}`);
   };
 
+  //Assignment Handler
+  const assignmentFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    if (
+      ![
+        "text/csv",
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      ].includes(file.type)
+    ) {
+      toast.error("Only CSV or Excel files are allowed!");
+      return;
+    }
+    setAssignmentFile(file);
+  };
+
+  const createAssignmentHandler = async () => {
+    if (!assignmentTitle.trim())
+      return toast.error("Assignment title required!");
+    if (!assignmentFile) return toast.error("Please upload a CSV/Excel file!");
+
+    setAssignmentUploading(true);
+    const formData = new FormData();
+    formData.append("title", assignmentTitle);
+    formData.append("file", assignmentFile);
+
+    try {
+      const res = await axios.post(
+        `${API_URL}/course/${courseId}/assignment/create`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setAssignmentProgress(percent);
+          },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        // reset form
+        setAssignment(res.data.assignment);
+        setAssignmentTitle("");
+        setAssignmentFile(null);
+        setAssignmentProgress(0);
+        document.getElementById("assignmentFile").value = "";
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to create assignment!");
+    } finally {
+      setAssignmentUploading(false);
+    }
+  };
+
+  // Update Assignment
+  const updateAssignmentHandler = async () => {
+    if (!assignmentTitle.trim())
+      return toast.error("Assignment title required!");
+    if (!assignmentFile) return toast.error("Please upload a CSV/Excel file!");
+
+    setAssignmentUploading(true);
+    const formData = new FormData();
+    formData.append("title", assignmentTitle);
+    formData.append("file", assignmentFile);
+
+    try {
+      const res = await axios.put(
+        `${API_URL}/course/${courseId}/assignment/update`,
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+          withCredentials: true,
+          onUploadProgress: (progressEvent) => {
+            const percent = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setAssignmentProgress(percent);
+          },
+        }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setAssignment(res.data.assignment); // refresh assignment
+        setAssignmentTitle("");
+        setAssignmentFile(null);
+        setAssignmentProgress(0);
+        document.getElementById("assignmentFile").value = "";
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to update assignment!");
+    } finally {
+      setAssignmentUploading(false);
+    }
+  };
+
+  // Remove Assignment
+  const removeAssignmentHandler = async () => {
+    try {
+      setRemovingAssignment(true); // Start loader for assignment
+      const res = await axios.delete(
+        `${API_URL}/course/${courseId}/assignment/remove`,
+        { withCredentials: true }
+      );
+
+      if (res.data.success) {
+        toast.success(res.data.message);
+        setAssignment(null); // clear UI
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to remove assignment!");
+    } finally {
+      setRemovingAssignment(false); // Stop loader
+    }
+  };
+
   return (
     <div className="flex-1 p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold tracking-tight">
-          Manage Lectures
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Upload your video and add lecture details below.
-        </p>
+      <div className="mb-6 flex items-center gap-3">
+        {/* Back button */}
+        <button
+          onClick={() => window.history.back()}
+          className="flex items-center justify-center w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600"
+        >
+          <ChevronLeft className="w-5 h-5 text-gray-800 dark:text-gray-200" />
+        </button>
+
+        {/* Title and description */}
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Course Content Management
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            Upload videos, add lectures, and manage assignments for this course.
+          </p>
+        </div>
       </div>
 
-      {/* Form Section */}
-      <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6">
-        <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="lectureTitle">Lecture Title</Label>
-            <Input
-              id="lectureTitle"
-              value={lectureTitle}
-              onChange={(e) => setLectureTitle(e.target.value)}
-              placeholder="e.g. Introduction to React"
-            />
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Switch
-              id="free"
-              checked={isPreviewFree}
-              onCheckedChange={setIsPreviewFree}
-            />
-            <Label htmlFor="free">This lecture is free to preview</Label>
-          </div>
-        </div>
-
-        {/* Upload Video Section */}
-        <div className="space-y-2">
-          <Label htmlFor="video">Select Video File</Label>
-          <Input
-            id="video"
-            type="file"
-            accept="video/*"
-            onChange={fileChangeHandler}
-            disabled={mediaProgress}
-          />
-
-          {mediaProgress && (
+      <div className="flex gap-4">
+        {/* Lecture adding Section */}
+        <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6 w-full">
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Progress value={uploadProgress} />
-              <p className="text-sm text-muted-foreground flex items-center gap-2">
-                <Upload className="w-4 h-4" />
-                Uploading... {uploadProgress}%
-              </p>
+              <Label htmlFor="lectureTitle">Lecture Title</Label>
+              <Input
+                id="lectureTitle"
+                value={lectureTitle}
+                onChange={(e) => setLectureTitle(e.target.value)}
+                placeholder="e.g. Introduction to React"
+              />
             </div>
-          )}
 
-          {videoUploaded && (
-            <>
-              <p className="text-sm text-green-600 flex items-center gap-2">
-                <CheckCircle className="w-4 h-4" />
-                Video uploaded: {video?.name || videoInfo?.display_name}
-              </p>
+            <div className="flex items-center gap-2">
+              <Switch
+                id="free"
+                checked={isPreviewFree}
+                onCheckedChange={setIsPreviewFree}
+              />
+              <Label htmlFor="free">This lecture is free to preview</Label>
+            </div>
+          </div>
 
-            
-            </>
-          )}
-        </div>
+          {/* Upload Video Section */}
+          <div className="space-y-2">
+            <Label htmlFor="video">Select Video File</Label>
+            <Input
+              id="video"
+              type="file"
+              accept="video/*"
+              onChange={fileChangeHandler}
+              disabled={mediaProgress}
+            />
 
-        <div className="flex items-center gap-3 pt-4 border-t">
-          <Button variant="outline" onClick={() => window.history.back()}>
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
-          <Button
-            onClick={createLectureHandler}
-            disabled={loading || !videoUploaded || !lectureTitle.trim()}
-          >
-            {loading ? (
+            {mediaProgress && (
+              <div className="space-y-2">
+                <Progress value={uploadProgress} />
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Upload className="w-4 h-4" />
+                  Uploading... {uploadProgress}%
+                </p>
+              </div>
+            )}
+
+            {videoUploaded && (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              <>
-                <PlusCircle className="mr-2 h-4 w-4" />
-                Add Lecture
+                <p className="text-sm text-green-600 flex items-center gap-2">
+                  <CheckCircle className="w-4 h-4" />
+                  Video uploaded: {video?.name || videoInfo?.display_name}
+                </p>
               </>
             )}
-          </Button>
+          </div>
+
+          <div className="flex items-center gap-3 pt-4 border-t">
+            <Button
+              onClick={createLectureHandler}
+              disabled={loading || !videoUploaded || !lectureTitle.trim()}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  Add Lecture
+                </>
+              )}
+            </Button>
+          </div>
+        </div>
+        {/* Assignment adding Section  */}
+        <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6 w-full">
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="assignmetnTitle">Assignment Title</Label>
+              <Input
+                id="assignmetnTitle"
+                value={assignmentTitle}
+                onChange={(e) => setAssignmentTitle(e.target.value)}
+                placeholder="e.g. Introduction to React"
+              />
+            </div>
+          </div>
+
+          {/* Upload CSV/Excel */}
+          <div className="space-y-2">
+            <Label htmlFor="assignmentFile">Upload CSV/Excel File</Label>
+            <Input
+              id="assignmentFile"
+              type="file"
+              accept=".csv,.xls,.xlsx"
+              onChange={assignmentFileChange}
+            />
+
+            {assignmentUploading && (
+              <>
+                <Progress value={assignmentProgress} />
+                <p className="text-sm text-muted-foreground flex items-center gap-2">
+                  <Upload className="w-4 h-4" /> Uploading...{" "}
+                  {assignmentProgress}%
+                </p>
+              </>
+            )}
+
+            {assignmentFile && !assignmentUploading && (
+              <p className="text-sm text-green-600 flex items-center gap-2">
+                <CheckCircle className="w-4 h-4" /> Selected:{" "}
+                {assignmentFile.name}
+              </p>
+            )}
+          </div>
+
+          {/* Actions */}
+          <div className="flex items-center gap-3 pt-4 border-t">
+            <Button
+              onClick={
+                assignment ? updateAssignmentHandler : createAssignmentHandler
+              }
+              disabled={
+                assignmentUploading ||
+                !assignmentTitle.trim() ||
+                !assignmentFile
+              }
+            >
+              {assignmentUploading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  {assignment ? "Updating..." : "Creating..."}
+                </>
+              ) : (
+                <>
+                  <PlusCircle className="mr-2 h-4 w-4" />
+                  {assignment ? "Update Assignment" : "Add Assignment"}
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -279,13 +507,43 @@ function CreateLecture() {
                     size="sm"
                     variant="destructive"
                     onClick={() => removeLectureHandler(lecture._id)}
+                    disabled={removingLectureId === lecture._id}
                   >
-                    <Trash className="mr-1 h-4 w-4" />
+                    {removingLectureId === lecture._id ? (
+                      <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                    ) : (
+                      <Trash className="mr-1 h-4 w-4" />
+                    )}
                     Remove
                   </Button>
                 </div>
               </div>
             ))}
+          </div>
+        )}
+        {assignment && (
+          <div className="flex items-center justify-between bg-blue-50 dark:bg-[#1E293B] px-4 py-5 rounded-md border border-blue-300 mt-4">
+            <div>
+              <h1 className="font-bold text-blue-800 dark:text-blue-200">
+                Assignment: {assignment.title}
+              </h1>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Button
+                size="sm"
+                variant="destructive"
+                onClick={removeAssignmentHandler}
+                disabled={removingAssignment}
+              >
+                {removingAssignment ? (
+                  <Loader2 className="mr-1 h-4 w-4 animate-spin" />
+                ) : (
+                  <Trash className="mr-1 h-4 w-4" />
+                )}
+                Remove
+              </Button>
+            </div>
           </div>
         )}
       </div>
