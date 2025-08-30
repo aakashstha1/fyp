@@ -70,6 +70,32 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
     navigator.clipboard.writeText(window.location.href);
     alert("Link copied to clipboard!");
   };
+  const formatThreadDate = (createdAt) => {
+    const date = new Date(createdAt);
+    const now = new Date();
+
+    const isToday =
+      date.getDate() === now.getDate() &&
+      date.getMonth() === now.getMonth() &&
+      date.getFullYear() === now.getFullYear();
+
+    const yesterday = new Date();
+    yesterday.setDate(now.getDate() - 1);
+    const isYesterday =
+      date.getDate() === yesterday.getDate() &&
+      date.getMonth() === yesterday.getMonth() &&
+      date.getFullYear() === yesterday.getFullYear();
+    if (latest) return "Latest";
+    if (isToday) return "Today";
+    if (isYesterday) return "Yesterday";
+
+    // Otherwise, show formatted date
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden ">
@@ -82,7 +108,7 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
           <div className="ml-3">
             <p className="font-semibold text-gray-800">{thread.author}</p>
             <p className="text-xs text-gray-500">
-              {new Date(thread.createdAt).toLocaleString()}
+              {formatThreadDate(thread.createdAt)}
             </p>
           </div>
         </div>
@@ -91,12 +117,12 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-2 rounded hover:bg-gray-100">
-                <MoreHorizontal/>
+                <MoreHorizontal />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => handleThreadDelete(thread.id)}>
-                 <Button>Delete</Button>
+                <Button>Delete</Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
