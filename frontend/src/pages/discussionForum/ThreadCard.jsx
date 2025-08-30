@@ -2,10 +2,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import axios from "axios";
-import { Delete } from "lucide-react";
-import { Share2, MessageCircle, MessageSquareOff } from "lucide-react";
+import { Delete, Menu, MoreHorizontal, MoreVertical } from "lucide-react";
+import { Share2, MessageCircle } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@radix-ui/react-dropdown-menu";
 
-function ThreadCard({ thread, currentUser }) {
+function ThreadCard({ thread, currentUser, handleThreadDelete }) {
   const [commentText, setCommentText] = useState("");
   const [comments, setComments] = useState(thread.comments || []);
   const [showCommentSection, setShowCommentSection] = useState(false);
@@ -66,17 +72,34 @@ function ThreadCard({ thread, currentUser }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden ">
       {/* Thread Header */}
-      <div className="flex items-center p-4 border-b border-gray-100">
-        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
-          {thread.author?.[0] || "U"}
+      <div className="flex items-center p-4 border-b border-gray-100 justify-between">
+        <div className="flex">
+          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+            {thread.author?.[0] || "U"}
+          </div>
+          <div className="ml-3">
+            <p className="font-semibold text-gray-800">{thread.author}</p>
+            <p className="text-xs text-gray-500">
+              {new Date(thread.createdAt).toLocaleString()}
+            </p>
+          </div>
         </div>
-        <div className="ml-3">
-          <p className="font-semibold text-gray-800">{thread.author}</p>
-          <p className="text-xs text-gray-500">
-            {new Date(thread.createdAt).toLocaleString()}
-          </p>
+
+        <div className="">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button className="p-2 rounded hover:bg-gray-100">
+                <MoreHorizontal/>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleThreadDelete(thread.id)}>
+                 <Button>Delete</Button>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </div>
 

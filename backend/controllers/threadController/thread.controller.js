@@ -65,6 +65,32 @@ export const getAllThreads = async (req, res) => {
   }
 };
 
+export const deleteThread = async (req, res) => {
+  try {
+    const { thread_id } = req.params;
+    const userId = req.user.userId;
+    if (!thread_id || !userId) {
+      return res.status(400).json({
+        message: "Please login or provide a valid thread ID",
+      });
+    }
+    const searchThread = await Thread.findById(thread_id);
+    if (!searchThread) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+    if (searchThread.userId.toString() != userId) {
+      return res.status(403).json({ message: "unAuthorized to delete" });
+    }
+    await searchThread.deleteOne();
+    return res.status(200).json({ message: "Thread deleted  successfully" });
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ message: "Server error", error: error.message });
+  }
+};
+
 export const addComment = async (req, res) => {
   try {
     const { threadId, content, userId } = req.body;

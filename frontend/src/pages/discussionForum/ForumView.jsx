@@ -8,6 +8,7 @@ import CreateThread from "./CreateThread";
 import ThreadCard from "./ThreadCard";
 import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
+import { toast } from "sonner";
 
 function ForumView() {
   const { currentUser } = useAuth();
@@ -101,6 +102,17 @@ function ForumView() {
         title,
         content,
       });
+      const newThread = {
+        id: res.data.thread, // the _id returned by backend
+        title,
+        content,
+        author: currentUser.name, // or currentUser.username
+        createdAt: new Date().toISOString(),
+        comments: [],
+      };
+
+      // Add the new thread at the top of the threads list
+      setThreads((prev) => [newThread, ...prev]);
 
       setTitle("");
       setContent("");
@@ -116,7 +128,22 @@ function ForumView() {
       setLoading(false);
     }
   };
+  const handleThreadDelete = async (threadId) => {
+    console.log(threadId);
+    try {
+      const res = await axios.delete(
+        `http://localhost:8000/api/thread/deleteThread/${threadId}`,
+        {
+          withCredentials: true,
+        }
+      );
 
+      setThreads((prev) => prev.filter((Th) => Th.id !== threadId));
+      toast(res.data.message || "Thread deleted successfully");
+    } catch (error) {
+      console.log("Something went wrong", error);
+    }
+  };
   return (
     <div className="p-4 relative min-h-screen bg-gray-50">
       <Button
@@ -155,6 +182,7 @@ function ForumView() {
           <ThreadCard
             key={thread.id}
             currentUser={currentUser}
+            handleThreadDelete={handleThreadDelete}
             thread={thread}
           />
         ))}
