@@ -1,4 +1,6 @@
 import Course from "../models/course.model.js";
+import User from "../models/user.model.js";
+
 import { uploadMedia } from "../utils/cloudinary.js";
 //Create new course
 export const createCourse = async (req, res) => {
@@ -232,5 +234,33 @@ export const getSearchedCourses = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+export const getAllCourses = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // Check if user exists and is admin
+    const user = await User.findById(userId);
+    if (!user || user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied. Admins only." });
+    }
+
+    // Fetch all published courses
+    const courses = await Course.find({ isPublished: true })
+      .populate("creator", "name email role")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      total: courses.length,
+      courses,
+    });
+  } catch (error) {
+    console.error("Error in getAllCourses:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
   }
 };

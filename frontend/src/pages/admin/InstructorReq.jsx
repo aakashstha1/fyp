@@ -1,6 +1,6 @@
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import React, { useEffect, useState } from "react";
-import DataTable from "@/components/DataTable";
+import DataTable from "@/pages/admin/userData/UserDataTable";
 import axios from "axios";
 const API_URL = "http://localhost:8000/api";
 function InstructorReq() {

@@ -126,3 +126,31 @@ export const requestInstructorRole = async (req, res) => {
       .json({ message: "Error submitting request", error: error.message });
   }
 };
+
+//Get all users
+export const getAllUsers = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    const user = await User.findById(userId);
+
+    // check role
+    if (user.role !== "admin") {
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied. Admins only." });
+    }
+
+    // fetch all users
+    const users = await User.find().sort({ createdAt: -1 });
+
+    res.status(200).json({
+      success: true,
+      total: users.length,
+      users,
+    });
+  } catch (error) {
+    console.error("Error in getAllUsers:", error.message);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

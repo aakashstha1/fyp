@@ -7,6 +7,8 @@ import {
   getReqById,
   rejectInstructorRequest,
 } from "../controllers/request.controller.js";
+import { getAllUsers } from "../controllers/user.controller.js";
+import { getAllCourses } from "../controllers/courseController.js";
 
 const router = express.Router();
 
@@ -22,5 +24,9 @@ router
 router
   .route("/reject/:reqId")
   .put(verifyToken, requireAdmin, rejectInstructorRequest);
+
+router.route("/user-list").get(verifyToken, getAllUsers);
+router.route("/course-list").get(verifyToken, getAllCourses);
+
 
 export default router;
