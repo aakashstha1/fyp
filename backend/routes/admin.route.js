@@ -9,6 +9,11 @@ import {
 } from "../controllers/request.controller.js";
 import { getAllUsers } from "../controllers/user.controller.js";
 import { getAllCourses } from "../controllers/courseController.js";
+import {
+  mostEnrolledCourses,
+  topContributors,
+  topRatedCourses,
+} from "../controllers/admin.controller.js";
 
 const router = express.Router();
 
@@ -27,6 +32,8 @@ router
 
 router.route("/user-list").get(verifyToken, getAllUsers);
 router.route("/course-list").get(verifyToken, getAllCourses);
-
+router.route("/top-rated-courses").get(verifyToken, topRatedCourses);
+router.route("/most-enrolled-courses").get(verifyToken, mostEnrolledCourses);
+router.route("/top-contributors").get(verifyToken, topContributors);
 
 export default router;
