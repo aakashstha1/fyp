@@ -389,17 +389,14 @@ function SingleCourse() {
               </li>
             ))}
 
-            {course?.assignment?.map((item, index) => (
-              <li
-                key={index}
-                className="flex justify-between items-center px-3 py-4 border rounded-md text-gray-800 hover:bg-gray-50 cursor-pointer transition"
-              >
+            {course?.assignment && (
+              <li className="flex justify-between items-center px-3 py-4 border rounded-md text-gray-800 hover:bg-gray-50 cursor-pointer transition">
                 <span className="leading-tight">
-                  {`Assignment ${index + 1} - ${item}`}
+                  {`Assignment - ${course.assignment.title}`}
                 </span>
                 <Lock className="w-4 h-4 text-gray-400" />
               </li>
-            ))}
+            )}
           </ul>
         </div>
 
