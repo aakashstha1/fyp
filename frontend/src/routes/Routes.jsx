@@ -62,9 +62,12 @@ function AppRoutes() {
           <Route path="ViewQuestion" element={<QuizViewer />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="discussion" element={<ForumView />} />
-          <Route path="study" element={<StudyContainer />} />
           <Route path="course/:courseId" element={<SingleCourse />} />
           <Route path="/assign" element={<Assignment />} />
+          <Route
+            path="/course/:courseId/progress"
+            element={<StudyContainer />}
+          />
           //Instructor Dashboard
           <Route path="dashboard" element={<Sidebar />}>
             <Route index element={<Dashboard />} />

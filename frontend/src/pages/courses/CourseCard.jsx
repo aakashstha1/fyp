@@ -10,6 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 // const levelClassName = {
 //   Beginner: "bg-green-200 text-green-800",
@@ -20,6 +21,7 @@ import { useAuth } from "@/contexts/AuthContext";
 function CourseCard({ course }) {
   const [isEnrolled, setIsEnrolled] = useState(false);
   const { currentUser } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!currentUser) return;
@@ -83,8 +85,13 @@ function CourseCard({ course }) {
       </CardContent>
 
       <CardFooter>
-        <Button className="w-full">
-          {isEnrolled ? "Go To Lesson" : "Enroll Now"}
+        <Button
+          className="w-full"
+          onClick={() =>
+            isEnrolled ? navigate(`/course/${course._id}/progress`) : ""
+          }
+        >
+          {isEnrolled ? "Go To Lesson" : "Enroll"}
         </Button>
       </CardFooter>
     </Card>

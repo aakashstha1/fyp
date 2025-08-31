@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import MainContent from "./mainContent";
 import StudyTopicList from "./studyCourseTopicsList";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 const API = "http://localhost:8000/api";
+
 export default function StudyContainer() {
+  const { courseId } = useParams();
   const [selectedLesson, setSelectedLesson] = useState(null);
 
   useEffect(() => {
-    const resLecture = axios.get(`${API}/${courseId}/lecture`);
+    const resLecture = axios.get(`${API}/${courseId}/lecture`, {
+      withCredentials: true,
+    });
   }, []);
   return (
     <div className="grid grid-cols-12 h-screen bg-gray-100">
