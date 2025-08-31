@@ -12,6 +12,7 @@ import {
 import React from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+ import { MessageSquare } from "lucide-react"; // replace ClipboardList
 const API_URL = "http://localhost:8000/api";
 function AdminSidebar() {
   const navigate = useNavigate();
@@ -76,6 +77,12 @@ function AdminSidebar() {
               <ClipboardList size={22} />
               <h1 className="text-base">Quizes</h1>
             </NavLink>
+           
+
+          <NavLink to="feedbacks" className={navLinkClasses}>
+            <MessageSquare size={22} />
+            <h1 className="text-base">Feedbacks</h1>
+          </NavLink>
           </div>
         </div>
 

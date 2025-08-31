@@ -14,6 +14,7 @@ import {
   topContributors,
   topRatedCourses,
 } from "../controllers/admin.controller.js";
+import { getAllFeedbacks,deleteFeedback ,markFeedbackReviewed} from "../controllers/feedbackController.js";
 
 const router = express.Router();
 
@@ -35,5 +36,10 @@ router.route("/course-list").get(verifyToken, getAllCourses);
 router.route("/top-rated-courses").get(verifyToken, topRatedCourses);
 router.route("/most-enrolled-courses").get(verifyToken, mostEnrolledCourses);
 router.route("/top-contributors").get(verifyToken, topContributors);
+
+router.route("/feedbacks").get(verifyToken, requireAdmin, getAllFeedbacks);
+router.route("/feedbacks/:id")
+  .delete(verifyToken, requireAdmin, deleteFeedback)
+  .put(verifyToken, requireAdmin, markFeedbackReviewed);
 
 export default router;

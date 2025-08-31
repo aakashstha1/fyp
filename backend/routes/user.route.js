@@ -6,6 +6,7 @@ import {
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import upload from "../utils/multer.js";
+import { submitFeedback } from "../controllers/feedbackController.js";
 
 const router = express.Router();
 router.route("/profile").get(verifyToken, getUser);
@@ -24,5 +25,6 @@ router.post(
   ]),
   requestInstructorRole
 );
+router.post("/feedback", submitFeedback);
 
 export default router;

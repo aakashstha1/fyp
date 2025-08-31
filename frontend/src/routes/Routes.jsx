@@ -38,6 +38,8 @@ import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
 import Courses from "@/pages/courses/Courses";
 import CourseList from "@/pages/admin/courseData/CourseList";
+import Contact from "@/pages/Contact";
+import Feedbacks from "@/pages/admin/DashboardComponents/Feedbacks";
 
 function AppRoutes() {
   return (
@@ -47,6 +49,7 @@ function AppRoutes() {
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
+          <Route path="contact" element={<Contact />} />
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
           <Route path="my-learning" element={<MyLearning />} />
@@ -93,6 +96,7 @@ function AppRoutes() {
 
           <Route path="users" element={<UserList />} />
           <Route path="courses" element={<CourseList />} />
+           <Route path="feedbacks" element={<Feedbacks />} />
         </Route>
       </Routes>
     </BrowserRouter>

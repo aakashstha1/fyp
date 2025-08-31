@@ -16,6 +16,8 @@ import ratingRoutes from "./routes/rating.routes.js";
 // import paymentRoutes from "./routes/payment.route.js";
 import enrollmentRoutes from "./routes/enrollment.route.js";
 
+import feedbackRoutes from "./routes/feedbackroute.js";
+
 dotenv.config();
 
 const app = express();
@@ -41,6 +43,9 @@ app.use("/api/course", courseRoutes);
 app.use("/api/rating", ratingRoutes);
 // app.use("/api/payment", paymentRoutes);
 app.use("/api/enroll", enrollmentRoutes);
+
+app.use("/api/feedback", feedbackRoutes);
+
 
 // Start server
 const PORT = process.env.PORT || 5000;
