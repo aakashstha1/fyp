@@ -2,7 +2,7 @@ import Assignment from "../models/assignment.model.js";
 import Course from "../models/course.model.js";
 import fs from "fs";
 import { uploadMedia, deleteMedia } from "../utils/cloudinary.js";
-
+import { parseCsvFile } from "../utils/parseCsvFile.js";
 // Create Assignment (single per course)
 export const createAssignment = async (req, res) => {
   try {
@@ -24,10 +24,12 @@ export const createAssignment = async (req, res) => {
     let fileData = {};
     if (req.file) {
       const result = await uploadMedia(req.file.path);
+      const questions = await parseCsvFile(req.file.path);
       fileData = {
         csvFileUrl: result.url,
         csvFileName: req.file.originalname,
         csvFilePublicId: result.public_id,
+        questions,
       };
       fs.unlinkSync(req.file.path); // remove local file
     }

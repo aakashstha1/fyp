@@ -38,6 +38,7 @@ import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
 import Courses from "@/pages/courses/Courses";
 import CourseList from "@/pages/admin/courseData/CourseList";
+import Assignment from "@/pages/assignment/assignment";
 
 function AppRoutes() {
   return (
@@ -63,6 +64,7 @@ function AppRoutes() {
           <Route path="discussion" element={<ForumView />} />
           <Route path="study" element={<StudyContainer />} />
           <Route path="course/:courseId" element={<SingleCourse />} />
+          <Route path="/assign" element={<Assignment />} />
           //Instructor Dashboard
           <Route path="dashboard" element={<Sidebar />}>
             <Route index element={<Dashboard />} />

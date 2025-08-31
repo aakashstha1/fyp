@@ -2,10 +2,13 @@ import { useState } from "react";
 
 import MainContent from "./mainContent";
 import StudyTopicList from "./studyCourseTopicsList";
-
+const API = "http://localhost:8000/api";
 export default function StudyContainer() {
   const [selectedLesson, setSelectedLesson] = useState(null);
 
+  useEffect(() => {
+    const resLecture = axios.get(`${API}/${courseId}/lecture`);
+  }, []);
   return (
     <div className="grid grid-cols-12 h-screen bg-gray-100">
       {/* Sidebar */}
