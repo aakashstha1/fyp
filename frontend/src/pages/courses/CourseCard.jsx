@@ -29,7 +29,6 @@ function CourseCard({ course }) {
       course?.enrolledStudents?.some((id) => id === currentUser._id)
     );
   }, [course, currentUser]);
-
   return (
     <Card className="w-full min-w-[300px] min-h-[360px] flex flex-col justify-between text-sm">
       <CardHeader className="px-3">
@@ -88,7 +87,9 @@ function CourseCard({ course }) {
         <Button
           className="w-full"
           onClick={() =>
-            isEnrolled ? navigate(`/course/${course._id}/progress`) : ""
+            isEnrolled
+              ? navigate(`/course/${course._id}/progress`)
+              : handleEnrollment
           }
         >
           {isEnrolled ? "Go To Lesson" : "Enroll"}

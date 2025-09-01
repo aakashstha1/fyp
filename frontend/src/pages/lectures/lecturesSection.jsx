@@ -4,21 +4,32 @@ import MainContent from "./mainContent";
 import StudyTopicList from "./studyCourseTopicsList";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-const API = "http://localhost:8000/api";
+const API = "http://localhost:8000/api/course";
 
 export default function StudyContainer() {
   const { courseId } = useParams();
   const [selectedLesson, setSelectedLesson] = useState(null);
-
+  const [lectures, setLectures] = useState([]);
   useEffect(() => {
-    const resLecture = axios.get(`${API}/${courseId}/lecture`, {
-      withCredentials: true,
-    });
-  }, []);
+    const fetchLecture = async () => {
+      try {
+        const res = await axios.get(`${API}/${courseId}/lectures`, {
+          withCredentials: true,
+        });
+        const lectures = res.data.lectures || [];
+        setLectures(lectures);
+        if (lectures.length > 0) setSelectedLesson(lectures[0]); // default first lecture
+      } catch (error) {
+        console.error("Error fetching lectures:", error);
+      }
+    };
+    if (courseId) fetchLecture();
+  }, [courseId]);
+
   return (
     <div className="grid grid-cols-12 h-screen bg-gray-100">
       {/* Sidebar */}
-      <StudyTopicList onSelectLesson={setSelectedLesson} />
+      <StudyTopicList onSelectLesson={setSelectedLesson} lectures={lectures} />
 
       {/* Main Content */}
       <MainContent lesson={selectedLesson} />
