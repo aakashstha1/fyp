@@ -37,6 +37,10 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    niches: {
+      type: [String], // <-- store as array
+      default: [],
+    },
   },
   {
     timestamps: true,

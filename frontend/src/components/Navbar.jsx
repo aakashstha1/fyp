@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import ModeToggle from "@/ModeToggle";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,10 +8,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Bell, Brush, Pencil, ShoppingBagIcon } from "lucide-react";
-
+import { Brush, LogOut, Pencil, User } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -23,23 +24,10 @@ import {
 } from "./ui/dialog";
 import { toast } from "sonner";
 
-// import { Menu } from "lucide-react";
-// import {
-//   Sheet,
-//   SheetContent,
-//   SheetTrigger,
-//   SheetHeader,
-//   SheetTitle,
-//   SheetDescription,
-// } from "@/components/ui/sheet";
-
 function Navbar() {
-  const location = useLocation();
-  const path = location.pathname;
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-
-  const shouldShowSecondary = !path.startsWith("/dashboard");
+  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
 
   const navLinkClass = ({ isActive }) =>
     isActive
@@ -47,10 +35,16 @@ function Navbar() {
       : "text-gray-500 hover:text-blue-400";
 
   const handleLogout = async () => {
-    const res = await logout();
-    toast.success(res?.data?.message || "Logged out successfully");
-    navigate("/");
+    setIsLogoutDialogOpen(false); // close dialog after logout
+    try {
+      const res = await logout();
+      toast.success(res?.data?.message || "Logged out successfully");
+      window.location.href = "/";
+    } catch (error) {
+      console.log(error);
+    }
   };
+
   return (
     <>
       {/* Main Navbar */}
@@ -58,6 +52,7 @@ function Navbar() {
         <div className="" onClick={() => navigate("/")}>
           LOGO
         </div>
+
         <div className="flex items-center gap-20">
           <div className="flex space-x-6">
             <NavLink to="/" className={navLinkClass}>
@@ -66,23 +61,112 @@ function Navbar() {
             <NavLink to="/about" className={navLinkClass}>
               About
             </NavLink>
-            <NavLink to="/contact" className={navLinkClass}>
-              Contact
-            </NavLink>
             <NavLink to="/courses" className={navLinkClass}>
               Courses
             </NavLink>
+
+            {/* Only show when logged in */}
+            {currentUser && (
+              <>
+                <NavLink to="/discussion" className={navLinkClass}>
+                  Discussion
+                </NavLink>
+                <NavLink to="/my-learning" className={navLinkClass}>
+                  My Learning
+                </NavLink>
+                <DropdownMenu>
+                  <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
+                    Note
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <NavLink to={"/my-docs"}>
+                      <DropdownMenuItem>
+                        <Pencil /> Write Note
+                      </DropdownMenuItem>
+                    </NavLink>
+                    <NavLink to={"/my-board"}>
+                      <DropdownMenuItem>
+                        <Brush />
+                        Draw Note
+                      </DropdownMenuItem>
+                    </NavLink>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            )}
           </div>
 
           {currentUser ? (
-            <div className="flex items-center space-x-6">
-              <Bell className="h-6 w-6" />
-              <ShoppingBagIcon className="h-6 w-6" />
+            <div className="flex items-center">
+              <DropdownMenu>
+                <DropdownMenuTrigger className="focus:outline-0">
+                  <Avatar>
+                    <AvatarImage
+                      src={currentUser?.imageUrl}
+                      alt="@evilrabbit"
+                    />
+                    <AvatarFallback>
+                      {currentUser?.name?.charAt(0) || "U"}
+                    </AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
 
-              <Avatar>
-                <AvatarImage src={currentUser?.imageUrl} alt="@evilrabbit" />
-                <AvatarFallback>ER</AvatarFallback>
-              </Avatar>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+
+                  {/* Show Dashboard only if role is instructor */}
+                  {currentUser?.role === "instructor" && (
+                    <DropdownMenuItem>
+                      <button
+                        onClick={() => navigate("/dashboard")}
+                        className="bg-black text-white w-full py-2 rounded-lg cursor-pointer"
+                      >
+                        Dashboard
+                      </button>
+                    </DropdownMenuItem>
+                  )}
+
+                  <DropdownMenuSeparator />
+                  <NavLink to={`/profile/${currentUser._id}`}>
+                    <DropdownMenuItem className="flex justify-between items-center cursor-pointer">
+                      <span>Profile</span>
+                      <User className="h-4 w-4 text-gray-500" />
+                    </DropdownMenuItem>
+                  </NavLink>
+
+                  <DropdownMenuItem
+                    className="flex justify-between items-center text-red-600 cursor-pointer"
+                    onClick={() => setIsLogoutDialogOpen(true)}
+                  >
+                    <span>Logout</span>
+                    <LogOut className="h-4 w-4" />
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+              <Dialog
+                open={isLogoutDialogOpen}
+                onOpenChange={setIsLogoutDialogOpen}
+              >
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Are you sure you want to logout?</DialogTitle>
+                  </DialogHeader>
+                  <DialogFooter>
+                    <DialogClose asChild>
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsLogoutDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                    <Button variant="destructive" onClick={handleLogout}>
+                      Logout
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           ) : (
             <div className="flex items-center gap-2">
@@ -97,60 +181,6 @@ function Navbar() {
           <ModeToggle />
         </div>
       </div>
-
-      {/* Secondary Navbar (Visible only when logged in) */}
-      {currentUser && shouldShowSecondary && (
-        <div className="mx-auto border-b py-5 flex items-center justify-center gap-6 text-sm text-gray-600">
-          <NavLink to="/dashboard" className={navLinkClass}>
-            Dashboard
-          </NavLink>
-          <NavLink to="/discussion" className={navLinkClass}>
-            Discussion
-          </NavLink>
-          <NavLink to={`/profile/${currentUser._id}`} className={navLinkClass}>
-            Profile
-          </NavLink>
-          <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none">
-              Note
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <NavLink to={"/my-docs"}>
-                <DropdownMenuItem>
-                  <Pencil /> Write Note
-                </DropdownMenuItem>
-              </NavLink>
-              <NavLink to={"/my-board"}>
-                <DropdownMenuItem>
-                  <Brush />
-                  Draw Note
-                </DropdownMenuItem>
-              </NavLink>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <NavLink to="/my-learning" className={navLinkClass}>
-            My Learning
-          </NavLink>
-          <Dialog>
-            <DialogTrigger asChild>
-              <p className="cursor-pointer hover:text-blue-400">Logout</p>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Are you sure you want to logout?</DialogTitle>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button variant="destructive" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-      )}
     </>
   );
 }

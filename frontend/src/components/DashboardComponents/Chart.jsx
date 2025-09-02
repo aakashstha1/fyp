@@ -37,54 +37,6 @@ const chartData = {
   ],
 };
 
-// const topRatedCourses = [
-//   { name: "Python Basics", instructor: "John Doe", rating: 4.9, reviews: 1200 },
-//   {
-//     name: "React for Beginners",
-//     instructor: "Jane Smith",
-//     rating: 4.8,
-//     reviews: 950,
-//   },
-//   {
-//     name: "Data Science 101",
-//     instructor: "Alice Lee",
-//     rating: 4.8,
-//     reviews: 870,
-//   },
-//   {
-//     name: "Machine Learning Fundamentals",
-//     instructor: "Bob Wilson",
-//     rating: 4.7,
-//     reviews: 750,
-//   },
-//   {
-//     name: "JavaScript Mastery",
-//     instructor: "Carol Brown",
-//     rating: 4.6,
-//     reviews: 680,
-//   },
-// ];
-
-// const topContributors = [
-//   { name: "John Doe", coursesCreated: 15, totalEarnings: 120000 },
-//   { name: "Jane Smith", coursesCreated: 12, totalEarnings: 105000 },
-//   { name: "Alice Lee", coursesCreated: 10, totalEarnings: 95000 },
-//   { name: "Bob Wilson", coursesCreated: 8, totalEarnings: 78000 },
-//   { name: "Carol Brown", coursesCreated: 7, totalEarnings: 65000 },
-// ];
-
-// const topEnrolledCourses = [
-//   { name: "Python Basics", instructor: "John Doe", students: 15000 },
-//   { name: "React for Beginners", instructor: "Jane Smith", students: 13000 },
-//   { name: "Data Science 101", instructor: "Alice Lee", students: 11000 },
-//   { name: "JavaScript Mastery", instructor: "Carol Brown", students: 9500 },
-//   {
-//     name: "Machine Learning Fundamentals",
-//     instructor: "Bob Wilson",
-//     students: 8200,
-//   },
-// ];
-
 function Chart() {
   const [timePeriod, setTimePeriod] = useState("monthly");
 

@@ -1,102 +1,176 @@
-import axios from "axios";
-import { Loader2 } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+
 const API_URL = "http://localhost:8000/api";
+
 function Signup() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
+  const [step, setStep] = useState(1);
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [selectedNiches, setSelectedNiches] = useState([]);
+  const [userId, setUserId] = useState(null);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const options = [
+    "Frontend Development",
+    "Backend Development",
+    "Web Development",
+    "Data Science",
+    "Artificial Intelligence",
+    "Cloud Computing",
+    "UI/UX Design",
+    "Cyber Security",
+    "Mobile App Development",
+    "Digital Marketing",
+  ];
 
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const handleSignup = async (e) => {
+    e.preventDefault();
+    setLoading(true);
     try {
-      setIsLoading(true);
-      const res = await axios.post(`${API_URL}/auth/register`, form, {
-        withCredentials: true,
-      });
-      toast.success(res?.data?.message || "Account created Succesfully");
-      navigate("/login");
+      const res = await axios.post(`${API_URL}/auth/register`, form);
+      toast.success("Account created successfully!");
+      setUserId(res.data.user._id);
+      setStep(2);
     } catch (error) {
-      console.log(error);
-      toast.error(error.response.data?.message || "Failed to create account!");
-      throw new Error(error.response.data?.message);
+      toast.error(error.response?.data?.message || "Signup failed");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
+    }
+  };
+
+  const toggleNiche = (niche) => {
+    if (selectedNiches.includes(niche)) {
+      setSelectedNiches(selectedNiches.filter((n) => n !== niche));
+    } else {
+      if (selectedNiches.length < 3) {
+        setSelectedNiches([...selectedNiches, niche]);
+      } else {
+        toast.error("You can select up to 3 niches only");
+      }
+    }
+  };
+
+  const handleSaveNiches = async () => {
+    if (!selectedNiches.length) {
+      toast.error("Select at least one niche");
+      return;
+    }
+
+    setLoading(true);
+    try {
+      await axios.post(`${API_URL}/user/niches/${userId}`, {
+        niches: selectedNiches,
+      });
+      toast.success("Niches saved successfully!");
+      navigate("/");
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to save niches");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <div className="min-h-[calc(100vh-145px)] flex items-center justify-center bg-white dark:bg-gray-900 px-2 sm:px-4">
-      <form
-        onSubmit={handleSubmit}
-        className="bg-gray-100 dark:bg-gray-800 w-full max-w-sm p-6 rounded-lg shadow-md text-gray-900 dark:text-white"
-        style={{ maxHeight: "90vh", overflowY: "auto" }}
-      >
-        <h2 className="text-xl sm:text-2xl font-semibold mb-6 text-center">
-          Sign Up
-        </h2>
-
-        <div className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Full Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-sm placeholder-gray-500 dark:placeholder-gray-300"
-          />
-
-          <input
-            type="email"
-            name="email"
-            placeholder="Email"
-            value={form.email}
-            onChange={handleChange}
-            required
-            className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-sm placeholder-gray-500 dark:placeholder-gray-300"
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            className="w-full p-3 rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-sm placeholder-gray-500 dark:placeholder-gray-300"
-          />
+      <div className="w-full max-w-md p-6 bg-gray-100 dark:bg-gray-800 rounded-lg shadow-md text-gray-900 dark:text-white">
+        {/* Step Indicator */}
+        <div className="flex items-center mb-6">
+          <div
+            className={`flex-1 h-1 transition-all duration-500 rounded ${
+              step >= 1 ? "bg-blue-600" : "bg-gray-300"
+            }`}
+          ></div>
+          <div
+            className={`flex-1 h-1 mx-2 transition-all duration-500 rounded ${
+              step === 2 ? "bg-blue-600" : "bg-gray-300"
+            }`}
+          ></div>
+        </div>
+        <div className="flex justify-between mb-6 text-sm font-medium text-gray-700 dark:text-gray-300">
+          <span className={step === 1 ? "text-blue-600" : ""}>Step 1</span>
+          <span className={step === 2 ? "text-blue-600" : ""}>Step 2</span>
         </div>
 
-        <button
-          type="submit"
-          className="w-full flex items-center justify-center mt-5 bg-blue-600 hover:bg-blue-700 transition p-3 rounded text-white font-medium text-sm"
-        >
-          {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : "Sign Up"}
-        </button>
+        {step === 1 && (
+          <form onSubmit={handleSignup} className="space-y-4">
+            <h2 className="text-xl font-semibold mb-4 text-center">Sign Up</h2>
+            <input
+              type="text"
+              name="name"
+              placeholder="Full Name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded border"
+            />
+            <input
+              type="email"
+              name="email"
+              placeholder="Email"
+              value={form.email}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded border"
+            />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              required
+              className="w-full p-3 rounded border"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full mt-3 p-3 bg-blue-600 text-white rounded"
+            >
+              {loading ? "Signing Up..." : "Sign Up"}
+            </button>
+          </form>
+        )}
 
-        <p className="text-sm text-center mt-4">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-500 hover:underline">
-            Log in
-          </Link>
-        </p>
-      </form>
+        {step === 2 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold mb-4 text-center">
+              Select Your Top 3 Learning Interests
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {options.map((option) => (
+                <div
+                  key={option}
+                  onClick={() => toggleNiche(option)}
+                  className={`px-3 py-1 rounded-full cursor-pointer text-sm transition-all duration-200 ${
+                    selectedNiches.includes(option)
+                      ? "bg-blue-600 text-white"
+                      : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-blue-100 dark:hover:bg-blue-800"
+                  }`}
+                >
+                  {option}
+                </div>
+              ))}
+            </div>
+            <div className="mt-2 text-sm">
+              Selected ({selectedNiches.length}/3):{" "}
+              {selectedNiches.join(", ") || "None"}
+            </div>
+            <button
+              onClick={handleSaveNiches}
+              disabled={loading || selectedNiches.length === 0}
+              className="w-full mt-3 p-3 bg-blue-600 text-white rounded disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {loading ? "Saving..." : "Save Preferences"}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
