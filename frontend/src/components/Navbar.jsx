@@ -51,7 +51,7 @@ function Navbar() {
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center gap-8">
+      <div className="hidden md:flex items-center gap-10">
         <div className="flex items-center space-x-6">
           <NavLink to="/" className={navLinkClass}>
             Home
@@ -89,9 +89,9 @@ function Navbar() {
         </div>
 
         {currentUser ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8">
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger className="focus:outline-none">
                 <Avatar>
                   <AvatarImage src={currentUser?.imageUrl} alt="@user" />
                   <AvatarFallback>U</AvatarFallback>
@@ -103,7 +103,7 @@ function Navbar() {
 
                 {currentUser?.role === "instructor" && (
                   <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                    Dashboard
+                    <Button>Dashboard</Button>
                   </DropdownMenuItem>
                 )}
 
