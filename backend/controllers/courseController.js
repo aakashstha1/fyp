@@ -264,3 +264,52 @@ export const getAllCourses = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+//get recommended course
+export const getRecommendedCourses = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+
+    // Fetch user
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const userNiches = user.niches.filter(Boolean); // only non-empty
+    if (!userNiches.length) {
+      return res.status(400).json({
+        success: false,
+        message: "No niches selected for this user",
+      });
+    }
+    const nicheRegexes = user.niches
+      .filter(Boolean)
+      .map((n) => new RegExp(n, "i")); // case-insensitive partial match
+
+    const recommendedCourses = await Course.aggregate([
+      {
+        $match: {
+          isPublished: true,
+          $or: [
+            { tags: { $elemMatch: { $in: nicheRegexes } } }, // match any tag partially
+            { category: { $in: nicheRegexes } }, // partial match for category
+            { title: { $in: nicheRegexes } }, // partial match for title
+          ],
+        },
+      },
+      { $sample: { size: 10 } },
+    ]);
+
+    res.status(200).json({
+      success: true,
+      total: recommendedCourses.length,
+      courses: recommendedCourses,
+    });
+  } catch (error) {
+    console.error("Error fetching recommended courses:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
