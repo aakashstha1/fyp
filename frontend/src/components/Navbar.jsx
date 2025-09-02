@@ -47,7 +47,7 @@ function Navbar() {
         className="cursor-pointer text-lg font-bold"
         onClick={() => navigate("/")}
       >
-        LOGO
+      logo
       </div>
 
       {/* Desktop Navigation */}
