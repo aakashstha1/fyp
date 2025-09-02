@@ -46,7 +46,7 @@ function Navbar() {
     <div className="border-b h-16 flex items-center justify-between px-4 md:px-10">
       {/* Logo */}
       <div
-        className="flex items-center gap-2 cursor-pointer text-2xl font-bold mb-8"
+        className="flex items-center gap-2 cursor-pointer text-2xl font-bold"
         onClick={() => navigate("/")}
       >
         <FaBookOpenReader fill="#1a2539" />
