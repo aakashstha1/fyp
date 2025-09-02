@@ -5,14 +5,24 @@ export default function MainContent({ lesson }) {
     <main className="col-span-6 p-6 overflow-y-auto">
       {/* Title */}
       <h1 className="text-xl font-semibold mb-4">
-        {lesson ? lesson.title : "Welcome to the Google UX Design Certificate"}
+        {lesson
+          ? lesson.lectureTitle
+          : "Welcome to the Google UX Design Certificate"}
       </h1>
 
-      {/* Video / Reading / Discussion placeholder */}
+      {/* Video / Reading / Discussion */}
       <div className="aspect-video bg-black rounded-lg flex items-center justify-center mb-4">
-        <button className="text-white">
-          <PlayCircle size={64} />
-        </button>
+        {lesson && lesson.videoUrl ? (
+          <video
+            src={lesson.videoUrl}
+            controls
+            className="w-full h-full rounded-lg"
+          />
+        ) : (
+          <button className="text-white">
+            <PlayCircle size={64} />
+          </button>
+        )}
       </div>
 
       {/* Actions */}
