@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import ModeToggle from "@/ModeToggle";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,10 +8,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Bell, Brush, Pencil, ShoppingBagIcon, Menu } from "lucide-react";
-
+import { Menu } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -21,18 +22,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-
-import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
-
+import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
 import { toast } from "sonner";
 
 function Navbar() {
-  const location = useLocation();
-  const path = location.pathname;
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-
-  const shouldShowSecondary = !path.startsWith("/dashboard");
 
   const navLinkClass = ({ isActive }) =>
     isActive
@@ -45,161 +40,203 @@ function Navbar() {
     navigate("/");
   };
 
-  const navLinks = (
-    <>
-      <NavLink to="/" className={navLinkClass}>
-        Home
-      </NavLink>
-      <NavLink to="/about" className={navLinkClass}>
-        About
-      </NavLink>
-      <NavLink to="/contact" className={navLinkClass}>
-        Contact
-      </NavLink>
-      <NavLink to="/courses" className={navLinkClass}>
-        Courses
-      </NavLink>
-    </>
-  );
-
   return (
-    <>
-      {/* Main Navbar */}
-      <div className="border-b h-15 flex items-center justify-between px-4 md:px-10">
-        <div
-          className="cursor-pointer text-lg font-bold"
-          onClick={() => navigate("/")}
-        >
-          LOGO
-        </div>
-
-        {/* Desktop Nav */}
-        <div className="hidden md:flex items-center gap-10">
-          <div className="flex space-x-6">{navLinks}</div>
-
-          {currentUser ? (
-            <div className="flex items-center space-x-6">
-              <Bell className="h-6 w-6" />
-              <ShoppingBagIcon className="h-6 w-6" />
-
-              <Avatar>
-                <AvatarImage
-                  src={currentUser?.imageUrl}
-                  alt="@user"
-                  onClick={() => navigate(`/profile/${currentUser._id}`)}
-                />
-                <AvatarFallback>U</AvatarFallback>
-              </Avatar>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Link to="/login">
-                <Button variant="outline">Login</Button>
-              </Link>
-              <Link to="/signup">
-                <Button>Sign Up</Button>
-              </Link>
-            </div>
-          )}
-          <ModeToggle />
-        </div>
-
-        {/* Mobile Nav */}
-        <div className="md:hidden flex items-center gap-2">
-          <ModeToggle />
-          <Sheet>
-            <SheetTrigger asChild>
-              <Menu className="h-7 w-7 cursor-pointer" />
-            </SheetTrigger>
-            <SheetContent side="right" className="flex flex-col gap-6 p-6">
-              {navLinks}
-
-              {currentUser ? (
-                <div className="flex flex-col gap-4">
-                  <div className="flex items-center gap-3">
-                    <Avatar>
-                      <AvatarImage
-                        src={currentUser?.imageUrl}
-                        alt="@user"
-                        onClick={() => navigate(`/profile/${currentUser._id}`)}
-                      />
-                      <AvatarFallback>U</AvatarFallback>
-                    </Avatar>
-                    <p className="font-medium">{currentUser?.name}</p>
-                  </div>
-                  <Button variant="destructive" onClick={handleLogout}>
-                    Logout
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-3">
-                  <Link to="/login">
-                    <Button variant="outline" className="w-full">
-                      Login
-                    </Button>
-                  </Link>
-                  <Link to="/signup">
-                    <Button className="w-full">Sign Up</Button>
-                  </Link>
-                </div>
-              )}
-            </SheetContent>
-          </Sheet>
-        </div>
+    <div className="border-b h-16 flex items-center justify-between px-4 md:px-10">
+      {/* Logo */}
+      <div
+        className="cursor-pointer text-lg font-bold"
+        onClick={() => navigate("/")}
+      >
+        LOGO
       </div>
 
-      {/* Secondary Navbar (Visible only when logged in) */}
-      {currentUser && shouldShowSecondary && (
-        <div className="mx-auto border-b py-3 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
-          <NavLink to="/dashboard" className={navLinkClass}>
-            Dashboard
+      {/* Desktop Navigation */}
+      <div className="hidden md:flex items-center gap-8">
+        <div className="flex items-center space-x-6">
+          <NavLink to="/" className={navLinkClass}>
+            Home
           </NavLink>
-          <NavLink to="/discussion" className={navLinkClass}>
-            Discussion
+          <NavLink to="/about" className={navLinkClass}>
+            About
+          </NavLink>
+          <NavLink to="/courses" className={navLinkClass}>
+            Courses
           </NavLink>
 
-          <DropdownMenu>
-            <DropdownMenuTrigger className="focus:outline-none">
-              Note
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <NavLink to={"/my-docs"}>
-                <DropdownMenuItem>
-                  <Pencil /> Write Note
-                </DropdownMenuItem>
+          {currentUser && (
+            <>
+              <NavLink to="/discussion" className={navLinkClass}>
+                Discussion
               </NavLink>
-              <NavLink to={"/my-board"}>
-                <DropdownMenuItem>
-                  <Brush />
-                  Draw Note
-                </DropdownMenuItem>
+              <NavLink to="/my-learning" className={navLinkClass}>
+                My Learning
               </NavLink>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <NavLink to="/my-learning" className={navLinkClass}>
-            My Learning
-          </NavLink>
-          <Dialog>
-            <DialogTrigger asChild>
-              <p className="cursor-pointer hover:text-blue-400">Logout</p>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Are you sure you want to logout?</DialogTitle>
-              </DialogHeader>
-              <DialogFooter>
-                <DialogClose asChild>
-                  <Button variant="outline">Cancel</Button>
-                </DialogClose>
-                <Button variant="destructive" onClick={handleLogout}>
-                  Logout
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+              <DropdownMenu>
+                <DropdownMenuTrigger className="focus:outline-none">
+                  Note
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <NavLink to="/my-docs">
+                    <DropdownMenuItem>Write Note</DropdownMenuItem>
+                  </NavLink>
+                  <NavLink to="/my-board">
+                    <DropdownMenuItem>Draw Note</DropdownMenuItem>
+                  </NavLink>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
         </div>
-      )}
-    </>
+
+        {currentUser ? (
+          <div className="flex items-center gap-4">
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <Avatar>
+                  <AvatarImage src={currentUser?.imageUrl} alt="@user" />
+                  <AvatarFallback>U</AvatarFallback>
+                </Avatar>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+
+                {currentUser?.role === "instructor" && (
+                  <DropdownMenuItem onClick={() => navigate("/dashboard")}>
+                    Dashboard
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuItem
+                  onClick={() => navigate(`/profile/${currentUser._id}`)}
+                >
+                  Profile
+                </DropdownMenuItem>
+
+                <DropdownMenuItem>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <span className="cursor-pointer">Logout</span>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>
+                          Are you sure you want to logout?
+                        </DialogTitle>
+                      </DialogHeader>
+                      <DialogFooter className="flex justify-end gap-2">
+                        <DialogClose asChild>
+                          <Button variant="outline">Cancel</Button>
+                        </DialogClose>
+                        <Button variant="destructive" onClick={handleLogout}>
+                          Logout
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <ModeToggle />
+          </div>
+        ) : (
+          <div className="flex items-center gap-2">
+            <Link to="/login">
+              <Button variant="outline">Login</Button>
+            </Link>
+            <Link to="/signup">
+              <Button>Sign Up</Button>
+            </Link>
+            <ModeToggle />
+          </div>
+        )}
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="md:hidden flex items-center gap-2">
+        {!currentUser && (
+          <Link to="/login">
+            <Button variant="outline" className="w-full">
+              Login
+            </Button>
+          </Link>
+        )}
+        <Sheet>
+          <SheetTrigger asChild>
+            <Menu className="h-7 w-7 cursor-pointer" />
+          </SheetTrigger>
+          <SheetContent side="right" className="flex flex-col gap-4 p-6">
+            {/* Always visible */}
+            <SheetClose asChild>
+              <NavLink to="/" className={navLinkClass}>
+                Home
+              </NavLink>
+            </SheetClose>
+            <SheetClose asChild>
+              <NavLink to="/about" className={navLinkClass}>
+                About
+              </NavLink>
+            </SheetClose>
+            <SheetClose asChild>
+              <NavLink to="/courses" className={navLinkClass}>
+                Courses
+              </NavLink>
+            </SheetClose>
+            {/* Logged-in only */}
+            {currentUser && (
+              <>
+                <SheetClose asChild>
+                  <NavLink to="/my-learning" className={navLinkClass}>
+                    My Learning
+                  </NavLink>
+                </SheetClose>
+                <SheetClose asChild>
+                  <NavLink to="/discussion" className={navLinkClass}>
+                    Discussion
+                  </NavLink>
+                </SheetClose>
+                <SheetClose asChild>
+                  <NavLink to="/my-docs" className={navLinkClass}>
+                    Write Note
+                  </NavLink>
+                </SheetClose>
+                {currentUser?.role === "instructor" && (
+                  <SheetClose asChild>
+                    <Button onClick={() => navigate("/dashboard")}>
+                      Dashboard
+                    </Button>
+                  </SheetClose>
+                )}
+
+                <SheetClose asChild>
+                  <Button
+                    variant="destructive"
+                    onClick={handleLogout}
+                    className="mt-2"
+                  >
+                    Logout
+                  </Button>
+                </SheetClose>
+              </>
+            )}
+
+            {/* Not logged-in */}
+            {!currentUser && (
+              <>
+                <Link to="/login">
+                  <Button variant="outline" className="w-full">
+                    Login
+                  </Button>
+                </Link>
+                <Link to="/signup">
+                  <Button className="w-full">Sign Up</Button>
+                </Link>
+              </>
+            )}
+          </SheetContent>
+        </Sheet>
+      </div>
+    </div>
   );
 }
 
