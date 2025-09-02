@@ -71,7 +71,6 @@ function AppRoutes() {
           //Instructor Dashboard
           <Route path="dashboard" element={<Sidebar />}>
             <Route index element={<Dashboard />} />
-
             <Route path="course" element={<CourseTable />} />
             <Route path="course/create" element={<AddCourse />} />
             <Route path="course/edit/:courseId" element={<EditCourse />} />

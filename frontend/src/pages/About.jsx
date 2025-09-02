@@ -1,6 +1,14 @@
 import React from "react";
-import { FaChalkboardTeacher, FaLightbulb, FaGlobe, FaUsers, FaLaptopCode, FaAward } from "react-icons/fa";
+import {
+  FaChalkboardTeacher,
+  FaLightbulb,
+  FaGlobe,
+  FaUsers,
+  FaLaptopCode,
+  FaAward,
+} from "react-icons/fa";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const aboutData = {
   hero: {
@@ -55,11 +63,13 @@ const aboutData = {
   ],
   cta: {
     title: "Join thousands of learners worldwide",
-    description: "Start your learning journey with us today and unlock new opportunities.",
+    description:
+      "Start your learning journey with us today and unlock new opportunities.",
   },
 };
 
 export default function About() {
+  const navigate = useNavigate();
   return (
     <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen px-6 py-16 max-w-7xl mx-auto">
       {/* Hero Section */}
@@ -71,7 +81,10 @@ export default function About() {
           <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300">
             {aboutData.hero.subtitle}
           </p>
-          <Button className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition">
+          <Button
+            className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition"
+            onClick={() => navigate("/courses")}
+          >
             Explore Courses
           </Button>
         </div>
@@ -109,7 +122,9 @@ export default function About() {
       {/* CTA Section */}
       <section className="mt-20 bg-blue-600 rounded-xl p-12 text-center text-white max-w-4xl mx-auto">
         <h2 className="text-4xl font-bold mb-6">{aboutData.cta.title}</h2>
-        <p className="mb-8 text-lg max-w-xl mx-auto">{aboutData.cta.description}</p>
+        <p className="mb-8 text-lg max-w-xl mx-auto">
+          {aboutData.cta.description}
+        </p>
         <Button className="px-10 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition">
           Get Started Now
         </Button>

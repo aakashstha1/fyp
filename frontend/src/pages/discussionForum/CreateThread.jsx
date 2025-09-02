@@ -1,7 +1,7 @@
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect } from "react";
+
 function CreateThread({
   onClose,
   onSubmit,
@@ -13,21 +13,19 @@ function CreateThread({
   setTitle,
   setContent,
 }) {
-
-
   return (
-    <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex justify-center items-center z-50">
-      <div className="bg-white p-6 rounded-2xl shadow-xl w-full max-w-md relative border border-gray-200">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50">
+      <div className="bg-gray-900 p-6 rounded-2xl shadow-xl w-full max-w-md relative border border-gray-700">
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 text-2xl"
+          className="absolute top-2 right-2 text-gray-400 hover:text-gray-200 text-2xl"
         >
           ×
         </button>
 
         {/* Heading */}
-        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-800">
+        <h2 className="text-2xl font-semibold mb-4 text-center text-gray-100">
           Create a New Thread
         </h2>
 
@@ -39,7 +37,7 @@ function CreateThread({
             onChange={(e) => setTitle(e.target.value)}
             disabled={loading}
             required
-            className="focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="bg-gray-800 text-gray-100 border-gray-600 focus-visible:ring-2 focus-visible:ring-blue-500"
           />
           <Textarea
             placeholder="What's on your mind?"
@@ -48,7 +46,7 @@ function CreateThread({
             rows={5}
             disabled={loading}
             required
-            className="focus-visible:ring-2 focus-visible:ring-blue-500"
+            className="bg-gray-800 text-gray-100 border-gray-600 focus-visible:ring-2 focus-visible:ring-blue-500"
           />
 
           <Button
@@ -61,12 +59,12 @@ function CreateThread({
 
           {/* Messages */}
           {successMessage && (
-            <p className="text-green-600 text-sm text-center">
+            <p className="text-green-400 text-sm text-center">
               {successMessage}
             </p>
           )}
           {errorMessage && (
-            <p className="text-red-600 text-sm text-center">{errorMessage}</p>
+            <p className="text-red-400 text-sm text-center">{errorMessage}</p>
           )}
         </form>
       </div>

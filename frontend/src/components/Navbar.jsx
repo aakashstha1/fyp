@@ -10,7 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Bell, Brush, Pencil, ShoppingBagIcon } from "lucide-react";
+import { Bell, Brush, Pencil, ShoppingBagIcon, Menu } from "lucide-react";
 
 import {
   Dialog,
@@ -21,17 +21,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "./ui/dialog";
-import { toast } from "sonner";
 
-// import { Menu } from "lucide-react";
-// import {
-//   Sheet,
-//   SheetContent,
-//   SheetTrigger,
-//   SheetHeader,
-//   SheetTitle,
-//   SheetDescription,
-// } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
+
+import { toast } from "sonner";
 
 function Navbar() {
   const location = useLocation();
@@ -51,28 +44,38 @@ function Navbar() {
     toast.success(res?.data?.message || "Logged out successfully");
     navigate("/");
   };
+
+  const navLinks = (
+    <>
+      <NavLink to="/" className={navLinkClass}>
+        Home
+      </NavLink>
+      <NavLink to="/about" className={navLinkClass}>
+        About
+      </NavLink>
+      <NavLink to="/contact" className={navLinkClass}>
+        Contact
+      </NavLink>
+      <NavLink to="/courses" className={navLinkClass}>
+        Courses
+      </NavLink>
+    </>
+  );
+
   return (
     <>
       {/* Main Navbar */}
-      <div className="border-b h-15 flex items-center justify-between px-10">
-        <div className="" onClick={() => navigate("/")}>
+      <div className="border-b h-15 flex items-center justify-between px-4 md:px-10">
+        <div
+          className="cursor-pointer text-lg font-bold"
+          onClick={() => navigate("/")}
+        >
           LOGO
         </div>
-        <div className="flex items-center gap-20">
-          <div className="flex space-x-6">
-            <NavLink to="/" className={navLinkClass}>
-              Home
-            </NavLink>
-            <NavLink to="/about" className={navLinkClass}>
-              About
-            </NavLink>
-            <NavLink to="/contact" className={navLinkClass}>
-              Contact
-            </NavLink>
-            <NavLink to="/courses" className={navLinkClass}>
-              Courses
-            </NavLink>
-          </div>
+
+        {/* Desktop Nav */}
+        <div className="hidden md:flex items-center gap-10">
+          <div className="flex space-x-6">{navLinks}</div>
 
           {currentUser ? (
             <div className="flex items-center space-x-6">
@@ -80,8 +83,12 @@ function Navbar() {
               <ShoppingBagIcon className="h-6 w-6" />
 
               <Avatar>
-                <AvatarImage src={currentUser?.imageUrl} alt="@evilrabbit" />
-                <AvatarFallback>ER</AvatarFallback>
+                <AvatarImage
+                  src={currentUser?.imageUrl}
+                  alt="@user"
+                  onClick={() => navigate(`/profile/${currentUser._id}`)}
+                />
+                <AvatarFallback>U</AvatarFallback>
               </Avatar>
             </div>
           ) : (
@@ -96,20 +103,61 @@ function Navbar() {
           )}
           <ModeToggle />
         </div>
+
+        {/* Mobile Nav */}
+        <div className="md:hidden flex items-center gap-2">
+          <ModeToggle />
+          <Sheet>
+            <SheetTrigger asChild>
+              <Menu className="h-7 w-7 cursor-pointer" />
+            </SheetTrigger>
+            <SheetContent side="right" className="flex flex-col gap-6 p-6">
+              {navLinks}
+
+              {currentUser ? (
+                <div className="flex flex-col gap-4">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage
+                        src={currentUser?.imageUrl}
+                        alt="@user"
+                        onClick={() => navigate(`/profile/${currentUser._id}`)}
+                      />
+                      <AvatarFallback>U</AvatarFallback>
+                    </Avatar>
+                    <p className="font-medium">{currentUser?.name}</p>
+                  </div>
+                  <Button variant="destructive" onClick={handleLogout}>
+                    Logout
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  <Link to="/login">
+                    <Button variant="outline" className="w-full">
+                      Login
+                    </Button>
+                  </Link>
+                  <Link to="/signup">
+                    <Button className="w-full">Sign Up</Button>
+                  </Link>
+                </div>
+              )}
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
 
       {/* Secondary Navbar (Visible only when logged in) */}
       {currentUser && shouldShowSecondary && (
-        <div className="mx-auto border-b py-5 flex items-center justify-center gap-6 text-sm text-gray-600">
+        <div className="mx-auto border-b py-3 flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600">
           <NavLink to="/dashboard" className={navLinkClass}>
             Dashboard
           </NavLink>
           <NavLink to="/discussion" className={navLinkClass}>
             Discussion
           </NavLink>
-          <NavLink to={`/profile/${currentUser._id}`} className={navLinkClass}>
-            Profile
-          </NavLink>
+
           <DropdownMenu>
             <DropdownMenuTrigger className="focus:outline-none">
               Note

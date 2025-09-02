@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 
 const letters = ["A", "B", "C", "D", "E"];
 
@@ -7,8 +8,7 @@ export default function Assignment() {
   const [answers, setAnswers] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [serverQuestion, setQuestions] = useState([]);
-  const courseId = "68b32c46ae4c81b305f6a49f";
-
+  const {courseId} = useParams();
   useEffect(() => {
     const fetch = async () => {
       const res = await axios.get(
