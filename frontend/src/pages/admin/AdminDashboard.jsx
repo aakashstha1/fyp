@@ -1,8 +1,8 @@
 import React from "react";
-import Chart from "../../components/DashboardComponents/Chart";
 import TopContributors from "../../components/DashboardComponents/TopContributers";
 import TopRatedCourses from "../../components/DashboardComponents/TopRated";
 import TopEnrolledCourses from "../../components/DashboardComponents/TopEnrolled";
+import AdminChart from "../../components/DashboardComponents/AdminChart";
 
 function AdminDashboard() {
   return (
@@ -17,7 +17,7 @@ function AdminDashboard() {
           </p>
         </div>
 
-        <Chart />
+        <AdminChart />
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <TopRatedCourses />

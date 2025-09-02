@@ -24,7 +24,7 @@ function Login() {
       console.log(res.user.role);
       const userRole = res?.user?.role;
       if (userRole === "admin") {
-        navigate("/admin");
+        navigate("/admin/dashboard");
       } else {
         navigate("/");
       }

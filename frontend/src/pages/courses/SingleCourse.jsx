@@ -32,6 +32,7 @@ function SingleCourse() {
   const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
 
   const [averageRating, setAverageRating] = useState(0);
   const [ratingsCount, setRatingsCount] = useState(0);
@@ -272,18 +273,50 @@ function SingleCourse() {
                   {isEnrolled ? "Go to Lessons" : "Enroll Now"}
                 </Button>
                 */}
-
                 <Button
                   variant="outline"
                   className="cursor-pointer"
-                  onClick={() =>
-                    isEnrolled
-                      ? navigate(`/course/${courseId}/progress`)
-                      : handleEnrollment()
-                  }
+                  onClick={() => {
+                    if (isEnrolled) {
+                      navigate(`/course/${courseId}/progress`);
+                    } else {
+                      setIsPurchaseDialogOpen(true);
+                    }
+                  }}
                 >
                   {isEnrolled ? "Go to Lessons" : "Enroll Now"}
                 </Button>
+                <Dialog
+                  open={isPurchaseDialogOpen}
+                  onOpenChange={setIsPurchaseDialogOpen}
+                >
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Confirm Enrollment</DialogTitle>
+                      <DialogDescription>
+                        Do you want to purchase this course for Rs.{" "}
+                        {course.price}?
+                      </DialogDescription>
+                    </DialogHeader>
+
+                    <DialogFooter className="flex justify-end gap-2">
+                      <Button
+                        variant="outline"
+                        onClick={() => setIsPurchaseDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        onClick={async () => {
+                          setIsPurchaseDialogOpen(false);
+                          await handleEnrollment(); // your existing enrollment function
+                        }}
+                      >
+                        Purchase
+                      </Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               {isEnrolled && (

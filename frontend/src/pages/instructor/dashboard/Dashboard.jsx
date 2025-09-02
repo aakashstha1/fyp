@@ -1,6 +1,6 @@
 import React from "react";
 
-import Chart from "./Chart";
+import Chart from "./CreatorIncomeChart";
 import TopRatedCourses from "@/components/DashboardComponents/TopRated";
 import TopEnrolled from "@/components/DashboardComponents/TopEnrolled";
 
