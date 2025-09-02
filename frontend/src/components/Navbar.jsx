@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import ModeToggle from "@/ModeToggle";
@@ -24,11 +24,12 @@ import {
 } from "./ui/dialog";
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
 import { toast } from "sonner";
+import { FaBookOpenReader } from "react-icons/fa6";
 
 function Navbar() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-
+  const [open, setOpen] = useState(false);
   const navLinkClass = ({ isActive }) =>
     isActive
       ? "text-blue-600 font-semibold"
@@ -37,21 +38,26 @@ function Navbar() {
   const handleLogout = async () => {
     const res = await logout();
     toast.success(res?.data?.message || "Logged out successfully");
-    navigate("/");
+    setOpen(false);
+    window.location.href = "/login";
   };
 
   return (
     <div className="border-b h-16 flex items-center justify-between px-4 md:px-10">
       {/* Logo */}
       <div
-        className="cursor-pointer text-lg font-bold"
+        className="flex items-center gap-2 cursor-pointer text-2xl font-bold mb-8"
         onClick={() => navigate("/")}
       >
-        LOGO
+        <FaBookOpenReader fill="#1a2539" />
+        <div>
+          <span className="text-[#1a2539]">Edu</span>
+          <span className="text-amber-500">Pal</span>
+        </div>
       </div>
 
       {/* Desktop Navigation */}
-      <div className="hidden md:flex items-center gap-8">
+      <div className="hidden md:flex items-center gap-10">
         <div className="flex items-center space-x-6">
           <NavLink to="/" className={navLinkClass}>
             Home
@@ -89,9 +95,9 @@ function Navbar() {
         </div>
 
         {currentUser ? (
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8">
             <DropdownMenu>
-              <DropdownMenuTrigger>
+              <DropdownMenuTrigger className="focus:outline-none">
                 <Avatar>
                   <AvatarImage src={currentUser?.imageUrl} alt="@user" />
                   <AvatarFallback>U</AvatarFallback>
@@ -103,7 +109,7 @@ function Navbar() {
 
                 {currentUser?.role === "instructor" && (
                   <DropdownMenuItem onClick={() => navigate("/dashboard")}>
-                    Dashboard
+                    <Button>Dashboard</Button>
                   </DropdownMenuItem>
                 )}
 
@@ -113,27 +119,8 @@ function Navbar() {
                   Profile
                 </DropdownMenuItem>
 
-                <DropdownMenuItem>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <span className="cursor-pointer">Logout</span>
-                    </DialogTrigger>
-                    <DialogContent className="sm:max-w-[425px]">
-                      <DialogHeader>
-                        <DialogTitle>
-                          Are you sure you want to logout?
-                        </DialogTitle>
-                      </DialogHeader>
-                      <DialogFooter className="flex justify-end gap-2">
-                        <DialogClose asChild>
-                          <Button variant="outline">Cancel</Button>
-                        </DialogClose>
-                        <Button variant="destructive" onClick={handleLogout}>
-                          Logout
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
+                <DropdownMenuItem onClick={() => setOpen(true)}>
+                  Logout
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -150,6 +137,23 @@ function Navbar() {
             <ModeToggle />
           </div>
         )}
+        <Dialog open={open} onOpenChange={setOpen}>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Are you sure you want to logout?</DialogTitle>
+            </DialogHeader>
+            <DialogFooter className="flex justify-end gap-2">
+              <DialogClose asChild>
+                <Button variant="outline" onClick={() => setOpen(false)}>
+                  Cancel
+                </Button>
+              </DialogClose>
+              <Button variant="destructive" onClick={handleLogout}>
+                Logout
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Mobile Navigation */}
