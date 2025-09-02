@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-function RecommendedCourse() {
+function LatestCourses() {
   const [courses, setCourses] = useState([]);
   const API_URL = "http://localhost:8000/api";
   const navigate = useNavigate();
@@ -14,11 +14,10 @@ function RecommendedCourse() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const res = await axios.get(`${API_URL}/course/recommendedCourses`, {
+        const res = await axios.get(`${API_URL}/course/courses`, {
           withCredentials: true,
         });
-        console.log(res);
-        setCourses(res?.data?.courses || []);
+        setCourses(res?.data?.publishedCourses || []);
       } catch (error) {
         console.log(error);
       }
@@ -30,7 +29,7 @@ function RecommendedCourse() {
     <div className="m-10">
       <div className="flex items-center mb-8 gap-3">
         <span className="w-1 h-8 bg-amber-500 rounded-sm"></span>
-        <h1 className="text-3xl font-bold text-gray-800">Suggested Courses</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Latest Courses</h1>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -112,4 +111,4 @@ function RecommendedCourse() {
   );
 }
 
-export default RecommendedCourse;
+export default LatestCourses;

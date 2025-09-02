@@ -6,6 +6,7 @@ import {
   getCourseByUserId,
   getPublishedCourse,
   getPublishedCourseById,
+  getRecommendedCourses,
   getSearchedCourses,
   togglePublishCourse,
   updateCourse,
@@ -29,7 +30,9 @@ import {
 const router = express.Router();
 
 router.route("/create").post(verifyToken, createCourse);
-router.route("/courses").get(getPublishedCourse); //do we need to login to view availabel courses??
+router.route("/courses").get(getPublishedCourse);
+router.route("/recommendedCourses").get(verifyToken, getRecommendedCourses);
+
 router.route("/filter-course").get(getSearchedCourses);
 
 router.route("/published-course/:courseId").get(getPublishedCourseById);
