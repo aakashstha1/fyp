@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   LineChart,
   Line,
@@ -8,37 +8,36 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
+import axios from "axios";
 
-// Sample data for different time periods
-const chartData = {
-  daily: [
-    { period: "Mon", income: 1200 },
-    { period: "Tue", income: 1800 },
-    { period: "Wed", income: 1500 },
-    { period: "Thu", income: 2200 },
-    { period: "Fri", income: 2800 },
-    { period: "Sat", income: 2100 },
-    { period: "Sun", income: 1900 },
-  ],
-  weekly: [
-    { period: "Week 1", income: 12000 },
-    { period: "Week 2", income: 15000 },
-    { period: "Week 3", income: 13500 },
-    { period: "Week 4", income: 18000 },
-    { period: "Week 5", income: 16500 },
-  ],
-  monthly: [
-    { period: "Jan", income: 52000 },
-    { period: "Feb", income: 67000 },
-    { period: "Mar", income: 63500 },
-    { period: "Apr", income: 78000 },
-    { period: "May", income: 85000 },
-    { period: "Jun", income: 79000 },
-  ],
-};
+function CreatorIncomeChart() {
+  const [timePeriod, setTimePeriod] = useState("daily");
+  const [chartData, setChartData] = useState({
+    daily: [],
+    weekly: [],
+    monthly: [],
+  });
 
-function Chart() {
-  const [timePeriod, setTimePeriod] = useState("monthly");
+  const API_URL = "http://localhost:8000/api";
+
+  useEffect(() => {
+    const fetchIncomeData = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/stats/income`, {
+          withCredentials: true,
+        });
+
+        // Make sure backend returns daily, weekly, monthly arrays
+        if (res.data && res.data.data) {
+          setChartData(res.data.data);
+        }
+      } catch (error) {
+        console.error("Failed to fetch income data:", error);
+      }
+    };
+
+    fetchIncomeData();
+  }, []);
 
   return (
     <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
@@ -60,6 +59,7 @@ function Chart() {
           ))}
         </div>
       </div>
+
       <div style={{ width: "100%", height: 350 }}>
         <ResponsiveContainer>
           <LineChart
@@ -102,4 +102,4 @@ function Chart() {
   );
 }
 
-export default Chart;
+export default CreatorIncomeChart;
