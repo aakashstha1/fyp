@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import ModeToggle from "@/ModeToggle";
 import { useAuth } from "@/contexts/AuthContext";
@@ -8,8 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import { Bell, Brush, Pencil, ShoppingBagIcon, Menu } from "lucide-react";
@@ -29,9 +27,12 @@ import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet";
 import { toast } from "sonner";
 
 function Navbar() {
+  const location = useLocation();
+  const path = location.pathname;
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false);
+
+  const shouldShowSecondary = !path.startsWith("/dashboard");
 
   const navLinkClass = ({ isActive }) =>
     isActive
@@ -39,14 +40,9 @@ function Navbar() {
       : "text-gray-500 hover:text-blue-400";
 
   const handleLogout = async () => {
-    setIsLogoutDialogOpen(false); // close dialog after logout
-    try {
-      const res = await logout();
-      toast.success(res?.data?.message || "Logged out successfully");
-      window.location.href = "/";
-    } catch (error) {
-      console.log(error);
-    }
+    const res = await logout();
+    toast.success(res?.data?.message || "Logged out successfully");
+    navigate("/");
   };
 
   const navLinks = (
