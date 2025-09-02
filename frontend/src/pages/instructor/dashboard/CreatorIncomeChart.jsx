@@ -76,14 +76,13 @@ function CreatorIncomeChart() {
               className="text-gray-700 dark:text-gray-300"
             />
             <YAxis
-              tick={{ fontSize: 12, fill: "currentColor" }}
-              axisLine={{ stroke: "currentColor" }}
-              tickFormatter={(value) => `$${value.toLocaleString()}`}
-              className="text-gray-700 dark:text-gray-300"
+              tick={{ fontSize: 12 }}
+              axisLine={{ stroke: "#e5e7eb" }}
+              tickFormatter={(value) => `Rs.${value.toLocaleString()}`}
             />
             <Tooltip
-              formatter={(value) => [`$${value.toLocaleString()}`, "Income"]}
-              labelStyle={{ color: "inherit" }}
+              formatter={(value) => [`Rs.${value.toLocaleString()}`, "Income"]}
+              labelStyle={{ color: "#374151" }}
               contentStyle={{
                 backgroundColor: "var(--tw-prose-body, #fff)",
                 color: "inherit",

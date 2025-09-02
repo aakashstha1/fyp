@@ -74,10 +74,10 @@ function AdminChart() {
             <YAxis
               tick={{ fontSize: 12 }}
               axisLine={{ stroke: "#e5e7eb" }}
-              tickFormatter={(value) => `$${value.toLocaleString()}`}
+              tickFormatter={(value) => `Rs.${value.toLocaleString()}`}
             />
             <Tooltip
-              formatter={(value) => [`$${value.toLocaleString()}`, "Income"]}
+              formatter={(value) => [`Rs.${value.toLocaleString()}`, "Income"]}
               labelStyle={{ color: "#374151" }}
               contentStyle={{
                 backgroundColor: "#f9fafb",
