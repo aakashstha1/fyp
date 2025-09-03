@@ -7,8 +7,6 @@ import {
   FaLaptopCode,
   FaAward,
 } from "react-icons/fa";
-import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
 
 const aboutData = {
   hero: {
@@ -69,34 +67,11 @@ const aboutData = {
 };
 
 export default function About() {
-  const navigate = useNavigate();
   return (
-    <div className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen px-6 py-16 max-w-7xl mx-auto">
-      {/* Hero Section */}
-      <section className="flex flex-col md:flex-row items-center md:items-start gap-12">
-        <div className="md:w-1/2 space-y-6">
-          <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
-            {aboutData.hero.title}
-          </h1>
-          <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300">
-            {aboutData.hero.subtitle}
-          </p>
-          <Button
-            className="mt-6 px-8 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition"
-            onClick={() => navigate("/courses")}
-          >
-            Explore Courses
-          </Button>
-        </div>
-        <div className="md:w-1/2">
-          <img
-            src={aboutData.hero.image}
-            alt="Empowering Education"
-            className="rounded-lg shadow-lg w-full object-cover max-h-96"
-          />
-        </div>
-      </section>
-
+    <div
+      className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen m-10"
+      id="about"
+    >
       {/* Mission Section */}
       <section className="mt-20 max-w-3xl mx-auto text-center">
         <h2 className="text-3xl font-bold mb-4">{aboutData.mission.title}</h2>
@@ -105,7 +80,6 @@ export default function About() {
         </p>
       </section>
 
-      {/* Values / Features Grid */}
       <section className="mt-20 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-12">
         {aboutData.values.map(({ icon, title, description }, idx) => (
           <div
@@ -117,17 +91,6 @@ export default function About() {
             <p className="text-gray-700 dark:text-gray-300">{description}</p>
           </div>
         ))}
-      </section>
-
-      {/* CTA Section */}
-      <section className="mt-20 bg-blue-600 rounded-xl p-12 text-center text-white max-w-4xl mx-auto">
-        <h2 className="text-4xl font-bold mb-6">{aboutData.cta.title}</h2>
-        <p className="mb-8 text-lg max-w-xl mx-auto">
-          {aboutData.cta.description}
-        </p>
-        <Button className="px-10 py-3 bg-white text-blue-600 font-semibold rounded-lg hover:bg-gray-100 transition">
-          Get Started Now
-        </Button>
       </section>
     </div>
   );

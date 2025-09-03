@@ -22,7 +22,7 @@ function CourseFilter({
   setCategory,
 }) {
   return (
-    <div className="flex flex-col w-full max-w-[250px] gap-6 pr-5 bg-white border-r">
+    <div className="flex flex-col w-full max-w-[250px] gap-6 pr-5 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 p-4 rounded-md">
       {/* Search */}
       <div className="flex flex-col gap-2">
         <form
@@ -32,12 +32,17 @@ function CourseFilter({
         >
           <Input
             type="search"
-            placeholder="search a course..."
+            placeholder="Search a course..."
             value={searchText}
             onChange={(e) => setSearchText(e.target.value)}
+            className="bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 border-gray-300 dark:border-gray-700"
           />
         </form>
-        <Button className="w-full" onClick={(e) => e.preventDefault()}>
+        <Button
+          className="w-full"
+          onClick={(e) => e.preventDefault()}
+          variant="default"
+        >
           Search
         </Button>
       </div>
@@ -45,14 +50,18 @@ function CourseFilter({
       {/* Sort Filter */}
       <div className="flex flex-col gap-6">
         <div>
-          <Label className="mb-2 block text-sm font-semibold text-gray-700">
+          <Label className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
             Sort By
           </Label>
-          <Select value={sortBy} onValueChange={(value) => setSortBy(value)}>
-            <SelectTrigger className="w-full">
+          <Select
+            value={sortBy}
+            onValueChange={(value) => setSortBy(value)}
+            className="dark:bg-gray-800 dark:text-gray-100"
+          >
+            <SelectTrigger className="w-full dark:bg-gray-800 dark:text-gray-100">
               <SelectValue placeholder="Sort by..." />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
               <SelectItem value="price">Price</SelectItem>
               <SelectItem value="rating">Rating</SelectItem>
             </SelectContent>
@@ -61,14 +70,18 @@ function CourseFilter({
 
         {/* Order */}
         <div>
-          <Label className="mb-2 block text-sm font-semibold text-gray-700">
+          <Label className="mb-2 block text-sm font-semibold text-gray-700 dark:text-gray-200">
             Order
           </Label>
-          <Select value={order} onValueChange={(value) => setOrder(value)}>
-            <SelectTrigger className="w-full">
+          <Select
+            value={order}
+            onValueChange={(value) => setOrder(value)}
+            className="dark:bg-gray-800 dark:text-gray-100"
+          >
+            <SelectTrigger className="w-full dark:bg-gray-800 dark:text-gray-100">
               <SelectValue placeholder="Order" />
             </SelectTrigger>
-            <SelectContent>
+            <SelectContent className="dark:bg-gray-800 dark:text-gray-100">
               <SelectItem value="asc">Low to High</SelectItem>
               <SelectItem value="desc">High to Low</SelectItem>
             </SelectContent>
@@ -78,7 +91,7 @@ function CourseFilter({
 
       {/* Category Filter */}
       <div>
-        <Label className="block mb-2 text-sm font-semibold text-gray-700">
+        <Label className="block mb-2 text-sm font-semibold text-gray-700 dark:text-gray-200">
           Filter by Category
         </Label>
         <RadioGroup
@@ -86,48 +99,30 @@ function CourseFilter({
           onValueChange={(value) => setCategory(value)}
           className="flex flex-col gap-4"
         >
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="all" id="all" />
-            <Label htmlFor="all">All</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="technology" id="technology" />
-            <Label htmlFor="technology">Technology</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="information-technology"
-              id="information-technology"
-            />
-            <Label htmlFor="information-technology">
-              Information Technology
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="business" id="business" />
-            <Label htmlFor="business">Business</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="design" id="design" />
-            <Label htmlFor="design">Design</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem
-              value="language-communication"
-              id="language-communication"
-            />
-            <Label htmlFor="language-communication">
-              Language & Communication
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="marketing" id="marketing" />
-            <Label htmlFor="marketing">Marketing</Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <RadioGroupItem value="other" id="other" />
-            <Label htmlFor="other">Others</Label>
-          </div>
+          {[
+            { id: "all", label: "All" },
+            { id: "technology", label: "Technology" },
+            { id: "information-technology", label: "Information Technology" },
+            { id: "business", label: "Business" },
+            { id: "design", label: "Design" },
+            { id: "language-communication", label: "Language & Communication" },
+            { id: "marketing", label: "Marketing" },
+            { id: "other", label: "Others" },
+          ].map((cat) => (
+            <div key={cat.id} className="flex items-center space-x-2">
+              <RadioGroupItem
+                value={cat.id}
+                id={cat.id}
+                className="dark:border-gray-400 dark:bg-gray-700 dark:checked:bg-blue-600"
+              />
+              <Label
+                htmlFor={cat.id}
+                className="text-gray-700 dark:text-gray-200"
+              >
+                {cat.label}
+              </Label>
+            </div>
+          ))}
         </RadioGroup>
       </div>
     </div>

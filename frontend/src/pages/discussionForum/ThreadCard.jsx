@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import axios from "axios";
-import { Delete, Menu, MoreHorizontal, MoreVertical } from "lucide-react";
+import { Delete, MoreHorizontal } from "lucide-react";
 import { Share2, MessageCircle } from "lucide-react";
 import {
   DropdownMenu,
@@ -42,22 +42,17 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
         `http://localhost:8000/api/thread/getComment/${thread.id}`
       );
       setComments(res.data.comments);
-      console.log(res.data.comments);
     } catch (error) {
       console.error("Cannot get comments", error);
     }
     setShowCommentSection((prev) => !prev);
   };
+
   const handleDeleteComment = async (commentId) => {
     try {
       await axios.delete("http://localhost:8000/api/thread/deleteComment", {
-        data: {
-          commentId,
-          userId: currentUser._id,
-        },
+        data: { commentId, userId: currentUser._id },
       });
-
-      // Remove deleted comment from UI
       setComments((prev) =>
         prev.filter((comment) => comment._id !== commentId)
       );
@@ -70,6 +65,7 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
     navigator.clipboard.writeText(window.location.href);
     alert("Link copied to clipboard!");
   };
+
   const formatThreadDate = (createdAt) => {
     const date = new Date(createdAt);
     const now = new Date();
@@ -85,11 +81,10 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
       date.getDate() === yesterday.getDate() &&
       date.getMonth() === yesterday.getMonth() &&
       date.getFullYear() === yesterday.getFullYear();
-   
+
     if (isToday) return "Today";
     if (isYesterday) return "Yesterday";
 
-    // Otherwise, show formatted date
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -98,31 +93,38 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden ">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
       {/* Thread Header */}
-      <div className="flex items-center p-4 border-b border-gray-100 justify-between">
+      <div className="flex items-center p-4 border-b border-gray-100 dark:border-gray-700 justify-between">
         <div className="flex">
-          <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold">
+          <div className="h-10 w-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-300 font-bold">
             {thread.author?.[0] || "U"}
           </div>
           <div className="ml-3">
-            <p className="font-semibold text-gray-800">{thread.author}</p>
-            <p className="text-xs text-gray-500">
+            <p className="font-semibold text-gray-800 dark:text-gray-100">
+              {thread.author}
+            </p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
               {formatThreadDate(thread.createdAt)}
             </p>
           </div>
         </div>
 
-        <div className="">
+        <div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="p-2 rounded hover:bg-gray-100">
-                <MoreHorizontal />
+              <button className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800">
+                <MoreHorizontal className="text-gray-600 dark:text-gray-300" />
               </button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
+            <DropdownMenuContent className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-md">
               <DropdownMenuItem onClick={() => handleThreadDelete(thread.id)}>
-                <Button>Delete</Button>
+                <Button
+                  variant="ghost"
+                  className="text-red-500 dark:text-red-400"
+                >
+                  Delete
+                </Button>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -131,12 +133,14 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
 
       {/* Thread Content */}
       <div className="p-4">
-        <h3 className="text-lg font-bold text-gray-900 mb-2">{thread.title}</h3>
-        <p className="text-gray-700">{thread.content}</p>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 mb-2">
+          {thread.title}
+        </h3>
+        <p className="text-gray-700 dark:text-gray-300">{thread.content}</p>
       </div>
 
       {/* Action Buttons */}
-      <div className="px-4 pb-4 border-t border-gray-100 flex gap-3">
+      <div className="px-4 pb-4 border-t border-gray-100 dark:border-gray-700 flex gap-3">
         <Button
           variant="outline"
           className="flex-1 flex items-center justify-center gap-2"
@@ -162,24 +166,27 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
               {comments.map((comment) => (
                 <li
                   key={comment._id}
-                  className="bg-gray-50 rounded-lg p-3 shadow-sm relative"
+                  className="bg-gray-50 dark:bg-gray-800 rounded-lg p-3 shadow-sm relative"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-medium text-sm">
+                    <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-300 font-medium text-sm">
                       {comment.userId?.name?.[0] || "U"}
                     </div>
                     <div className="flex-1">
-                      <div className="text-xs text-gray-500 mt-1">
+                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                         {comment.userId?.name || "Anonymous"} <br />
                         {new Date(comment.createdAt).toLocaleString()}
                       </div>
-                      <p className="text-gray-800">{comment.content}</p>
+                      <p className="text-gray-800 dark:text-gray-100">
+                        {comment.content}
+                      </p>
                     </div>
                     {(currentUser._id === comment.userId?._id ||
                       currentUser._id === thread.userId) && (
                       <button
                         title="Delete"
                         onClick={() => handleDeleteComment(comment._id)}
+                        className="text-red-500 dark:text-red-400"
                       >
                         <Delete />
                       </button>
@@ -189,7 +196,7 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-gray-500 italic">
+            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
               No comments yet. Be the first!
             </p>
           )}
@@ -202,7 +209,7 @@ function ThreadCard({ thread, currentUser, handleThreadDelete }) {
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder="Write a comment..."
-              className="flex-1"
+              className="flex-1 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-600"
             />
             <Button type="submit" className="px-4 py-2">
               Post

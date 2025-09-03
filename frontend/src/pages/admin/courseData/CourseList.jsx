@@ -7,8 +7,8 @@ import CourseDataTable from "./courseDataTable";
 function CourseList() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
-  const [sortBy, setSortBy] = useState("none"); // enrolled, rating, price
-  const [sortOrder, setSortOrder] = useState("high"); // high or low
+  const [sortBy, setSortBy] = useState("none");
+  const [sortOrder, setSortOrder] = useState("high");
   const [totalCourses, setTotalCourses] = useState(0);
 
   const API_URL = "http://localhost:8000/api";
@@ -29,11 +29,9 @@ function CourseList() {
     fetchCourses();
   }, []);
 
-  // Apply sorting whenever sortBy or sortOrder changes
   useEffect(() => {
     let sorted = [...courses];
-
-    const multiplier = sortOrder === "high" ? -1 : 1; // -1 for high->low, 1 for low->high
+    const multiplier = sortOrder === "high" ? -1 : 1;
 
     if (sortBy === "enrolled") {
       sorted.sort(
@@ -54,17 +52,29 @@ function CourseList() {
   }, [sortBy, sortOrder, courses]);
 
   return (
-    <div className="max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">All Courses</h1>
+    <div className="max-w-6xl mx-auto p-4">
+      {/* Title & Count */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4">
+        <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
+          All Courses
+        </h1>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
+          Total:{" "}
+          <span className="font-semibold text-gray-800 dark:text-gray-200">
+            {totalCourses}
+          </span>
+        </span>
+      </div>
 
-      <div className="mb-4 flex items-center gap-10">
-        {/* Sorting criterion */}
+      {/* Sorting Controls */}
+      <div className="mb-4 flex flex-wrap items-center gap-10 text-sm">
+        {/* Sort by */}
         <div>
           <h2 className="font-semibold text-lg">Sort by:</h2>
           <RadioGroup
             defaultValue="none"
             onValueChange={setSortBy}
-            className="flex gap-4"
+            className="flex gap-4 mt-2"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="none" id="none" />
@@ -72,7 +82,7 @@ function CourseList() {
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="enrolled" id="enrolled" />
-              <label htmlFor="enrolled">Enrolled Students</label>
+              <label htmlFor="enrolled">Enrolled</label>
             </div>
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="rating" id="rating" />
@@ -85,13 +95,13 @@ function CourseList() {
           </RadioGroup>
         </div>
 
-        {/* Sorting order */}
+        {/* Order */}
         <div>
           <h2 className="font-semibold text-lg">Order:</h2>
           <RadioGroup
             defaultValue="high"
             onValueChange={setSortOrder}
-            className="flex gap-4"
+            className="flex gap-4 mt-2"
           >
             <div className="flex items-center space-x-2">
               <RadioGroupItem value="high" id="high" />
@@ -105,8 +115,7 @@ function CourseList() {
         </div>
       </div>
 
-      <h1 className="pb-4 font-semibold">Total courses: {totalCourses}</h1>
-
+      {/* Table */}
       <CourseDataTable data={filteredCourses} />
     </div>
   );

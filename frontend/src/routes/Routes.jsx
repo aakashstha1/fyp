@@ -38,19 +38,59 @@ import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
 import Courses from "@/pages/courses/Courses";
 import CourseList from "@/pages/admin/courseData/CourseList";
+<<<<<<< HEAD
+=======
+import Assignment from "@/pages/assignment/assignment";
+import PageNotFound from "@/components/PageNotFound";
+import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
+>>>>>>> af392c9df4be13483cfd3b78267a6a39416389ea
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
+<<<<<<< HEAD
           <Route index element={<Home />} />
           <Route path="login" element={<Login />} />
           <Route path="signup" element={<Signup />} />
           <Route path="contact" element={<Contact />} />
+=======
+          <Route
+            index
+            element={
+              <ProtectedRoute roles={["instructor", "enrollee"]}>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="login"
+            element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="signup"
+            element={
+              <PublicRoute>
+                <Signup />
+              </PublicRoute>
+            }
+          />
+>>>>>>> af392c9df4be13483cfd3b78267a6a39416389ea
           <Route path="about" element={<About />} />
           <Route path="my-docs" element={<MyDoc />} />
-          <Route path="my-learning" element={<MyLearning />} />
+          <Route
+            path="my-learning"
+            element={
+              <ProtectedRoute roles={["instructor", "enrollee"]}>
+                <MyLearning />
+              </ProtectedRoute>
+            }
+          />
           <Route path="courses" element={<Courses />} />
           <Route path="quiz-start" element={<QuizViewer />} />
           <Route path="editor/:docId" element={<DocEditor />} />
@@ -58,7 +98,14 @@ function AppRoutes() {
           <Route path="my-board" element={<Board />} />
           <Route path="profile/:userId" element={<Profile />} />
           <Route path="chat" element={<Chat />} />
-          <Route path="apply-for-instructor" element={<ApplyInstructor />} />
+          <Route
+            path="apply-for-instructor"
+            element={
+              <ProtectedRoute roles={["enrollee"]}>
+                <ApplyInstructor />
+              </ProtectedRoute>
+            }
+          />
           <Route path="ViewQuestion" element={<QuizViewer />} />
           <Route path="leaderboard" element={<Leaderboard />} />
           <Route path="discussion" element={<ForumView />} />
@@ -69,9 +116,15 @@ function AppRoutes() {
             element={<StudyContainer />}
           />
           //Instructor Dashboard
-          <Route path="dashboard" element={<Sidebar />}>
+          <Route
+            path="dashboard"
+            element={
+              <ProtectedRoute roles={["instructor"]}>
+                <Sidebar />
+              </ProtectedRoute>
+            }
+          >
             <Route index element={<Dashboard />} />
-
             <Route path="course" element={<CourseTable />} />
             <Route path="course/create" element={<AddCourse />} />
             <Route path="course/edit/:courseId" element={<EditCourse />} />
@@ -87,7 +140,14 @@ function AppRoutes() {
           </Route>
         </Route>
         //Admin routes
-        <Route path="/admin" element={<AdminSidebar />}>
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute roles={["admin"]}>
+              <AdminSidebar />
+            </ProtectedRoute>
+          }
+        >
           <Route path="Add-Quiz" element={<AddQuestionsLayout />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="instructor-request" element={<InstructorReq />} />
@@ -100,6 +160,7 @@ function AppRoutes() {
           <Route path="courses" element={<CourseList />} />
            <Route path="feedbacks" element={<Feedbacks />} />
         </Route>
+        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </BrowserRouter>
   );

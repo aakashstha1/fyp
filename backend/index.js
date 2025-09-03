@@ -15,6 +15,7 @@ import courseRoutes from "./routes/course.route.js";
 import ratingRoutes from "./routes/rating.routes.js";
 // import paymentRoutes from "./routes/payment.route.js";
 import enrollmentRoutes from "./routes/enrollment.route.js";
+import statsRoutes from "./routes/stats.route.js";
 
 import feedbackRoutes from "./routes/feedbackroute.js";
 
@@ -41,6 +42,8 @@ app.use("/api/quize", quize);
 app.use("/api/thread", threadRoutes);
 app.use("/api/course", courseRoutes);
 app.use("/api/rating", ratingRoutes);
+app.use("/api/stats", statsRoutes);
+
 // app.use("/api/payment", paymentRoutes);
 app.use("/api/enroll", enrollmentRoutes);
 

@@ -154,3 +154,38 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+//  Update User Niches (Learning Preferences)
+export const updateUserNiches = async (req, res) => {
+  try {
+    const { id } = req.params; // userId from URL
+    const { niches } = req.body; // should be an array
+
+    if (!niches || !Array.isArray(niches) || niches.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Please select at least one niche" });
+    }
+
+    const user = await User.findByIdAndUpdate(
+      id,
+      { niches },
+      { new: true, runValidators: true }
+    );
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Niches updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Error updating niches:", error);
+    res.status(500).json({ success: false, message: "Server Error" });
+  }
+};

@@ -1,12 +1,12 @@
 import React from "react";
-import Chart from "./DashboardComponents/Chart";
-import TopContributors from "./DashboardComponents/TopContributers";
-import TopRatedCourses from "./DashboardComponents/TopRated";
-import TopEnrolledCourses from "./DashboardComponents/TopEnrolled";
+import TopContributors from "../../components/DashboardComponents/TopContributers";
+import TopRatedCourses from "../../components/DashboardComponents/TopRated";
+import TopEnrolledCourses from "../../components/DashboardComponents/TopEnrolled";
+import AdminChart from "../../components/DashboardComponents/AdminChart";
 
 function AdminDashboard() {
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen p-6">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
@@ -17,7 +17,7 @@ function AdminDashboard() {
           </p>
         </div>
 
-        <Chart />
+        <AdminChart />
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           <TopRatedCourses />

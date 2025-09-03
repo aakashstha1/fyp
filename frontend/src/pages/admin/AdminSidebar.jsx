@@ -12,11 +12,17 @@ import {
 import React from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+<<<<<<< HEAD
  import { MessageSquare } from "lucide-react"; // replace ClipboardList
 const API_URL = "http://localhost:8000/api";
+=======
+import { FaBookOpenReader } from "react-icons/fa6";
+
+>>>>>>> af392c9df4be13483cfd3b78267a6a39416389ea
 function AdminSidebar() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
+  const API_URL = "http://localhost:8000/api";
   const navLinkClasses = ({ isActive }) =>
     `flex items-center gap-3 p-2 rounded-md transition-all duration-200 ${
       isActive
@@ -41,17 +47,15 @@ function AdminSidebar() {
         {/* Top Part */}
         <div>
           <Link to="/">
-            <div className="flex items-center gap-2 mb-8">
-              {/* <figure className="h-[40px] w-[40px] flex justify-center items-center overflow-hidden">
-                <img
-                  src="/2.png"
-                  alt="logo.png"
-                  className="h-full w-full object-cover"
-                />
-              </figure> */}
-              <h2 className="hidden md:block font-extrabold text-2xl">
-                E-Learning
-              </h2>
+            <div
+              className="flex items-center gap-2 cursor-pointer text-2xl font-bold mb-8"
+              onClick={() => navigate("/")}
+            >
+              <FaBookOpenReader fill="#1a2539" />
+              <div>
+                <span className="text-[#1a2539]">Edu</span>
+                <span className="text-amber-500">Pal</span>
+              </div>
             </div>
           </Link>
 

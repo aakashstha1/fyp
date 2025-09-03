@@ -3,6 +3,7 @@ import {
   getUser,
   requestInstructorRole,
   updateProfile,
+  updateUserNiches,
 } from "../controllers/user.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import upload from "../utils/multer.js";
@@ -25,6 +26,10 @@ router.post(
   ]),
   requestInstructorRole
 );
+<<<<<<< HEAD
 router.post("/feedback", submitFeedback);
+=======
+router.route("/niches/:id").post(updateUserNiches);
+>>>>>>> af392c9df4be13483cfd3b78267a6a39416389ea
 
 export default router;

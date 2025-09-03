@@ -1,8 +1,16 @@
 import { useState, useEffect } from "react";
 import { PlayCircle, FileText, MessageCircle, CheckCircle } from "lucide-react";
+import Assignment from "../assignment/assignment";
+import { Button } from "@headlessui/react";
+import { useParams } from "react-router-dom";
 
-export default function StudyTopicList({ lectures = [], onSelectLesson }) {
+export default function StudyTopicList({
+  lectures = [],
+  onSelectLesson,
+  handleAssignment,
+}) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const { courseId } = useParams();
 
   // Automatically select the first lecture when lectures prop changes
   useEffect(() => {
@@ -13,6 +21,7 @@ export default function StudyTopicList({ lectures = [], onSelectLesson }) {
   }, [lectures, onSelectLesson]);
 
   const handleClick = (lesson, i) => {
+    
     setActiveIndex(i);
     onSelectLesson(lesson);
   };
@@ -38,12 +47,15 @@ export default function StudyTopicList({ lectures = [], onSelectLesson }) {
               {lesson.type === "Commit" && <CheckCircle size={18} />}
               {lesson.lectureTitle}
             </span>
-            {lesson.duration && (
-              <span className="text-sm text-gray-500">{lesson.duration}</span>
-            )}
           </li>
         ))}
       </ul>
+      <Button
+        className={"p-2 rounded-md cursor-pointer"}
+        onClick={handleAssignment}
+      >
+        Assignment
+      </Button>
     </aside>
   );
 }

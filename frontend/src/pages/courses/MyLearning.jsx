@@ -33,7 +33,7 @@ function MyLearning() {
             <p className="text-xl text-center text-gray-600">
               You have not enrolled in any course yet.
             </p>
-            <Link to={"/"}>
+            <Link to={"/courses"}>
               <Button>
                 Enroll now
                 <ArrowRight />

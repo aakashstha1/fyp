@@ -6,7 +6,7 @@ import UserDatatable from "./userDataTable";
 function UserList() {
   const [users, setUsers] = useState([]);
   const [roleFilter, setRoleFilter] = useState("all");
-  const [totalUsers, setTotalUsers] = useState("");
+  const [totalUsers, setTotalUsers] = useState(0);
 
   const API_URL = "http://localhost:8000/api";
 
@@ -16,20 +16,23 @@ function UserList() {
         const res = await axios.get(`${API_URL}/admin/user-list`, {
           withCredentials: true,
         });
-        setTotalUsers(res?.data?.total);
-        const formatted = res.data.users.map((u) => ({
-          user: u, // wrap to match DataTable expectation
-        }));
+
+        const formatted = res?.data?.users?.map((u) => ({ user: u })) || [];
+
         setUsers(formatted);
+        setTotalUsers(res?.data?.total || formatted.length);
       } catch (err) {
-        console.error("Failed to fetch users:", err);
+        console.error("❌ Failed to fetch users:", err);
       }
     };
+
     fetchUsers();
   }, []);
 
+  // Extract unique roles
   const roles = ["all", ...new Set(users.map((u) => u.user.role))];
 
+  // Apply filter
   const filteredUsers =
     roleFilter === "all"
       ? users
@@ -39,26 +42,32 @@ function UserList() {
     <div className="max-w-6xl mx-auto">
       <h1 className="text-2xl font-bold mb-4">All Users</h1>
 
-      <div className="mb-4 flex items-center gap-5">
-        <h2 className="font-semibold text-lg">Filter by Role:</h2>
-        <RadioGroup
-          defaultValue="all"
-          onValueChange={setRoleFilter}
-          className="flex gap-4"
-        >
-          {roles.map((role) => (
-            <div key={role} className="flex items-center space-x-2">
-              <RadioGroupItem value={role} id={role} />
-              <label htmlFor={role}>
-                {role.charAt(0).toUpperCase() + role.slice(1)}
-              </label>
-            </div>
-          ))}
-        </RadioGroup>
+      {/* Role Filter (similar to sort in courses) */}
+      <div className="mb-4 flex items-center gap-10">
+        <div>
+          <h2 className="font-semibold text-lg">Filter by Role:</h2>
+          <RadioGroup
+            defaultValue="all"
+            onValueChange={setRoleFilter}
+            className="flex gap-4"
+          >
+            {roles.map((role) => (
+              <div key={role} className="flex items-center space-x-2">
+                <RadioGroupItem value={role} id={role} />
+                <label htmlFor={role}>
+                  {role.charAt(0).toUpperCase() + role.slice(1)}
+                </label>
+              </div>
+            ))}
+          </RadioGroup>
+        </div>
       </div>
+
+      {/* Total count */}
       <h1 className="pb-4 font-semibold">Total users: {totalUsers}</h1>
 
-      <UserDatatable data={filteredUsers} showStatus={false} showRole={true} />
+      {/* User Table */}
+      <UserDatatable data={filteredUsers} showRole={true} />
     </div>
   );
 }
