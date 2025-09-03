@@ -28,8 +28,12 @@ export default function StudyContainer() {
     };
     if (courseId) fetchLecture();
   }, [courseId]);
-  const handleAssignment = () => {
-    setAssignment(true);
+  const handleAssignment = (type) => {
+    if (type === "assignment") {
+      setAssignment(true);
+    } else {
+      setAssignment(false);
+    }
   };
   return (
     <div className="grid grid-cols-12 h-screen bg-gray-100">

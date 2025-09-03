@@ -21,7 +21,7 @@ export default function StudyTopicList({
   }, [lectures, onSelectLesson]);
 
   const handleClick = (lesson, i) => {
-    
+    handleAssignment("lecture");
     setActiveIndex(i);
     onSelectLesson(lesson);
   };
@@ -52,7 +52,7 @@ export default function StudyTopicList({
       </ul>
       <Button
         className={"p-2 rounded-md cursor-pointer"}
-        onClick={handleAssignment}
+        onClick={() => handleAssignment("assignment")}
       >
         Assignment
       </Button>
