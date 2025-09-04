@@ -14,7 +14,6 @@ export default function QuizViewer() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch quiz
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
@@ -35,7 +34,6 @@ export default function QuizViewer() {
     fetchQuiz();
   }, []);
 
-  // Timer
   useEffect(() => {
     if (!quiz || submitted) return;
     if (timeLeft <= 0) handleSubmit();
@@ -53,10 +51,9 @@ export default function QuizViewer() {
     setSubmitted(true);
 
     try {
-      console.log(answers);
       const res = await axios.post(
         "http://localhost:8000/api/quize/submit",
-        { answers }, // Already letters
+        { answers },
         { withCredentials: true }
       );
 
@@ -70,72 +67,109 @@ export default function QuizViewer() {
   };
 
   if (loading)
-    return <p className="text-center p-10 animate-pulse">Loading quiz...</p>;
-  if (error) return <p className="text-center p-10 text-red-600">{error}</p>;
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <p className="text-gray-500 text-lg animate-pulse">Loading quiz...</p>
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center min-h-[50vh]">
+        <p className="text-red-600 text-lg font-semibold bg-red-100 px-6 py-3 rounded shadow">
+          {error}
+        </p>
+      </div>
+    );
+
   if (!quiz) return null;
 
   return (
-    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen p-6">
-      <h2 className="text-4xl font-bold text-center mb-8">{quiz.title}</h2>
-
-      {quiz.questions?.map((q, idx) => {
-        const correctLetter = q.answer;
-
-        return (
-          <div key={q._id || idx} className="bg-white p-6 rounded shadow mb-6">
-            <h3 className="mb-4">
-              {idx + 1}. {q.question}
-            </h3>
-            <ul className="space-y-2">
-              {q.options.map((option, optIndex) => {
-                const letter = ["A", "B", "C", "D"][optIndex];
-                const isSelected = answers[q._id] === letter;
-                const isCorrect = submitted && letter === correctLetter;
-                const isWrong = submitted && isSelected && !isCorrect;
-
-                return (
-                  <li key={optIndex}>
-                    <label
-                      className={`flex items-center p-2 rounded border cursor-pointer
-                      ${
-                        isCorrect
-                          ? "bg-green-100 border-green-400"
-                          : isWrong
-                          ? "bg-red-100 border-red-400"
-                          : isSelected
-                          ? "bg-blue-100 border-blue-400"
-                          : "border-gray-200"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name={`q-${idx}`}
-                        checked={isSelected}
-                        onChange={() => handleAnswerChange(q._id, letter)}
-                        disabled={submitted}
-                        className="mr-2"
-                      />
-                      <span className="font-bold mr-2">{letter}.</span>
-                      <span>{option}</span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
+    <div className="bg-gray-50 dark:bg-gray-900 min-h-screen p-6">
+      <div className="max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-extrabold text-gray-900 dark:text-gray-100 mb-2">
+            {quiz.title}
+          </h1>
+          <div className="relative w-full h-4 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner mt-2">
+            <div
+              className="absolute top-0 left-0 h-4 bg-gradient-to-r from-green-400 via-yellow-400 to-red-500 transition-all duration-500"
+              style={{ width: `${(timeLeft / 60) * 100}%` }}
+            />
           </div>
-        );
-      })}
-
-      {!submitted && (
-        <div className="text-center mt-6">
-          <button
-            onClick={handleSubmit}
-            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-          >
-            Submit Quiz
-          </button>
+          <p className="mt-1 text-gray-700 dark:text-gray-300 font-medium">
+            Time Left: {timeLeft}s
+          </p>
         </div>
-      )}
+
+        {/* Questions */}
+        {quiz.questions?.map((q, idx) => {
+          const correctLetter = q.answer;
+          return (
+            <div
+              key={q._id || idx}
+              className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md mb-6 border border-gray-200 dark:border-gray-700 hover:shadow-lg transition"
+            >
+              <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+                {idx + 1}. {q.question}
+              </h2>
+              <ul className="space-y-3">
+                {q.options.map((option, optIndex) => {
+                  const letter = ["A", "B", "C", "D"][optIndex];
+                  const isSelected = answers[q._id] === letter;
+                  const isCorrect = submitted && letter === correctLetter;
+                  const isWrong = submitted && isSelected && !isCorrect;
+
+                  return (
+                    <li key={optIndex}>
+                      <label
+                        className={`flex items-center p-4 rounded-xl cursor-pointer border transition transform hover:scale-[1.02]
+                          ${
+                            isCorrect
+                              ? "bg-green-50 border-green-400"
+                              : isWrong
+                              ? "bg-red-50 border-red-400"
+                              : isSelected
+                              ? "bg-blue-50 border-blue-400"
+                              : "bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                          }
+                        `}
+                      >
+                        <input
+                          type="radio"
+                          name={`q-${idx}`}
+                          checked={isSelected}
+                          onChange={() => handleAnswerChange(q._id, letter)}
+                          disabled={submitted}
+                          className="mr-3 w-5 h-5 text-blue-600 accent-blue-600"
+                        />
+                        <span className="font-bold text-gray-700 dark:text-gray-200 mr-3">
+                          {letter}.
+                        </span>
+                        <span className="text-gray-800 dark:text-gray-100">
+                          {option}
+                        </span>
+                      </label>
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          );
+        })}
+
+        {!submitted && (
+          <div className="flex justify-center mt-8">
+            <button
+              onClick={handleSubmit}
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-8 py-3 rounded-2xl font-semibold shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300"
+            >
+              Submit Quiz
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
