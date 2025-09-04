@@ -8,10 +8,13 @@ function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/quize/leaderboard");
-        setData(res.data);
+        const res = await axios.get(
+          "http://localhost:8000/api/quize/leaderboard"
+        );
+        setData(res.data.leaderboard || []);
       } catch (err) {
         setError("Failed to fetch leaderboard.");
+        console.error(err);
       }
     };
 
@@ -31,6 +34,7 @@ function Leaderboard() {
       </h1>
 
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
+        {/* Header */}
         <div className="grid grid-cols-4 bg-gray-100 text-gray-700 font-semibold text-sm sm:text-base px-6 py-3">
           <div>#</div>
           <div>User</div>
@@ -38,6 +42,7 @@ function Leaderboard() {
           <div>Date</div>
         </div>
 
+        {/* Entries */}
         {data.length === 0 ? (
           <div className="text-center text-gray-500 py-10">No records yet.</div>
         ) : (
@@ -53,7 +58,7 @@ function Leaderboard() {
               <div className="font-bold text-blue-600">
                 {entry.score} / {entry.total}
               </div>
-              <div>{new Date(entry.date).toLocaleDateString()}</div>
+              <div>{new Date(entry.createdAt).toLocaleDateString()}</div>
             </div>
           ))
         )}

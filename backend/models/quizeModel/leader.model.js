@@ -1,21 +1,20 @@
 import mongoose from "mongoose";
 
-const leaderboardSchema = new mongoose.Schema({
-  userId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+const leaderboardSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      require: true,
+    },
+    score: {
+      type: Number,
+    },
+    total: {
+      type: Number,
+    },
   },
-  score: {
-    type: Number,
-  },
-  total: {
-    type: Number,
-  },
-  date: {
-    type: Date,
-    default: Date.now,
-  },
-});
-
+  { timestamps: true }
+);
 
 export default mongoose.model("Leaderboard", leaderboardSchema);

@@ -105,6 +105,8 @@ function AppRoutes() {
             path="/course/:courseId/progress"
             element={<StudyContainer />}
           />
+
+          
           //Instructor Dashboard
           <Route
             path="dashboard"

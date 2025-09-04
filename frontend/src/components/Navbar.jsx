@@ -77,6 +77,11 @@ function Navbar() {
               <NavLink to="/my-learning" className={navLinkClass}>
                 My Learning
               </NavLink>
+
+              <NavLink to="/quiz-start" className={navLinkClass}>
+                Play Quiz
+              </NavLink>
+
               <DropdownMenu>
                 <DropdownMenuTrigger className="focus:outline-none">
                   Note
@@ -194,6 +199,7 @@ function Navbar() {
                     My Learning
                   </NavLink>
                 </SheetClose>
+
                 <SheetClose asChild>
                   <NavLink to="/discussion" className={navLinkClass}>
                     Discussion

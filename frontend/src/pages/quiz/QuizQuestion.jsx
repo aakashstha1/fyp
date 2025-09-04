@@ -1,25 +1,42 @@
-import React from "react";
-import QuizOption from "./QuizOption";
+import React, { useState } from "react";
 
-function QuizQuestion({ question, index, onAnswer }) {
+export default function QuizQuestion({ index, question, onAnswer, darkMode }) {
+  const [selected, setSelected] = useState(null);
+
+  const handleSelect = (option) => {
+    setSelected(option);
+    onAnswer(option);
+  };
+
   return (
-    <div className="bg-gray-800 p-4 rounded-lg">
-      <h4 className="text-white font-semibold">
-        {index + 1}. {question.questionText}
-      </h4>
-      <ul className="mt-2 space-y-1">
-        {question.options.map((opt, i) => (
-          <QuizOption
-            key={i}
-            option={opt}
-            name={`question_${index}`}
-            id={`q${index}_opt${i}`}
-            onChange={() => onAnswer(opt)} // when user selects this option
-          />
+    <div
+      className={`p-6 rounded-2xl border transition-all duration-300 ${
+        darkMode
+          ? "bg-gray-800 border-gray-700 text-gray-100"
+          : "bg-white border-gray-200 text-gray-900"
+      } shadow-lg hover:shadow-2xl`}
+    >
+      <h3 className="text-lg font-semibold mb-4">
+        Q{index}. {question.questionText}
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        {question.options.map((opt, idx) => (
+          <button
+            key={idx}
+            onClick={() => handleSelect(opt)}
+            className={`p-4 rounded-lg border text-left font-medium transition-all duration-300 shadow ${
+              selected === opt
+                ? "bg-blue-600 text-white border-blue-600"
+                : darkMode
+                ? "bg-gray-700 border-gray-600 text-gray-100 hover:bg-gray-600"
+                : "bg-gray-100 border-gray-300 hover:bg-gray-200"
+            }`}
+          >
+            {opt}
+          </button>
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
-
-export default QuizQuestion;

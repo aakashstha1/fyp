@@ -6,115 +6,108 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import axios from "axios";
 
-export default function AddQuestionForm({ userId }) {
-  const [questionText, setQuestionText] = useState("");
-  const [options, setOptions] = useState(["", ""]);
-  const [correctAnswer, setCorrectAnswer] = useState("");
+export default function AddQuizForm({ userId }) {
+  const [title, setTitle] = useState("");
+  const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  const addOptionField = () => {
-    setOptions([...options, ""]);
-  };
-
-  const handleOptionChange = (index, value) => {
-    const newOptions = [...options];
-    newOptions[index] = value;
-    setOptions(newOptions);
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0]);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!questionText || options.some((opt) => !opt) || !correctAnswer) {
-      toast.error("Please fill in all fields.");
+    if (!title) {
+      toast.error("Quiz title is required.");
       return;
     }
-
-    if (!options.includes(correctAnswer)) {
-      toast.error("Correct answer must match one of the options.");
+    if (!file) {
+      toast.error("CSV file is required.");
       return;
     }
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:8000/api/quize/add", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userId,
-          questionText,
-          options,
-          correctAnswer,
-        }),
-      });
 
-      const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.message || "Failed to add question.");
-      } else {
-        toast.success("Question added successfully!");
-        setQuestionText("");
-        setOptions(["", ""]);
-        setCorrectAnswer("");
-        setCategory("");
-      }
+      const formData = new FormData();
+      formData.append("title", title);
+      formData.append("file", file);
+      formData.append("userId", userId); // optional if backend uses JWT
+
+      const res = await axios.post(
+        "http://localhost:8000/api/quize/add",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          withCredentials: true, // if you need cookies/auth
+        }
+      );
+
+      toast.success(res.data.message || "Quiz uploaded successfully!");
+      setTitle("");
+      setFile(null);
     } catch (error) {
-      toast.error("Something went wrong.");
+      console.error(error);
+      if (error.response?.data?.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error("Something went wrong while uploading the quiz.");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Card className="max-w-xl mx-auto mt-10 p-4">
-      <CardContent className="space-y-4">
-        <h2 className="text-xl font-bold text-center text-indigo-600">
-          Add Quiz Question
+    <Card className="max-w-2xl mx-auto mt-12 p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+      <CardContent className="space-y-6">
+        <h2 className="text-2xl font-bold text-center text-indigo-600">
+          Add Quiz from CSV
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Quiz Title */}
           <div>
-            <Label>Question Text</Label>
+            <Label className="mb-1">Quiz Title</Label>
             <Input
-              value={questionText}
-              onChange={(e) => setQuestionText(e.target.value)}
-              placeholder="Enter your question"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Enter quiz title"
+              className="border-gray-300 focus:ring-indigo-500 focus:border-indigo-500"
             />
           </div>
 
-          <div className="space-y-2">
-            <Label>Options</Label>
-            {options.map((option, index) => (
-              <Input
-                key={index}
-                value={option}
-                onChange={(e) => handleOptionChange(index, e.target.value)}
-                placeholder={`Option ${index + 1}`}
-                className="mb-2"
-              />
-            ))}
-            <Button type="button" variant="secondary" onClick={addOptionField}>
-              Add Option
-            </Button>
-          </div>
-
+          {/* CSV File Upload */}
           <div>
-            <Label>Correct Answer</Label>
-            <Input
-              value={correctAnswer}
-              onChange={(e) => setCorrectAnswer(e.target.value)}
-              placeholder="Must match one of the options"
+            <Label className="mb-1">Upload CSV File</Label>
+            <input
+              type="file"
+              accept=".csv"
+              onChange={handleFileChange}
+              className="block w-full text-gray-700 border border-gray-300 rounded px-3 py-2 cursor-pointer"
             />
+            {file && (
+              <p className="mt-2 text-sm text-gray-600">
+                Selected file:{" "}
+                <span className="font-semibold">{file.name}</span>
+              </p>
+            )}
           </div>
 
+          {/* Submit Button */}
           <Button type="submit" className="w-full" disabled={loading}>
-            {loading ? "Submitting..." : "Add Question"}
+            {loading ? "Uploading..." : "Upload Quiz"}
           </Button>
         </form>
       </CardContent>
     </Card>
   );
 }
+   

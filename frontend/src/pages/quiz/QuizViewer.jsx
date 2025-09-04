@@ -1,111 +1,136 @@
+"use client";
+
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useAuth } from "@/contexts/AuthContext";
-import QuizQuestion from "./QuizQuestion";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
-function QuizViewer() {
-  const { currentUser } = useAuth();
-  const [questionData, setQuestionData] = useState(null);
-  const [error, setError] = useState(null);
+export default function QuizViewer() {
+  const [quiz, setQuiz] = useState(null);
   const [answers, setAnswers] = useState({});
-  const [timeLeft, setTimeLeft] = useState(60); // 1 minute
+  const [timeLeft, setTimeLeft] = useState(60);
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
+  // Fetch quiz
   useEffect(() => {
-    const fetchQuestions = async () => {
+    const fetchQuiz = async () => {
       try {
-        const res = await axios.post("http://localhost:8000/api/quize/view", {
-          userId: currentUser,
-        });
-        setQuestionData(res.data);
+        const res = await axios.post(
+          "http://localhost:8000/api/quize/view",
+          {},
+          { withCredentials: true }
+        );
+        if (res.data.quizzes?.length > 0) setQuiz(res.data.quizzes[0]);
+        else setError("No quiz available right now.");
       } catch (err) {
-        setError("Failed to fetch questions.");
+        console.error(err);
+        setError("Failed to fetch quiz.");
+      } finally {
+        setLoading(false);
       }
     };
+    fetchQuiz();
+  }, []);
 
-    if (currentUser) fetchQuestions();
-  }, [currentUser]);
-
+  // Timer
   useEffect(() => {
-    if (!submitted && timeLeft > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-      return () => clearInterval(timer);
-    } else if (timeLeft === 0 && !submitted) {
-      handleSubmit();
-    }
-  }, [timeLeft, submitted]);
+    if (!quiz || submitted) return;
+    if (timeLeft <= 0) handleSubmit();
 
-  const handleAnswerChange = (questionId, selectedOption) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: selectedOption }));
+    const timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft, submitted, quiz]);
+
+  const handleAnswerChange = (questionId, selectedLetter) => {
+    setAnswers((prev) => ({ ...prev, [questionId]: selectedLetter }));
   };
 
   const handleSubmit = async () => {
+    if (submitted) return;
     setSubmitted(true);
-    try {
-      const res = await axios.post("http://localhost:8000/api/quize/submit", {
-        userId: currentUser,
-        answers,
-      });
 
-      // Show success message then navigate
-      alert("✅ Quiz submitted successfully! Redirecting to leaderboard...");
-      navigate("/leaderboard"); // change path as per your route
+    try {
+      console.log(answers);
+      const res = await axios.post(
+        "http://localhost:8000/api/quize/submit",
+        { answers }, // Already letters
+        { withCredentials: true }
+      );
+
+      toast.success(`Score: ${res.data.score}/${res.data.total}`);
+      navigate("/leaderboard");
     } catch (err) {
-      alert("❌ Submission failed. Please try again.");
+      console.error(err);
+      toast.error(err.response?.data?.message || "Submission failed.");
+      setSubmitted(false);
     }
   };
 
-  if (error)
-    return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <p className="text-red-600 text-lg font-semibold bg-red-100 px-4 py-2 rounded shadow">
-          {error}
-        </p>
-      </div>
-    );
-
-  if (!questionData)
-    return (
-      <div className="flex justify-center items-center min-h-[50vh]">
-        <p className="text-gray-600 text-lg font-medium animate-pulse">
-          Loading quiz...
-        </p>
-      </div>
-    );
+  if (loading)
+    return <p className="text-center p-10 animate-pulse">Loading quiz...</p>;
+  if (error) return <p className="text-center p-10 text-red-600">{error}</p>;
+  if (!quiz) return null;
 
   return (
-    <div className="px-4 sm:px-6 lg:px-8 py-8 max-w-4xl mx-auto">
-      <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
-        🧠 Quiz Time!
-      </h2>
-      <div className="text-center text-red-500 text-lg font-semibold mb-6">
-        ⏳ Time Left: {timeLeft}'s
-      </div>
+    <div className="bg-gray-100 dark:bg-gray-900 min-h-screen p-6">
+      <h2 className="text-4xl font-bold text-center mb-8">{quiz.title}</h2>
 
-      <div className="space-y-6">
-        {questionData.questions.map((q, idx) => (
-          <div
-            key={q._id || idx}
-            className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-shadow border border-gray-200"
-          >
-            <QuizQuestion
-              index={idx}
-              question={q}
-              onAnswer={(selected) => handleAnswerChange(q._id, selected)}
-            />
+      {quiz.questions?.map((q, idx) => {
+        const correctLetter = q.answer;
+
+        return (
+          <div key={q._id || idx} className="bg-white p-6 rounded shadow mb-6">
+            <h3 className="mb-4">
+              {idx + 1}. {q.question}
+            </h3>
+            <ul className="space-y-2">
+              {q.options.map((option, optIndex) => {
+                const letter = ["A", "B", "C", "D"][optIndex];
+                const isSelected = answers[q._id] === letter;
+                const isCorrect = submitted && letter === correctLetter;
+                const isWrong = submitted && isSelected && !isCorrect;
+
+                return (
+                  <li key={optIndex}>
+                    <label
+                      className={`flex items-center p-2 rounded border cursor-pointer
+                      ${
+                        isCorrect
+                          ? "bg-green-100 border-green-400"
+                          : isWrong
+                          ? "bg-red-100 border-red-400"
+                          : isSelected
+                          ? "bg-blue-100 border-blue-400"
+                          : "border-gray-200"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name={`q-${idx}`}
+                        checked={isSelected}
+                        onChange={() => handleAnswerChange(q._id, letter)}
+                        disabled={submitted}
+                        className="mr-2"
+                      />
+                      <span className="font-bold mr-2">{letter}.</span>
+                      <span>{option}</span>
+                    </label>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
-        ))}
-      </div>
+        );
+      })}
 
       {!submitted && (
-        <div className="flex justify-center mt-10">
+        <div className="text-center mt-6">
           <button
             onClick={handleSubmit}
-            className="bg-blue-600 text-white px-6 py-3 rounded-lg text-lg font-medium hover:bg-blue-700 shadow-md transition-all"
+            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
           >
             Submit Quiz
           </button>
@@ -114,5 +139,3 @@ function QuizViewer() {
     </div>
   );
 }
-
-export default QuizViewer;
