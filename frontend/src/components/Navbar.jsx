@@ -12,7 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { Menu } from "lucide-react";
+import { ChevronDown, Menu } from "lucide-react";
 import {
   Dialog,
   DialogClose,
@@ -78,8 +78,9 @@ function Navbar() {
                 My Learning
               </NavLink>
               <DropdownMenu>
-                <DropdownMenuTrigger className="focus:outline-none">
-                  Note
+                <DropdownMenuTrigger className="flex items-center gap-1 focus:outline-none cursor-pointer">
+                  <span>Note</span>
+                  <ChevronDown className="w-4 h-4" />
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <NavLink to="/my-docs">
@@ -97,7 +98,7 @@ function Navbar() {
         {currentUser ? (
           <div className="flex items-center gap-8">
             <DropdownMenu>
-              <DropdownMenuTrigger className="focus:outline-none">
+              <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
                 <Avatar>
                   <AvatarImage src={currentUser?.imageUrl} alt="@user" />
                   <AvatarFallback>U</AvatarFallback>
@@ -199,11 +200,11 @@ function Navbar() {
                     Discussion
                   </NavLink>
                 </SheetClose>
-                <SheetClose asChild>
+                {/* <SheetClose asChild>
                   <NavLink to="/my-docs" className={navLinkClass}>
                     Write Note
                   </NavLink>
-                </SheetClose>
+                </SheetClose> */}
                 {currentUser?.role === "instructor" && (
                   <SheetClose asChild>
                     <Button onClick={() => navigate("/dashboard")}>

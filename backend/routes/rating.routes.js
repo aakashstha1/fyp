@@ -9,7 +9,7 @@ import { verifyToken } from "../middleware/auth.middleware.js";
 const router = express.Router();
 
 router.route("/submit").post(verifyToken, submitRating);
-router.route("/:courseId").get(verifyToken, getCourseRatings);
-router.route("/:courseId/average").get(verifyToken, getAverageRating);
+router.route("/:courseId").get( getCourseRatings);
+router.route("/:courseId/average").get( getAverageRating);
 
 export default router;

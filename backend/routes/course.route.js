@@ -2,19 +2,21 @@ import express from "express";
 import { verifyToken } from "../middleware/auth.middleware.js";
 import {
   createCourse,
+  deleteCourse,
   getCourseById,
   getCourseByUserId,
+  getCourseLectures,
   getPublishedCourse,
   getPublishedCourseById,
   getRecommendedCourses,
   getSearchedCourses,
   togglePublishCourse,
   updateCourse,
-} from "../controllers/courseController.js";
+} from "../controllers/course.controller.js";
 import {
   createLecture,
   editLecture,
-  getCourseLectures,
+  // getCourseLectures,
   getLectureById,
   removeLecture,
   uploadVideo,
@@ -74,5 +76,6 @@ router
 
 // Get assignment for course
 router.route("/:courseId/assignment").get(verifyToken, getCourseAssignment);
+router.route("/:courseId").delete(verifyToken, deleteCourse);
 
 export default router;

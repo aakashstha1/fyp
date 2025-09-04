@@ -46,6 +46,7 @@ function Courses() {
             limit: COURSES_PER_PAGE,
           },
         });
+        console.log(res);
 
         setCourses(res.data.courses || []);
         setTotalPages(res.data.totalPages || 1);

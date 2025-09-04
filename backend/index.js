@@ -16,6 +16,7 @@ import ratingRoutes from "./routes/rating.routes.js";
 // import paymentRoutes from "./routes/payment.route.js";
 import enrollmentRoutes from "./routes/enrollment.route.js";
 import statsRoutes from "./routes/stats.route.js";
+import progressRoutes from "./routes/courseProgress.route.js";
 
 dotenv.config();
 
@@ -41,6 +42,7 @@ app.use("/api/thread", threadRoutes);
 app.use("/api/course", courseRoutes);
 app.use("/api/rating", ratingRoutes);
 app.use("/api/stats", statsRoutes);
+app.use("/api/progress", progressRoutes);
 
 // app.use("/api/payment", paymentRoutes);
 app.use("/api/enroll", enrollmentRoutes);

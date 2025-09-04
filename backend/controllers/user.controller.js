@@ -143,7 +143,6 @@ export const getAllUsers = async (req, res) => {
 
     // fetch all users
     const users = await User.find().sort({ createdAt: -1 });
-
     res.status(200).json({
       success: true,
       total: users.length,

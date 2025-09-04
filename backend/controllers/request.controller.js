@@ -4,7 +4,7 @@ import Request from "../models/request.model.js";
 export const getAllRequests = async (req, res) => {
   try {
     const requests = await Request.find()
-      .populate("user", "name email role isVerified")
+      .populate("user", "name email role isVerified phone imageUrl")
       .sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
@@ -37,7 +37,7 @@ export const approveInstructorRequest = async (req, res) => {
   try {
     const { reqId } = req.params;
     const request = await Request.findById(reqId).populate("user");
-    console.log(request);
+    // console.log(request);
     if (!request) return res.status(404).json({ message: "Request not found" });
 
     if (request.status !== "pending") {

@@ -47,7 +47,7 @@ function InstructorReqDetail() {
         { withCredentials: true }
       );
       toast.success(res?.data?.message);
-      navigate("/admin/instructor-requests");
+      navigate("/admin/instructor-request");
     } catch (error) {
       console.log(error);
       toast.error(error.response?.data?.message);
@@ -62,7 +62,7 @@ function InstructorReqDetail() {
         { withCredentials: true }
       );
       toast.success(res?.data?.message);
-      navigate("/admin/instructor-requests");
+      navigate("/admin/instructor-request");
     } catch (error) {
       console.log(error);
       toast.error(error.response?.data?.message);

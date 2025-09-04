@@ -33,7 +33,7 @@ import EditCourse from "@/pages/instructor/course/EditCourse";
 import EditLecture from "@/pages/instructor/lecture/EditLecture";
 import CreateLecture from "@/pages/instructor/lecture/CreateLecture";
 
-import StudyContainer from "@/pages/lectures/lecturesSection";
+// import StudyContainer from "@/pages/lectures/lecturesSection";
 import SingleCourse from "@/pages/courses/SingleCourse";
 import MyLearning from "@/pages/courses/MyLearning";
 import Courses from "@/pages/courses/Courses";
@@ -41,20 +41,14 @@ import CourseList from "@/pages/admin/courseData/CourseList";
 import Assignment from "@/pages/assignment/assignment";
 import PageNotFound from "@/components/PageNotFound";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
+import Courseprogress from "@/pages/lectures/CourseProgress";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Layout />}>
-          <Route
-            index
-            element={
-              <ProtectedRoute roles={["instructor", "enrollee"]}>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
+          <Route index element={<Home />} />
           <Route
             path="login"
             element={
@@ -83,10 +77,24 @@ function AppRoutes() {
           />
           <Route path="courses" element={<Courses />} />
           <Route path="quiz-start" element={<QuizViewer />} />
-          <Route path="editor/:docId" element={<DocEditor />} />
+          <Route
+            path="editor/:docId"
+            element={
+              <ProtectedRoute roles={["instructor", "enrollee"]}>
+                <DocEditor />
+              </ProtectedRoute>
+            }
+          />
           <Route path="about" element={<About />} />
           <Route path="my-board" element={<Board />} />
-          <Route path="profile/:userId" element={<Profile />} />
+          <Route
+            path="profile/:userId"
+            element={
+              <ProtectedRoute roles={["instructor", "enrollee"]}>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
           <Route path="chat" element={<Chat />} />
           <Route
             path="apply-for-instructor"
@@ -98,12 +106,23 @@ function AppRoutes() {
           />
           <Route path="ViewQuestion" element={<QuizViewer />} />
           <Route path="leaderboard" element={<Leaderboard />} />
-          <Route path="discussion" element={<ForumView />} />
+          <Route
+            path="discussion"
+            element={
+              <ProtectedRoute roles={["instructor", "enrollee"]}>
+                <ForumView />
+              </ProtectedRoute>
+            }
+          />
           <Route path="course/:courseId" element={<SingleCourse />} />
           <Route path="/assign" element={<Assignment />} />
           <Route
             path="/course/:courseId/progress"
-            element={<StudyContainer />}
+            element={
+              <ProtectedRoute roles={["instructor", "enrollee"]}>
+                <Courseprogress />
+              </ProtectedRoute>
+            }
           />
           //Instructor Dashboard
           <Route

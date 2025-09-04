@@ -18,11 +18,11 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 function SingleCourse() {
-  const levelClassName = {
-    Beginner: "bg-green-200 text-green-800",
-    Intermediate: "bg-yellow-200 text-yellow-800",
-    Advance: "bg-red-200 text-red-800",
-  };
+  // const levelClassName = {
+  //   Beginner: "bg-green-200 text-green-800",
+  //   Intermediate: "bg-yellow-200 text-yellow-800",
+  //   Advance: "bg-red-200 text-red-800",
+  // };
   const navigate = useNavigate();
   const { currentUser } = useAuth();
   const [course, setCourse] = useState({});
@@ -58,7 +58,7 @@ function SingleCourse() {
         // console.log(course);
         setLectures(res?.data?.course?.lectures);
         // console.log(lectures);
-        if (res?.data?.course?.enrolledStudents?.includes(currentUser._id)) {
+        if (res?.data?.course?.enrolledStudents?.includes(currentUser?._id)) {
           setIsEnrolled(true);
         }
       } catch (error) {
@@ -126,6 +126,12 @@ function SingleCourse() {
 
   //handel enrollement
   const handleEnrollment = async () => {
+    if (!currentUser) {
+      toast.error("You must be logged in to enroll!");
+      navigate("/login");
+      return;
+    }
+
     const payload = {
       courseId,
       totalPrice: course.price,
@@ -217,9 +223,9 @@ function SingleCourse() {
           </div>
 
           {/* Level */}
-          <Badge className={`${levelClassName[course?.level]}`}>
+          {/* <Badge className={`${levelClassName[course?.level]}`}>
             {course.level}
-          </Badge>
+          </Badge> */}
 
           {/* Tags */}
           <div className="flex flex-wrap gap-2">
@@ -246,7 +252,7 @@ function SingleCourse() {
               <h2 className="text-lg font-semibold text-white">Instructor</h2>
               <div className="flex items-center gap-3 mt-2">
                 <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
+                  <AvatarImage src={course?.creator?.imageUrl} />
                   <AvatarFallback>CN</AvatarFallback>
                 </Avatar>
                 <span className="text-white font-medium">
@@ -277,14 +283,20 @@ function SingleCourse() {
                   variant="outline"
                   className="cursor-pointer"
                   onClick={() => {
-                    if (isEnrolled) {
+                    // Check if user is enrolled OR the creator
+                    if (
+                      isEnrolled ||
+                      currentUser?._id === course?.creator?._id
+                    ) {
                       navigate(`/course/${courseId}/progress`);
                     } else {
                       setIsPurchaseDialogOpen(true);
                     }
                   }}
                 >
-                  {isEnrolled ? "Go to Lessons" : "Enroll Now"}
+                  {isEnrolled || currentUser?._id === course?.creator?._id
+                    ? "Go to Lessons"
+                    : "Enroll Now"}
                 </Button>
                 <Dialog
                   open={isPurchaseDialogOpen}
@@ -425,7 +437,7 @@ function SingleCourse() {
             {course?.assignment && (
               <li className="flex justify-between items-center px-3 py-4 border rounded-md text-gray-800 hover:bg-gray-50 cursor-pointer transition">
                 <span className="leading-tight">
-                  {`Assignment - ${course.assignment.title}`}
+                  {`Assignment - ${course?.assignment?.title}`}
                 </span>
                 <Lock className="w-4 h-4 text-gray-400" />
               </li>

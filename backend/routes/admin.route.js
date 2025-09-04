@@ -8,7 +8,7 @@ import {
   rejectInstructorRequest,
 } from "../controllers/request.controller.js";
 import { getAllUsers } from "../controllers/user.controller.js";
-import { getAllCourses } from "../controllers/courseController.js";
+import { getAllCourses } from "../controllers/course.controller.js";
 import {
   mostEnrolledCourses,
   topContributors,

@@ -10,6 +10,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import axios from "axios";
 // import { useGetCreatorCourseQuery } from "@/features/api/courseApi";
 import { Edit, Plus, Trash2 } from "lucide-react";
@@ -21,7 +32,7 @@ function CourseTable() {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
   // const [loading, setLoading] = useState(false);
-  
+
   const API_URL = "http://localhost:8000/api";
 
   useEffect(() => {
@@ -41,6 +52,22 @@ function CourseTable() {
     };
     fetchCourses();
   }, []);
+
+  const handleDelete = async (courseId) => {
+    try {
+      await axios.delete(`${API_URL}/course/${courseId}`, {
+        withCredentials: true,
+      });
+
+      // Update local state to remove deleted course
+      setCourses((prev) => prev.filter((c) => c._id !== courseId));
+
+      toast.success("Course deleted successfully!");
+    } catch (error) {
+      console.error(error);
+      toast.error(error?.response?.data?.message || "Failed to delete course!");
+    }
+  };
 
   return (
     <div>
@@ -100,9 +127,34 @@ function CourseTable() {
                   >
                     <Edit />
                   </Button>
-                  <Button className="bg-red-500 hover:bg-red-500 cursor-pointer">
-                    <Trash2 />
-                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button className="bg-red-500 hover:bg-red-600 cursor-pointer">
+                        <Trash2 />
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>
+                          Are you absolutely sure?
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This action cannot be undone. This will permanently
+                          delete the course and remove all related lectures,
+                          assignments, and enrolled students’ access.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                          className="bg-red-500 hover:bg-red-600"
+                          onClick={() => handleDelete(course._id)}
+                        >
+                          Yes, Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
                 </div>
               </TableCell>
             </TableRow>
