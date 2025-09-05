@@ -54,6 +54,7 @@ function LatestCourses() {
                       course?.creator?.imageUrl ||
                       "https://github.com/shadcn.png"
                     }
+                    className="object-cover"
                   />
                   <AvatarFallback>IN</AvatarFallback>
                 </Avatar>

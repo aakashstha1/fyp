@@ -59,9 +59,10 @@ function RecommendedCourse() {
                     <Avatar>
                       <AvatarImage
                         src={
-                          course.creator?.avatar ||
+                          course.creator?.imageUrl ||
                           "https://github.com/shadcn.png"
                         }
+                        className="object-cover"
                       />
                       <AvatarFallback>IN</AvatarFallback>
                     </Avatar>

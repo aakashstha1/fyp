@@ -100,7 +100,11 @@ function Navbar() {
             <DropdownMenu>
               <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
                 <Avatar>
-                  <AvatarImage src={currentUser?.imageUrl} alt="@user" />
+                  <AvatarImage
+                    src={currentUser?.imageUrl}
+                    alt="@user"
+                    className="object-cover"
+                  />
                   <AvatarFallback>U</AvatarFallback>
                 </Avatar>
               </DropdownMenuTrigger>

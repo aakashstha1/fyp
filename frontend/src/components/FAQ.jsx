@@ -16,17 +16,17 @@ function FAQ() {
     {
       question: "How do I enroll in a course?",
       answer:
-        "You can enroll in a course by visiting the course page and clicking the 'Enroll' button.",
+        "You can enroll in a course by visiting the course page and clicking the 'Course overview' button and then Enroll.",
     },
     {
-      question: "Can I get a refund?",
+      question: "Do the courses include assignments and quizzes?",
       answer:
-        "Refunds are available within 7 days of purchase if you haven't started the course.",
+        "Yes, each course includes 1 assignment to help reinforce learning. Notes are not provided at this time.",
     },
     {
-      question: "Do I get a certificate?",
+      question: "How long do I have access to the course?",
       answer:
-        "Yes, after completing a course, you will receive a certificate of completion.",
+        "You get lifetime access to the course content once you enroll, so you can learn at your own pace.",
     },
     {
       question: "Are the courses self-paced?",

@@ -45,6 +45,7 @@ function CourseCard({ course }) {
           <Avatar className="h-6 w-6">
             <AvatarImage
               src={course?.creator?.imageUrl || "https://github.com/shadcn.png"}
+              className="object-cover"
             />
             <AvatarFallback>IN</AvatarFallback>
           </Avatar>

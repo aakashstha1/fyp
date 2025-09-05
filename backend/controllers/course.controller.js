@@ -283,29 +283,50 @@ export const getRecommendedCourses = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
-    const userNiches = user.niches.filter(Boolean); // only non-empty
+    const userNiches = user.niches.filter(Boolean);
     if (!userNiches.length) {
       return res.status(400).json({
         success: false,
         message: "No niches selected for this user",
       });
     }
-    const nicheRegexes = user.niches
-      .filter(Boolean)
-      .map((n) => new RegExp(n, "i")); // case-insensitive partial match
+
+    const nicheRegexes = userNiches.map((n) => new RegExp(n, "i"));
 
     const recommendedCourses = await Course.aggregate([
       {
         $match: {
           isPublished: true,
           $or: [
-            { tags: { $elemMatch: { $in: nicheRegexes } } }, // match any tag partially
-            { category: { $in: nicheRegexes } }, // partial match for category
-            { title: { $in: nicheRegexes } }, // partial match for title
+            { tags: { $elemMatch: { $in: nicheRegexes } } },
+            { category: { $in: nicheRegexes } },
+            { title: { $in: nicheRegexes } },
           ],
         },
       },
       { $sample: { size: 10 } },
+      {
+        $lookup: {
+          from: "users", // collection name
+          localField: "creator",
+          foreignField: "_id",
+          as: "creator",
+        },
+      },
+      { $unwind: "$creator" },
+      {
+        $project: {
+          title: 1,
+          price: 1,
+          category: 1,
+          tags: 1,
+          thumbnail: 1,
+          averageRating: 1,
+          enrolledStudents: 1,
+          "creator.name": 1,
+          "creator.imageUrl": 1,
+        },
+      },
     ]);
 
     res.status(200).json({
@@ -318,7 +339,6 @@ export const getRecommendedCourses = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
-
 export const getCourseLectures = async (req, res) => {
   try {
     const { courseId } = req.params;
