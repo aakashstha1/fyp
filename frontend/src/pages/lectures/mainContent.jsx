@@ -1,6 +1,6 @@
 import { PlayCircle, Download, Share2, ThumbsUp } from "lucide-react";
 import Assignment from "../assignment/assignment";
-import { useEffect } from "react";
+
 import { toast } from "sonner";
 
 export default function MainContent({ lesson, isAssignment }) {
