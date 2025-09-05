@@ -7,13 +7,13 @@ const assignmentSchema = new mongoose.Schema(
     csvFileName: { type: String },
     csvFilePublicId: { type: String },
 
-    questions: [
-      {
-        question: { type: String, required: true },
-        options: [{ type: String, required: true }],
-        answer: { type: String }, // e.g., "A", "B", "C"
-      },
-    ],
+    // questions: [
+    //   {
+    //     question: { type: String, required: true },
+    //     options: [{ type: String, required: true }],
+    //     answer: { type: String }, // e.g., "A", "B", "C"
+    //   },
+    // ],
   },
   {
     timestamps: true,

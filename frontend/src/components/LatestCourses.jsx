@@ -17,7 +17,8 @@ function LatestCourses() {
         const res = await axios.get(`${API_URL}/course/courses`, {
           withCredentials: true,
         });
-        setCourses(res?.data?.publishedCourses || []);
+        const allCourses = res?.data?.publishedCourses || [];
+        setCourses(allCourses.slice(0, 4)); // Only take first 4 courses
       } catch (error) {
         console.log(error);
       }
@@ -50,8 +51,10 @@ function LatestCourses() {
                 <Avatar>
                   <AvatarImage
                     src={
-                      course.creator?.avatar || "https://github.com/shadcn.png"
+                      course?.creator?.imageUrl ||
+                      "https://github.com/shadcn.png"
                     }
+                    className="object-cover"
                   />
                   <AvatarFallback>IN</AvatarFallback>
                 </Avatar>

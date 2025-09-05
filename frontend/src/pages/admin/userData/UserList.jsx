@@ -16,7 +16,6 @@ function UserList() {
         const res = await axios.get(`${API_URL}/admin/user-list`, {
           withCredentials: true,
         });
-
         const formatted = res?.data?.users?.map((u) => ({ user: u })) || [];
 
         setUsers(formatted);

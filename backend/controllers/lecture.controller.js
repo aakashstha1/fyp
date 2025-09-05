@@ -115,29 +115,29 @@ export const uploadVideo = async (req, res) => {
 };
 
 //Get lectures
-export const getCourseLectures = async (req, res) => {
-  try {
-    const { courseId } = req.params;
-    const course = await Course.findById(courseId).populate("lectures");
-    if (!course) {
-      return res.status(404).json({
-        success: false,
-        message: "Cannot find the course!",
-      });
-    }
+// export const getCourseLectures = async (req, res) => {
+//   try {
+//     const { courseId } = req.params;
+//     const course = await Course.findById(courseId).populate("lectures");
+//     if (!course) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "Cannot find the course!",
+//       });
+//     }
 
-    return res.status(200).json({
-      success: true,
-      lectures: course?.lectures,
-    });
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      success: false,
-      message: "Failed to get lectures!",
-    });
-  }
-};
+//     return res.status(200).json({
+//       success: true,
+//       lectures: course?.lectures,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).json({
+//       success: false,
+//       message: "Failed to get lectures!",
+//     });
+//   }
+// };
 
 // Update Lecture
 export const editLecture = async (req, res) => {
@@ -254,3 +254,4 @@ export const getLectureById = async (req, res) => {
     });
   }
 };
+

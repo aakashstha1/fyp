@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
 import {
   BookOpen,
-  ClipboardList,
+  // ClipboardList,
   LayoutDashboard,
   LayoutList,
   LogOut,
@@ -17,7 +17,7 @@ import { FaBookOpenReader } from "react-icons/fa6";
 function AdminSidebar() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const API_URL = "http://localhost:8000/api";
+  // const API_URL = "http://localhost:8000/api";
   const navLinkClasses = ({ isActive }) =>
     `flex items-center gap-3 p-2 rounded-md transition-all duration-200 ${
       isActive
@@ -41,7 +41,7 @@ function AdminSidebar() {
       <div className="hidden lg:flex flex-col justify-between  w-[200px] sm:w-[250px] border-r border-gray-300 dark:border-gray-700 bg-[#f0f0f0] p-5 fixed h-screen">
         {/* Top Part */}
         <div>
-          <Link to="/">
+          <Link to="/admin/dashboard">
             <div
               className="flex items-center gap-2 cursor-pointer text-2xl font-bold mb-8"
               onClick={() => navigate("/")}
@@ -72,10 +72,10 @@ function AdminSidebar() {
               <User size={22} />
               <h1 className="text-base">Users</h1>
             </NavLink>
-            <NavLink to="Add-Quiz" className={navLinkClasses}>
+            {/* <NavLink to="Add-Quiz" className={navLinkClasses}>
               <ClipboardList size={22} />
               <h1 className="text-base">Quizes</h1>
-            </NavLink>
+            </NavLink> */}
           </div>
         </div>
 

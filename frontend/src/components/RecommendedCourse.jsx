@@ -17,8 +17,8 @@ function RecommendedCourse() {
         const res = await axios.get(`${API_URL}/course/recommendedCourses`, {
           withCredentials: true,
         });
-        console.log(res);
-        setCourses(res?.data?.courses || []);
+        const allCourses = res?.data?.courses || [];
+        setCourses(allCourses.slice(0, 4)); // Only take first 4 courses
       } catch (error) {
         console.log(error);
       }
@@ -27,88 +27,100 @@ function RecommendedCourse() {
   }, []);
 
   return (
-    <div className="m-10">
-      <div className="flex items-center mb-8 gap-3">
-        <span className="w-1 h-8 bg-amber-500 rounded-sm"></span>
-        <h1 className="text-3xl font-bold text-gray-800">Suggested Courses</h1>
-      </div>
+    <>
+      {courses?.length > 0 && (
+        <div className="m-10">
+          <div className="flex items-center mb-8 gap-3">
+            <span className="w-1 h-8 bg-amber-500 rounded-sm"></span>
+            <h1 className="text-3xl font-bold text-gray-800">
+              Suggested Courses
+            </h1>
+          </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {courses.map((course, idx) => (
-          <Card key={idx} className="w-full flex flex-col justify-between">
-            <CardHeader>
-              <img
-                src={course.thumbnail || "https://via.placeholder.com/300x150"}
-                alt={course.title}
-                className="h-40 w-full object-cover rounded-md"
-              />
-            </CardHeader>
-
-            <CardContent className="space-y-3">
-              <h1 className="font-semibold text-lg truncate">{course.title}</h1>
-
-              <div className="flex items-center gap-2">
-                <Avatar>
-                  <AvatarImage
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {courses.map((course, idx) => (
+              <Card key={idx} className="w-full flex flex-col justify-between">
+                <CardHeader>
+                  <img
                     src={
-                      course.creator?.avatar || "https://github.com/shadcn.png"
+                      course.thumbnail || "https://via.placeholder.com/300x150"
                     }
+                    alt={course.title}
+                    className="h-40 w-full object-cover rounded-md"
                   />
-                  <AvatarFallback>IN</AvatarFallback>
-                </Avatar>
-                <span>{course?.creator?.name || "Instructor"}</span>
-              </div>
+                </CardHeader>
 
-              <h2 className="font-semibold text-xl">
-                Rs. {course?.price?.toFixed(2) || "N/A"}
-              </h2>
+                <CardContent className="space-y-3">
+                  <h1 className="font-semibold text-lg truncate">
+                    {course.title}
+                  </h1>
 
-              <div className="flex items-center justify-between">
-                <p className="flex items-center gap-2">
-                  <Star
-                    className="h-5 w-5 text-amber-500"
-                    fill="currentColor"
-                  />
-                  {course?.averageRating
-                    ? course.averageRating.toFixed(1)
-                    : "N/A"}
-                </p>
-              </div>
+                  <div className="flex items-center gap-2">
+                    <Avatar>
+                      <AvatarImage
+                        src={
+                          course.creator?.imageUrl ||
+                          "https://github.com/shadcn.png"
+                        }
+                        className="object-cover"
+                      />
+                      <AvatarFallback>IN</AvatarFallback>
+                    </Avatar>
+                    <span>{course?.creator?.name || "Instructor"}</span>
+                  </div>
 
-              <p className="flex flex-wrap gap-2">
-                {(course.tags || []).slice(0, 3).map((tag, i) => (
-                  <span
-                    key={i}
-                    className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full"
+                  <h2 className="font-semibold text-xl">
+                    Rs. {course?.price?.toFixed(2) || "N/A"}
+                  </h2>
+
+                  <div className="flex items-center justify-between">
+                    <p className="flex items-center gap-2">
+                      <Star
+                        className="h-5 w-5 text-amber-500"
+                        fill="currentColor"
+                      />
+                      {course?.averageRating
+                        ? course.averageRating.toFixed(1)
+                        : "N/A"}
+                    </p>
+                  </div>
+
+                  <p className="flex flex-wrap gap-2">
+                    {(course.tags || []).slice(0, 3).map((tag, i) => (
+                      <span
+                        key={i}
+                        className="inline-block text-xs bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </p>
+                </CardContent>
+
+                <CardFooter>
+                  <Button
+                    className="w-full cursor-pointer"
+                    onClick={() => navigate(`/course/${course._id}`)}
                   >
-                    {tag}
-                  </span>
-                ))}
-              </p>
-            </CardContent>
+                    Course Overview
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
 
-            <CardFooter>
-              <Button
-                className="w-full cursor-pointer"
-                onClick={() => navigate(`/course/${course._id}`)}
-              >
-                Course Overview
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
-      </div>
-
-      <div className="flex items-center justify-center mt-8">
-        <Button
-          variant="ghost"
-          className="cursor-pointer"
-          onClick={() => navigate("/courses")}
-        >
-          View more <ChevronsRight />
-        </Button>
-      </div>
-    </div>
+          <div className="flex items-center justify-center mt-8">
+            <Button
+              variant="ghost"
+              className="cursor-pointer"
+              onClick={() => navigate("/courses")}
+            >
+              View more <ChevronsRight />
+            </Button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }
 

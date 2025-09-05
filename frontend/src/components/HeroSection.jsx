@@ -26,14 +26,14 @@ function HeroSection() {
       {/* Foreground content */}
       <div className="mt-10 relative z-20 max-w-2xl">
         <h1 className="text-2xl sm:text-4xl font-bold text-white text-center pb-2">
-          E-learning Platform
+          EduPal – E-Learning Platform
         </h1>
         <h2 className="text-lg sm:text-2xl font-semibold text-gray-200 text-center">
           Learn. Grow. Succeed.
         </h2>
         <p className="text-center mt-4 text-sm sm:text-base text-neutral-300 px-2">
-          Explore expert-led courses in technology, business, design, and more.
-          Learn anytime, anywhere, at your own pace.
+          Discover courses that fit your goals and learn in a way that works for
+          you. Flexible, accessible, and easy to follow.
         </p>
       </div>
 

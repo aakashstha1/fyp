@@ -33,19 +33,19 @@ function CourseCard({ course }) {
     <Card className="w-full min-w-[300px] min-h-[360px] flex flex-col justify-between text-sm">
       <CardHeader className="px-3">
         <img
-          src={course.thumbnail}
-          alt={course.title}
+          src={course?.thumbnail}
+          alt={course?.title}
           className="h-40 w-full object-cover rounded-md"
         />
       </CardHeader>
-
       <CardContent className="space-y-2 px-3 pb-2">
         <h1 className=" font-semibold text-lg truncate">{course.title}</h1>
 
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
             <AvatarImage
-              src={course.creator?.imageUrl || "https://github.com/shadcn.png"}
+              src={course?.creator?.imageUrl || "https://github.com/shadcn.png"}
+              className="object-cover"
             />
             <AvatarFallback>IN</AvatarFallback>
           </Avatar>
@@ -54,7 +54,9 @@ function CourseCard({ course }) {
           </span>
         </div>
 
-        <h2 className="font-semibold">${course.price?.toFixed(2) || "N/A"}</h2>
+        <h2 className="font-semibold">
+          Rs. {course.price?.toFixed(2) || "N/A"}
+        </h2>
 
         <div className="flex items-center justify-between py-2">
           {/* <Badge
@@ -89,10 +91,10 @@ function CourseCard({ course }) {
           onClick={() =>
             isEnrolled
               ? navigate(`/course/${course._id}/progress`)
-              : handleEnrollment
+              : navigate(`/course/${course._id}`)
           }
         >
-          {isEnrolled ? "Go To Lesson" : "Enroll"}
+          {isEnrolled ? "Go To Lesson" : "Course Overview "}
         </Button>
       </CardFooter>
     </Card>

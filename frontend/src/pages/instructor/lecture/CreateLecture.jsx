@@ -1,8 +1,16 @@
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Switch } from "@/components/ui/switch";
+import { DialogTrigger } from "@radix-ui/react-dialog";
 import axios from "axios";
 import {
   ChevronLeft,
@@ -12,6 +20,7 @@ import {
   Trash,
   Upload,
   CheckCircle,
+  Eye,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -31,6 +40,8 @@ function CreateLecture() {
   const [assignmentFile, setAssignmentFile] = useState(null);
   const [assignmentUploading, setAssignmentUploading] = useState(false);
   const [assignmentProgress, setAssignmentProgress] = useState(0);
+  const [assignmentDialogOpen, setAssignmentDialogOpen] = useState(false);
+  const [parsedAssignment, setParsedAssignment] = useState([]);
 
   const [removingLectureId, setRemovingLectureId] = useState(null);
   const [removingAssignment, setRemovingAssignment] = useState(false);
@@ -50,9 +61,8 @@ function CreateLecture() {
         const res = await axios.get(`${API_URL}/course/${courseId}/lectures`, {
           withCredentials: true,
         });
-        if (res.data.success) {
-          setLectures(res.data.lectures);
-        }
+        // console.log(res);
+        setLectures(res?.data?.course?.lectures);
       } catch (error) {
         console.error(error);
       }
@@ -297,6 +307,35 @@ function CreateLecture() {
     }
   };
 
+  const handleViewAssignment = async () => {
+    if (!assignment?.csvFileUrl) {
+      toast.error("No assignment file available");
+      return;
+    }
+
+    try {
+      const res = await fetch(assignment.csvFileUrl);
+      const text = await res.text();
+      const lines = text.split("\n").filter((line) => line.trim() !== "");
+
+      const parsed = lines.slice(1).map((line, idx) => {
+        const cells = line.split(",");
+        return {
+          id: cells[0],
+          question: cells[1],
+          options: [cells[2], cells[3], cells[4], cells[5]],
+          correct: cells[6],
+        };
+      });
+
+      setParsedAssignment(parsed);
+      setAssignmentDialogOpen(true);
+    } catch (error) {
+      console.log("Error parsing CSV:", error);
+      toast.error("Failed to parse assignment file");
+    }
+  };
+
   return (
     <div className="flex-1 p-6">
       {/* Header */}
@@ -398,9 +437,9 @@ function CreateLecture() {
         <div className="bg-white border rounded-2xl p-6 shadow-sm space-y-6 w-full">
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="assignmetnTitle">Assignment Title</Label>
+              <Label htmlFor="assignmentTitle">Assignment Title</Label>
               <Input
-                id="assignmetnTitle"
+                id="assignmentTitle"
                 value={assignmentTitle}
                 onChange={(e) => setAssignmentTitle(e.target.value)}
                 placeholder="e.g. Introduction to React"
@@ -408,7 +447,7 @@ function CreateLecture() {
             </div>
           </div>
 
-          {/* Upload CSV/Excel!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! */}
+          {/* Upload CSV/Excel */}
           <div className="space-y-2">
             <Label htmlFor="assignmentFile">Upload CSV/Excel File</Label>
             <Input
@@ -467,9 +506,9 @@ function CreateLecture() {
       {/* Lecture List */}
       <div className="mt-10">
         <h2 className="text-lg font-medium mb-4">
-          Lectures ({lectures.length})
+          Lectures ({lectures?.length})
         </h2>
-        {lectures.length === 0 ? (
+        {lectures?.length === 0 ? (
           <div className="text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-200">
             <p className="text-muted-foreground">
               No lectures yet. Upload a video and add your first lecture!
@@ -477,7 +516,7 @@ function CreateLecture() {
           </div>
         ) : (
           <div className="grid gap-4">
-            {lectures.map((lecture, index) => (
+            {lectures?.map((lecture, index) => (
               <div
                 key={lecture._id}
                 className="flex items-center justify-between bg-[#F7F9FA] dark:bg-[#1F1F1F] px-4 py-5 rounded-md border"
@@ -532,6 +571,13 @@ function CreateLecture() {
             <div className="flex items-center gap-3">
               <Button
                 size="sm"
+                variant="outline"
+                onClick={handleViewAssignment}
+              >
+                <Eye className="mr-1 h-4 w-4" /> View
+              </Button>
+              <Button
+                size="sm"
                 variant="destructive"
                 onClick={removeAssignmentHandler}
                 disabled={removingAssignment}
@@ -543,6 +589,49 @@ function CreateLecture() {
                 )}
                 Remove
               </Button>
+              <Dialog
+                open={assignmentDialogOpen}
+                onOpenChange={setAssignmentDialogOpen}
+              >
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>
+                      Assignment Preview: {assignment?.title}
+                    </DialogTitle>
+                    <DialogDescription>
+                      Review the questions and options in this assignment.
+                    </DialogDescription>
+                  </DialogHeader>
+
+                  <div className="mt-4 space-y-4 max-h-96 overflow-y-auto">
+                    {parsedAssignment.length === 0 ? (
+                      <p className="text-gray-500">No questions found.</p>
+                    ) : (
+                      parsedAssignment.map((q, idx) => (
+                        <div key={idx} className="p-2 border rounded">
+                          <p className="font-semibold">
+                            {idx + 1}. {q.question}
+                          </p>
+                          <ul className="list-disc ml-5 mt-1">
+                            {q.options.map((opt, i) => (
+                              <li key={i}>{opt}</li>
+                            ))}
+                          </ul>
+                          <p className="text-green-600 text-sm mt-1">
+                            Correct Answer: {q.correct}
+                          </p>
+                        </div>
+                      ))
+                    )}
+                  </div>
+
+                  <div className="mt-4 flex justify-end">
+                    <Button onClick={() => setAssignmentDialogOpen(false)}>
+                      Close
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         )}

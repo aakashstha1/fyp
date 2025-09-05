@@ -16,6 +16,7 @@ function Signup() {
   const options = [
     "Frontend Development",
     "Backend Development",
+    "Fullstack Development",
     "Web Development",
     "Data Science",
     "Artificial Intelligence",
@@ -24,6 +25,11 @@ function Signup() {
     "Cyber Security",
     "Mobile App Development",
     "Digital Marketing",
+    "Loksewa Exam Preparation",
+    "Bridge Course: +2 Science to Bachelor Science",
+    "Bridge Course: +2 Commerce to Bachelor Commerce",
+    "Business & Entrepreneurship",
+    "Design & Multimedia",
   ];
 
   const handleChange = (e) =>

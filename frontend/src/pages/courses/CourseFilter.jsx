@@ -105,8 +105,10 @@ function CourseFilter({
             { id: "information-technology", label: "Information Technology" },
             { id: "business", label: "Business" },
             { id: "design", label: "Design" },
-            { id: "language-communication", label: "Language & Communication" },
             { id: "marketing", label: "Marketing" },
+            { id: "loksewa", label: "Loksewa" },
+            { id: "bridge-course", label: "Bridge Course" },
+
             { id: "other", label: "Others" },
           ].map((cat) => (
             <div key={cat.id} className="flex items-center space-x-2">

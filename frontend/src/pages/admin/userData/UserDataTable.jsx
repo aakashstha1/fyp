@@ -10,8 +10,9 @@ import {
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
-const UserDatatable = ({ data, showRole = true }) => {
+const UserDatatable = ({ data, showRole, showStatus }) => {
   return (
     <div className="border rounded-lg shadow-sm max-h-[600px] overflow-y-auto">
       <Table>
@@ -23,6 +24,8 @@ const UserDatatable = ({ data, showRole = true }) => {
             <TableHead>Email</TableHead>
             <TableHead>Contact</TableHead>
             {showRole && <TableHead>Role</TableHead>}
+            {showStatus && <TableHead>Status</TableHead>}
+
             <TableHead className="text-right w-32">Action</TableHead>
           </TableRow>
         </TableHeader>
@@ -70,9 +73,29 @@ const UserDatatable = ({ data, showRole = true }) => {
                   </TableCell>
                 )}
 
+                {showStatus && (
+                  <TableCell>
+                    <Badge
+                      className={`w-24 justify-center text-white ${
+                        req?.status === "approved"
+                          ? "bg-green-500 "
+                          : req?.status === "pending"
+                          ? "bg-yellow-500 "
+                          : req?.status === "rejected"
+                          ? "bg-red-500 "
+                          : "bg-gray-400 "
+                      }`}
+                    >
+                      {req?.status
+                        ? req.status.charAt(0).toUpperCase() +
+                          req.status.slice(1)
+                        : "N/A"}
+                    </Badge>
+                  </TableCell>
+                )}
                 {/* Action */}
                 <TableCell className="text-right space-x-2">
-                  {req?.user?.role === "instructor" && (
+                  {req?.user?.role != "admin" && (
                     <Link to={`/admin/instructor-request/${req._id}`}>
                       <Button
                         size="sm"

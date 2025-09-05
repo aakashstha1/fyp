@@ -119,7 +119,7 @@ function EditLecture() {
         payload.videoInfo = videoInfo;
       }
 
-      if (Object.keys(payload).length === 0) {
+      if (Object.keys(payload)?.length === 0) {
         toast.error("Nothing to update!");
         setLoading(false);
         return;
