@@ -1,28 +1,21 @@
 import Thread from "../../models/threadModel/thread.model.js";
 import User from "../../models/user.model.js";
 import Comment from "../../models/threadModel/comment.model.js";
-export const ThreadPost = async (req, res) => {
+export const createThread = async (req, res) => {
   try {
-    const { title, content, userId } = req.body;
-
+    const { title, content, category } = req.body;
+    const userId = req.user.userId;
     if (!userId || !title || !content) {
       return res.status(400).json({
         message:
           "All fields are required. Please check login, title, and content.",
       });
     }
-
-    const userExists = await User.findById(userId);
-    if (!userExists) {
-      return res.status(404).json({
-        message: "User not found. Please login first.",
-      });
-    }
-
     const payload = new Thread({
       title,
       content,
       userId,
+      category,
     });
 
     await payload.save();
@@ -39,22 +32,17 @@ export const ThreadPost = async (req, res) => {
   }
 };
 
-export const getAllThreads = async (req, res) => {
+export const getFilteredThreads = async (req, res) => {
   try {
-    const userId = req.query.userId;
+    const { category = "all" } = req.query;
 
-    if (!userId) {
-      return res.status(401).json({ message: " please login first" });
-    }
+    const filter = {};
+    if (category !== "all") filter.category = category;
 
-    const existed = await User.findById(userId);
-    if (!existed) {
-      return res.status(402).json({ message: "UnAuthorized login detected" });
-    }
-    const threads = await Thread.find().populate("userId", "name").sort({
+    const threads = await Thread.find(filter).populate("userId", "name").sort({
       createdAt: -1,
     });
-    res.status(201).json({
+    res.status(200).json({
       threads,
     });
   } catch (error) {
@@ -67,14 +55,14 @@ export const getAllThreads = async (req, res) => {
 
 export const deleteThread = async (req, res) => {
   try {
-    const { thread_id } = req.params;
+    const { threadId } = req.params;
     const userId = req.user.userId;
-    if (!thread_id || !userId) {
+    if (!threadId || !userId) {
       return res.status(400).json({
         message: "Please login or provide a valid thread ID",
       });
     }
-    const searchThread = await Thread.findById(thread_id);
+    const searchThread = await Thread.findById(threadId);
     if (!searchThread) {
       return res.status(404).json({ message: "Thread not found" });
     }
@@ -91,9 +79,66 @@ export const deleteThread = async (req, res) => {
   }
 };
 
+export const updateThread = async (req, res) => {
+  try {
+    const { threadId } = req.params;
+    const { title, content, category } = req.body;
+    const userId = req.user.userId;
+
+    const thread = await Thread.findById(threadId);
+    if (!thread) return res.status(404).json({ message: "Thread not found" });
+    if (thread.userId.toString() !== userId)
+      return res.status(403).json({ message: "Unauthorized" });
+
+    thread.title = title || thread.title;
+    thread.content = content || thread.content;
+    thread.category = category || thread.category;
+    await thread.save();
+    return res
+      .status(200)
+      .json({ message: "Thread update Successfully", thread });
+  } catch (error) {
+    console.error("updateThread Error:", error);
+    return res.status(500).json({ message: "server error at thread" });
+  }
+};
+
+export const toggleLike = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { threadId } = req.params;
+
+    const thread = await Thread.findById(threadId);
+    if (!thread) {
+      return res.status(404).json({ message: "Thread not found" });
+    }
+    const isLiked = thread.likes.includes(userId);
+    if (isLiked) {
+      thread.likes = thread.likes.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    } else {
+      thread.likes.push(userId);
+    }
+
+    await thread.save();
+    return res.status(200).json({
+      message: isLiked ? "Unliked successfully" : "Liked successfully",
+      likesCount: thread.likes.length,
+    });
+  } catch (error) {
+    console.error("toggleLike Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Server error while toggling like" });
+  }
+};
+// --------------------Comments---------------------------------
 export const addComment = async (req, res) => {
   try {
-    const { threadId, content, userId } = req.body;
+    const { content } = req.body;
+    const { threadId } = req.params;
+    const userId = req.user.userId;
     if (!threadId || !userId || !content) {
       return res.status(400).json({
         message: "Something is missing",
@@ -161,8 +206,8 @@ export const getComment = async (req, res) => {
 // Delete
 export const deleteComment = async (req, res) => {
   try {
-    const { commentId, userId } = req.body;
-
+    const { commentId } = req.params;
+    const userId = req.user.userId;
     const comment = await Comment.findById(commentId);
     if (!comment) {
       return res.status(404).json({ message: "Comment not found" });
@@ -189,5 +234,28 @@ export const deleteComment = async (req, res) => {
     return res.status(200).json({ message: "Comment deleted successfully" });
   } catch (err) {
     return res.status(500).json({ message: "Server error", error: err });
+  }
+};
+export const updateComment = async (req, res) => {
+  try {
+    const userId = req.user.userId;
+    const { commentId } = req.params;
+    const { content } = req.body;
+
+    const comment = await Comment.findById(commentId);
+
+    if (!comment) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+    if (comment.userId.toString() !== userId) {
+      return res.status(403).json({ message: "Unauthorized" });
+    }
+
+    comment.content = content || comment.content;
+    await comment.save();
+    return res.status(200).json({ message: "Comment updated", comment });
+  } catch (error) {
+    console.error("updateComment Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
 };
