@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Heart, MessageCircle, Trash2, Edit2 } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
+import ConfirmBox from "./ConfirmBox";
 
 const API = "http://localhost:8000/api/thread";
 
@@ -17,7 +18,9 @@ export default function PostCard({
   const [showComments, setShowComments] = useState(false);
   const [comments, setComments] = useState(post.comments || []);
   const [commentText, setCommentText] = useState("");
-
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [confirmMessage, setConfirmMessage] = useState("");
+  const [deleteTarget, setDeleteTarget] = useState(null);
   const [likes, setLikes] = useState(
     Array.isArray(post.likes) ? post.likes : []
   );
@@ -127,33 +130,32 @@ export default function PostCard({
     }
   };
 
-  const deleteComment = async (commentId) => {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this comment?"
-    );
-    if (!confirmed) return;
-
-    try {
-      await axios.delete(`${API}/deleteComment/${commentId}`, {
-        withCredentials: true,
-      });
-      setComments((prev) => prev.filter((c) => c._id !== commentId));
-    } catch (err) {
-      console.error(err);
-    }
+  const deleteComment = (commentId) => {
+    setConfirmMessage("Are you sure you want to delete this comment?");
+    setDeleteTarget(() => async () => {
+      try {
+        await axios.delete(`${API}/deleteComment/${commentId}`, {
+          withCredentials: true,
+        });
+        setComments((prev) => prev.filter((c) => c._id !== commentId));
+      } catch (err) {
+        console.error(err);
+      }
+    });
+    setShowConfirm(true);
   };
-
-  const handleDeleteThread = async () => {
-    const confirmed = window.confirm(
+  const handleDeleteThread = () => {
+    setConfirmMessage(
       "Are you sure you want to delete this thread? This action cannot be undone."
     );
-    if (!confirmed) return;
-
-    try {
-      await onDelete(post.threadId);
-    } catch (err) {
-      console.error("Failed to delete thread:", err);
-    }
+    setDeleteTarget(() => async () => {
+      try {
+        await onDelete(post.threadId);
+      } catch (err) {
+        console.error("Failed to delete thread:", err);
+      }
+    });
+    setShowConfirm(true);
   };
 
   return (
@@ -197,6 +199,15 @@ export default function PostCard({
               <Trash2 size={18} />
             </button>
           )}
+          <ConfirmBox
+            open={showConfirm}
+            message={confirmMessage}
+            onConfirm={async () => {
+              if (deleteTarget) await deleteTarget();
+              setShowConfirm(false);
+            }}
+            onCancel={() => setShowConfirm(false)}
+          />
         </div>
       </div>
 
