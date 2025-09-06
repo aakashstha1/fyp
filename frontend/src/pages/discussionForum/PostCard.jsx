@@ -159,18 +159,18 @@ export default function PostCard({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-lg p-5 border border-gray-200 dark:border-gray-700 transition-colors">
+    <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-200 dark:border-gray-700 transition-all duration-200">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
             {post.author?.charAt(0) || "U"}
           </div>
           <div>
-            <div className="text-gray-900 dark:text-white font-semibold">
+            <div className="text-sm font-medium text-gray-900 dark:text-white">
               {post.author}
             </div>
-            <div className="text-gray-500 dark:text-gray-400 text-xs">
+            <div className="text-xs text-gray-500 dark:text-gray-400">
               {formatDistanceToNow(new Date(post.createdAt), {
                 addSuffix: true,
               })}
@@ -251,13 +251,13 @@ export default function PostCard({
         </div>
       ) : (
         <div className="mb-3">
-          <div className="mb-1 inline-flex items-center gap-2 text-xs px-2 py-1 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
+          <span className="inline-block text-xs px-3 py-1 mb-2 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300">
             #{post.category}
-          </div>
-          <h3 className="text-gray-900 dark:text-white font-bold text-lg mb-1 whitespace-pre-wrap">
+          </span>
+          <h3 className="text-gray-900 dark:text-white font-semibold text-xl mb-2 whitespace-pre-wrap">
             {post.title}
           </h3>
-          <p className="text-gray-700 dark:text-gray-300 text-sm whitespace-pre-wrap">
+          <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed whitespace-pre-wrap">
             {post.content}
           </p>
         </div>
@@ -267,7 +267,7 @@ export default function PostCard({
       <div className="flex items-center gap-6 border-t border-gray-200 dark:border-gray-700 pt-3">
         <button
           onClick={toggleLike}
-          className={`flex items-center gap-2 transition ${
+          className={`flex items-center gap-2  px-2 py-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition ${
             likedByMe
               ? "text-red-600 dark:text-red-400"
               : "text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
@@ -290,7 +290,6 @@ export default function PostCard({
         </button>
       </div>
 
-      {/* Comments */}
       {/* Comments */}
       {showComments && (
         <div className="mt-4">
@@ -393,7 +392,7 @@ export default function PostCard({
             />
             <button
               onClick={addComment}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full text-sm font-medium"
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-lg text-sm font-medium"
             >
               Post
             </button>

@@ -27,7 +27,7 @@ const CATEGORIES = [
 
 function ForumView() {
   // MOCK currentUser if your context isn't wired here yet:
-  const {currentUser} = useAuth();
+  const { currentUser } = useAuth();
 
   // create modal state
   const [showModal, setShowModal] = useState(false);
@@ -208,19 +208,21 @@ function ForumView() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div className="mx-auto max-w-6xl px-4 py-8 grid grid-cols-1 md:grid-cols-[260px_1fr] gap-6">
+      <div className="mx-auto max-w-7xl px-6 py-10 grid grid-cols-1 md:grid-cols-[280px_1fr] gap-8">
         {/* Sidebar Filter */}
-        <CategoryFilter
-          category={categoryFilter}
-          onChange={(val) => handleCategoryChange(val)}
-        />
+        <aside className="bg-white dark:bg-gray-800 rounded-2xl shadow-md p-6 h-fit border border-gray-200 dark:border-gray-700">
+          <CategoryFilter
+            category={categoryFilter}
+            onChange={(val) => handleCategoryChange(val)}
+          />
+        </aside>
 
         {/* Main */}
         <main>
           {/* Create Button */}
           <Button
             onClick={() => setShowModal(true)}
-            className="fixed bottom-6 right-6 p-4 rounded-full shadow-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600"
+            className="fixed bottom-8 right-8 px-6 py-3 rounded-full shadow-xl bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-lg font-medium"
           >
             + Create Post
           </Button>

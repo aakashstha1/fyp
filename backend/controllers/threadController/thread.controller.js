@@ -191,7 +191,7 @@ export const getComment = async (req, res) => {
 
     if (!comments.length) {
       return res
-        .status(404)
+        .status(200)
         .json({ message: "No comments found for this thread" });
     }
 
