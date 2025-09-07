@@ -49,7 +49,7 @@ export default function QuizViewer() {
   const handleSubmit = async () => {
     if (submitted) return;
     setSubmitted(true);
-
+    
     try {
       const res = await axios.post(
         "http://localhost:8000/api/quize/submit",

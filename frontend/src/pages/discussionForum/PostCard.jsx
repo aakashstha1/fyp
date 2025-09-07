@@ -21,6 +21,7 @@ export default function PostCard({
   const [showConfirm, setShowConfirm] = useState(false);
   const [confirmMessage, setConfirmMessage] = useState("");
   const [deleteTarget, setDeleteTarget] = useState(null);
+
   const [likes, setLikes] = useState(
     Array.isArray(post.likes) ? post.likes : []
   );
