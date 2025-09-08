@@ -21,6 +21,13 @@ const threadModel = new mongoose.Schema(
         ref: "Comment",
       },
     ],
+    likes: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    category: { type: String, required: true },
   },
   { timestamps: true }
 );

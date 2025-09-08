@@ -124,6 +124,8 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
+
+          
           //Instructor Dashboard
           <Route
             path="dashboard"

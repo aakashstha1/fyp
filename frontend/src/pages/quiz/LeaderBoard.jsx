@@ -8,13 +8,15 @@ function Leaderboard() {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("http://localhost:8000/api/quize/leaderboard");
-        setData(res.data);
+        const res = await axios.get(
+          "http://localhost:8000/api/quize/leaderboard"
+        );
+        setData(res.data.leaderboard || []);
       } catch (err) {
         setError("Failed to fetch leaderboard.");
+        console.error(err);
       }
     };
-
     fetchLeaderboard();
   }, []);
 
@@ -25,38 +27,63 @@ function Leaderboard() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-10">
-      <h1 className="text-4xl font-bold text-center mb-10 text-gray-800">
-        🏆 Leaderboard
-      </h1>
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto">
+        <h1 className="text-4xl sm:text-5xl font-extrabold text-center text-gray-900 dark:text-white mb-10">
+          🏆 Leaderboard
+        </h1>
 
-      <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="grid grid-cols-4 bg-gray-100 text-gray-700 font-semibold text-sm sm:text-base px-6 py-3">
-          <div>#</div>
-          <div>User</div>
-          <div>Score</div>
-          <div>Date</div>
-        </div>
-
-        {data.length === 0 ? (
-          <div className="text-center text-gray-500 py-10">No records yet.</div>
-        ) : (
-          data.map((entry, index) => (
-            <div
-              key={entry._id}
-              className={`grid grid-cols-4 px-6 py-4 text-gray-800 text-sm sm:text-base border-t ${
-                index % 2 === 0 ? "bg-gray-50" : "bg-white"
-              }`}
-            >
-              <div className="font-medium">{index + 1}</div>
-              <div className="truncate">{entry.userId?.name || "User"}</div>
-              <div className="font-bold text-blue-600">
-                {entry.score} / {entry.total}
-              </div>
-              <div>{new Date(entry.date).toLocaleDateString()}</div>
+        <div className="space-y-4">
+          {data.length === 0 ? (
+            <div className="text-center text-gray-500 dark:text-gray-400 py-10 text-lg">
+              No records yet.
             </div>
-          ))
-        )}
+          ) : (
+            data.map((entry, index) => {
+              const isTop = index === 0;
+              const isSecond = index === 1;
+              const isThird = index === 2;
+              const bgColor = index % 2 === 0 ? "bg-white" : "bg-gray-50";
+
+              return (
+                <div
+                  key={entry._id}
+                  className={`flex justify-between items-center p-5 rounded-2xl shadow-md transition-transform hover:scale-[1.02] ${bgColor}`}
+                >
+                  {/* Rank */}
+                  <div className="text-xl sm:text-2xl font-bold w-12 text-center flex-shrink-0">
+                    {index + 1}
+                  </div>
+
+                  {/* User Name */}
+                  <div className="flex-1 text-lg sm:text-xl font-medium truncate mx-4 text-gray-800 dark:text-gray-200">
+                    {entry.userId?.name || "User"}
+                  </div>
+
+                  {/* Score */}
+                  <div
+                    className={`font-bold text-lg sm:text-xl flex-shrink-0 w-28 text-right ${
+                      isTop
+                        ? "text-yellow-500"
+                        : isSecond
+                        ? "text-gray-400"
+                        : isThird
+                        ? "text-yellow-700"
+                        : "text-blue-600"
+                    }`}
+                  >
+                    {entry.score} / {entry.total}
+                  </div>
+
+                  {/* Date */}
+                  <div className="text-gray-500 dark:text-gray-400 text-sm sm:text-base flex-shrink-0 w-32 text-right">
+                    {new Date(entry.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+              );
+            })
+          )}
+        </div>
       </div>
     </div>
   );
