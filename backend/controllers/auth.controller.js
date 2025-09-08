@@ -7,20 +7,36 @@ export const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
-    // Check if user already exists
+    // 1. Validate name (no numbers allowed)
+    const nameRegex = /^[A-Za-z\s]+$/;
+    if (!nameRegex.test(name)) {
+      return res
+        .status(400)
+        .json({ message: "Name must only contain letters and spaces" });
+    }
+
+    // 2. Validate password length (>= 8 characters)
+    if (!password || password.length < 8) {
+      return res
+        .status(400)
+        .json({ message: "Password must be at least 8 characters long" });
+    }
+
+    // 3. Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser)
       return res.status(400).json({ message: "User already exists" });
 
-    // Hash password
+    // 4. Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create user
+    // 5. Create user
     const user = await User.create({
       name,
       email,
       password: hashedPassword,
     });
+
     const { password: pwd, ...rest } = user._doc;
 
     res

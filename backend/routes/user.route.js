@@ -1,5 +1,6 @@
 import express from "express";
 import {
+  checkProfileCompletion,
   getUser,
   requestInstructorRole,
   updateProfile,
@@ -26,5 +27,6 @@ router.post(
   requestInstructorRole
 );
 router.route("/niches/:id").post(updateUserNiches);
+router.route("/profile-completion").get(verifyToken, checkProfileCompletion);
 
 export default router;

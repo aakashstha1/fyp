@@ -3,12 +3,10 @@ import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
 export const ProtectedRoute = ({ roles, children }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser } = useAuth();
   const location = useLocation();
 
-  if (loading) {
-    return <div>Loading...</div>; // spinner while loading
-  }
+
 
   if (!currentUser) {
     // Not logged in
@@ -34,11 +32,9 @@ export const ProtectedRoute = ({ roles, children }) => {
 };
 
 export const PublicRoute = ({ children }) => {
-  const { currentUser, loading } = useAuth();
+  const { currentUser } = useAuth();
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  
 
   if (currentUser) {
     if (currentUser.role === "admin")

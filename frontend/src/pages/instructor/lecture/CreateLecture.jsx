@@ -442,7 +442,7 @@ function CreateLecture() {
                 id="assignmentTitle"
                 value={assignmentTitle}
                 onChange={(e) => setAssignmentTitle(e.target.value)}
-                placeholder="e.g. Introduction to React"
+                placeholder="e.g. Web Development MCQ Quiz"
               />
             </div>
           </div>

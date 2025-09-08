@@ -188,3 +188,44 @@ export const updateUserNiches = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+// Check Profile Completion Controller
+export const checkProfileCompletion = async (req, res) => {
+  try {
+    const userId = req.user.userId; // from auth middleware
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Check if profile fields are complete
+    if (
+      !user.name?.trim() ||
+      !user.bio?.trim() ||
+      !user.phone?.trim() ||
+      !user.gender?.trim() ||
+      !user.imageUrl ||
+      !user.email?.trim()
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Plase complete your profile to Apply for instructor.",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile is complete",
+    });
+  } catch (error) {
+    console.error("Profile check error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while checking profile",
+    });
+  }
+};

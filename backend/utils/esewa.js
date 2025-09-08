@@ -4,8 +4,13 @@ import crypto from "crypto";
 // Generate eSewa payment hash
 export async function getEsewaPaymentHash({ amount, transaction_uuid }) {
   try {
-    const data = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${process.env.ESEWA_PRODUCT_CODE}`;
+    const productCode = process.env.ESEWA_PRODUCT_CODE;
     const secretKey = process.env.ESEWA_SECRET_KEY;
+
+    // Use & not ,
+    // const data = `total_amount=${amount}&transaction_uuid=${transaction_uuid}&product_code=${productCode}`;
+    const data = `total_amount=${amount},transaction_uuid=${transaction_uuid},product_code=${productCode}`;
+
     const hash = crypto
       .createHmac("sha256", secretKey)
       .update(data)
@@ -23,18 +28,19 @@ export async function getEsewaPaymentHash({ amount, transaction_uuid }) {
 // Verify eSewa payment
 export async function verifyEsewaPayment(encodedData) {
   try {
-    // Decode base64 received from eSewa
+    // Decode base64 payload
     let decodedData = Buffer.from(encodedData, "base64").toString("utf-8");
     decodedData = JSON.parse(decodedData);
-    console.log("decoded data", decodedData);
-    const headersList = {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    };
 
-    const data = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${process.env.ESEWA_PRODUCT_CODE},signed_field_names=${decodedData.signed_field_names}`;
+    // console.log("Decoded payment data:", decodedData);
 
+    const productCode = process.env.ESEWA_PRODUCT_CODE;
     const secretKey = process.env.ESEWA_SECRET_KEY;
+
+    // Signed string must match original structure
+    // const data = `transaction_code=${decodedData.transaction_code}&status=${decodedData.status}&total_amount=${decodedData.total_amount}&transaction_uuid=${decodedData.transaction_uuid}&product_code=${productCode}&signed_field_names=${decodedData.signed_field_names}`;
+    const data = `transaction_code=${decodedData.transaction_code},status=${decodedData.status},total_amount=${decodedData.total_amount},transaction_uuid=${decodedData.transaction_uuid},product_code=${productCode},signed_field_names=${decodedData.signed_field_names}`;
+
     const hash = crypto
       .createHmac("sha256", secretKey)
       .update(data)
@@ -44,13 +50,13 @@ export async function verifyEsewaPayment(encodedData) {
       throw { message: "Invalid signature", decodedData };
     }
 
-    const reqOptions = {
-      url: `${process.env.ESEWA_GATEWAY_URL}/api/epay/transaction/status/?product_code=${process.env.ESEWA_PRODUCT_CODE}&total_amount=${decodedData.total_amount}&transaction_uuid=${decodedData.transaction_uuid}`,
-      method: "GET",
-      headers: headersList,
-    };
-
-    const response = await axios.request(reqOptions);
+    // Verify with eSewa server
+    const response = await axios.get(
+      `${process.env.ESEWA_GATEWAY_URL}/api/epay/transaction/status/?product_code=${productCode}&total_amount=${decodedData.total_amount}&transaction_uuid=${decodedData.transaction_uuid}`,
+      {
+        headers: { Accept: "application/json" },
+      }
+    );
 
     if (
       response.data.status !== "COMPLETE" ||

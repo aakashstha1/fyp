@@ -19,12 +19,11 @@ function AdminDashboard() {
 
         <AdminChart />
 
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-6">
           <TopRatedCourses />
           <TopEnrolledCourses />
+          <TopContributors />
         </div>
-
-        <TopContributors />
       </div>
     </div>
   );

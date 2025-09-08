@@ -13,6 +13,17 @@ import React from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { FaBookOpenReader } from "react-icons/fa6";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 function AdminSidebar() {
   const navigate = useNavigate();
@@ -87,8 +98,11 @@ function AdminSidebar() {
             className="flex items-center gap-3 p-2 rounded-md transition-all duration-200 "
           >
             <Avatar className="cursor-pointer">
-              <AvatarImage src="" alt="@shadcn" />
-              <AvatarFallback></AvatarFallback>
+              <AvatarImage src={currentUser?.name} alt="@shadcn" />
+
+              <AvatarFallback>
+                {currentUser?.name?.charAt(0).toUpperCase() || "U"}
+              </AvatarFallback>
             </Avatar>
             <div>
               <h1 className="font-semibold">{currentUser?.name}</h1>
@@ -96,15 +110,32 @@ function AdminSidebar() {
             </div>
           </NavLink>
 
-          {/* Logout Button */}
-          <Button
-            variant="destructive"
-            onClick={logoutHandler}
-            className="w-full"
-          >
-            <LogOut size={22} />
-            Logout
-          </Button>
+          {/* Logout confitmation */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive" className="w-full">
+                <LogOut size={22} />
+                Logout
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Are you sure you want to log out?
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  You will be logged out of your account and redirected to the
+                  login page.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction onClick={logoutHandler}>
+                  Yes, Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 

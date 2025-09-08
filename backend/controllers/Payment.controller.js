@@ -24,14 +24,13 @@ export const initializePayment = async (req, res) => {
     const existingPurchase = await PurchasedCourse.findOne({
       course: courseId,
       enrollee: userId,
-      status: { $in: ["pending", "completed"] }, // block both pending and completed
+      status: { $in: ["completed"] }, // block both pending and completed
     });
 
     if (existingPurchase) {
       return res.status(400).json({
         success: false,
-        message:
-          "You have already initiated or completed payment for this course.",
+        message: "You have already completed payment for this course.",
         purchasedCourseData: existingPurchase,
       });
     }
@@ -43,18 +42,30 @@ export const initializePayment = async (req, res) => {
       paymentMethod: "esewa",
       totalPrice: totalPrice,
     });
+    // console.log("purchased courese", purchasedCourseData);
 
     // Initiate payment with eSewa
     const paymentInitiate = await getEsewaPaymentHash({
       amount: totalPrice,
       transaction_uuid: purchasedCourseData._id,
     });
-    // console.log(paymentInitiate);
+    // console.log("paymentInitiate", paymentInitiate);
     // Respond with payment details
     res.json({
       success: true,
-      payment: paymentInitiate,
-      purchasedCourseData,
+      payment: {
+        amount: totalPrice,
+        tax_amount: 0,
+        total_amount: totalPrice,
+        transaction_uuid: purchasedCourseData._id,
+        product_code: process.env.ESEWA_PRODUCT_CODE,
+        success_url: "http://localhost:8000/api/payment/complete-payment",
+        failure_url: "http://localhost:8000/api/payment/failed",
+        product_service_charge: 0,
+        product_delivery_charge: 0,
+        signature: paymentInitiate.signature,
+        signed_field_names: paymentInitiate.signed_field_names,
+      },
     });
   } catch (error) {
     console.log(error);
@@ -65,7 +76,7 @@ export const initializePayment = async (req, res) => {
 //Verify By Esewa
 export const completePayment = async (req, res) => {
   const { data } = req.query; // Data received from eSewa's redirect
-  console.log("data", data);
+  // console.log("data", data);
   try {
     // Verify payment with eSewa
     const paymentInfo = await verifyEsewaPayment(data);
@@ -112,11 +123,22 @@ export const completePayment = async (req, res) => {
       { $set: { status: "completed" } }
     );
 
+    const course = await Course.findById(purchasedCourseData.course);
+    if (
+      course &&
+      !course.enrolledStudents.some(
+        (id) => id.toString() === purchasedCourseData.enrollee.toString()
+      )
+    ) {
+      course.enrolledStudents.push(purchasedCourseData.enrollee);
+      await course.save();
+    }
     // Respond with success message
     res.json({
       success: true,
       message: "Payment successful",
       paymentData,
+      course,
     });
   } catch (error) {
     res.status(500).json({
@@ -126,5 +148,3 @@ export const completePayment = async (req, res) => {
     });
   }
 };
-
-

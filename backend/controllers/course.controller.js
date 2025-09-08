@@ -339,6 +339,8 @@ export const getRecommendedCourses = async (req, res) => {
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
+
 export const getCourseLectures = async (req, res) => {
   try {
     const { courseId } = req.params;

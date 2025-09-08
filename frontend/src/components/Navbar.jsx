@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Button } from "./ui/button";
 import ModeToggle from "@/ModeToggle";
@@ -12,24 +12,26 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { ChevronDown, Menu } from "lucide-react";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
+import { ChevronDown, LogOut, Menu } from "lucide-react";
+
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "./ui/sheet";
 import { toast } from "sonner";
 import { FaBookOpenReader } from "react-icons/fa6";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "./ui/alert-dialog";
 
 function Navbar() {
   const navigate = useNavigate();
   const { currentUser, logout } = useAuth();
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
   const navLinkClass = ({ isActive }) =>
     isActive
       ? "text-blue-600 font-semibold"
@@ -38,7 +40,7 @@ function Navbar() {
   const handleLogout = async () => {
     const res = await logout();
     toast.success(res?.data?.message || "Logged out successfully");
-    setOpen(false);
+    // setOpen(false);
     window.location.href = "/login";
   };
 
@@ -128,12 +130,31 @@ function Navbar() {
                 >
                   Profile
                 </DropdownMenuItem>
-
-                <DropdownMenuItem onClick={() => setOpen(true)}>
-                  Logout
-                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
+
+            {/* Logout with AlertDialog */}
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="destructive">
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>
+                    Are you sure you want to logout?
+                  </AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleLogout}>
+                    Logout
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+
             <ModeToggle />
           </div>
         ) : (
@@ -147,23 +168,6 @@ function Navbar() {
             <ModeToggle />
           </div>
         )}
-        <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Are you sure you want to logout?</DialogTitle>
-            </DialogHeader>
-            <DialogFooter className="flex justify-end gap-2">
-              <DialogClose asChild>
-                <Button variant="outline" onClick={() => setOpen(false)}>
-                  Cancel
-                </Button>
-              </DialogClose>
-              <Button variant="destructive" onClick={handleLogout}>
-                Logout
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
 
       {/* Mobile Navigation */}
@@ -223,15 +227,27 @@ function Navbar() {
                   </SheetClose>
                 )}
 
-                <SheetClose asChild>
-                  <Button
-                    variant="destructive"
-                    onClick={handleLogout}
-                    className="mt-2"
-                  >
-                    Logout
-                  </Button>
-                </SheetClose>
+                {/* Logout with confirmation */}
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" className="mt-2 w-full">
+                      Logout
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>
+                        Are you sure you want to logout?
+                      </AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleLogout}>
+                        Logout
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               </>
             )}
 
