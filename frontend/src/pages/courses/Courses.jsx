@@ -46,7 +46,7 @@ function Courses() {
             limit: COURSES_PER_PAGE,
           },
         });
-        console.log(res);
+        // console.log(res);
 
         setCourses(res.data.courses || []);
         setTotalPages(res.data.totalPages || 1);
@@ -139,11 +139,14 @@ function Courses() {
           </div>
 
           {/* Pagination */}
-          {!loading && courses.length > 0 && (
+          {!loading && courses.length > 0 && totalPages > 1 && (
             <div className="flex justify-center mt-8 gap-2 flex-wrap">
               <button
                 disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
+                onClick={() => {
+                  setCurrentPage((prev) => prev - 1);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className="px-3 py-1 border rounded disabled:opacity-50"
               >
                 Prev
@@ -151,7 +154,10 @@ function Courses() {
               {paginationButtons}
               <button
                 disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
+                onClick={() => {
+                  setCurrentPage((prev) => prev + 1);
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }}
                 className="px-3 py-1 border rounded disabled:opacity-50"
               >
                 Next

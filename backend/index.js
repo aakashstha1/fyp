@@ -13,7 +13,7 @@ import quize from "./routes/quizeQuestionAdd.route.js";
 import threadRoutes from "./routes/thread.route.js";
 import courseRoutes from "./routes/course.route.js";
 import ratingRoutes from "./routes/rating.routes.js";
-// import paymentRoutes from "./routes/payment.route.js";
+import paymentRoutes from "./routes/payment.route.js";
 import enrollmentRoutes from "./routes/enrollment.route.js";
 import statsRoutes from "./routes/stats.route.js";
 import progressRoutes from "./routes/courseProgress.route.js";
@@ -44,10 +44,11 @@ app.use("/api/rating", ratingRoutes);
 app.use("/api/stats", statsRoutes);
 app.use("/api/progress", progressRoutes);
 
-// app.use("/api/payment", paymentRoutes);
+app.use("/api/payment", paymentRoutes);
 app.use("/api/enroll", enrollmentRoutes);
 
 // Start server
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   ConnectDB();

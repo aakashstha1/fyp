@@ -15,7 +15,7 @@ export const getCreatorIncome = async (req, res) => {
 
     // Daily aggregation
     const daily = await PurchasedCourse.aggregate([
-      { $match: { course: { $in: courseIds } } },
+      { $match: { course: { $in: courseIds }, status: "completed" } },
       {
         $group: {
           _id: {
@@ -29,7 +29,7 @@ export const getCreatorIncome = async (req, res) => {
 
     // Weekly aggregation
     const weekly = await PurchasedCourse.aggregate([
-      { $match: { course: { $in: courseIds } } },
+      { $match: { course: { $in: courseIds }, status: "completed" } },
       {
         $group: {
           _id: { $isoWeek: "$purchasedDate" },
@@ -41,7 +41,7 @@ export const getCreatorIncome = async (req, res) => {
 
     // Monthly aggregation
     const monthly = await PurchasedCourse.aggregate([
-      { $match: { course: { $in: courseIds } } },
+      { $match: { course: { $in: courseIds }, status: "completed" } },
       {
         $group: {
           _id: { $month: "$purchasedDate" },
@@ -95,7 +95,6 @@ export const getCreatorIncome = async (req, res) => {
   }
 };
 
-
 export const getAllIncome = async (req, res) => {
   try {
     // Only allow admin
@@ -109,7 +108,7 @@ export const getAllIncome = async (req, res) => {
 
     // Daily aggregation
     const daily = await PurchasedCourse.aggregate([
-      { $match: { course: { $in: courseIds } } },
+      { $match: { course: { $in: courseIds }, status: "completed" } },
       {
         $group: {
           _id: {
@@ -123,7 +122,7 @@ export const getAllIncome = async (req, res) => {
 
     // Weekly aggregation
     const weekly = await PurchasedCourse.aggregate([
-      { $match: { course: { $in: courseIds } } },
+      { $match: { course: { $in: courseIds }, status: "completed" } },
       {
         $group: {
           _id: { $isoWeek: "$purchasedDate" },
@@ -135,7 +134,7 @@ export const getAllIncome = async (req, res) => {
 
     // Monthly aggregation
     const monthly = await PurchasedCourse.aggregate([
-      { $match: { course: { $in: courseIds } } },
+      { $match: { course: { $in: courseIds }, status: "completed" } },
       {
         $group: {
           _id: { $month: "$purchasedDate" },

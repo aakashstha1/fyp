@@ -14,7 +14,7 @@ function InstructorReq() {
         const res = await axios.get(`${API_URL}/admin/instructor-requests`, {
           withCredentials: true,
         });
-        console.log(res);
+        // console.log(res);
         setAllRequests(res?.data?.requests);
       } catch (error) {
         console.log(error);

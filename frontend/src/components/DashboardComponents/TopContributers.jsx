@@ -1,4 +1,4 @@
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
@@ -78,6 +78,9 @@ function TopContributors() {
                       src={contributor?.imageUrl || ""}
                       alt={contributor?.name}
                     />
+                    <AvatarFallback>
+                      {contributor?.name?.charAt(0).toUpperCase() || "U"}
+                    </AvatarFallback>
                   </Avatar>
                 </td>
                 <td className="py-3 px-4 font-medium text-gray-800">

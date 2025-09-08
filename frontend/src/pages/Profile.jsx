@@ -37,6 +37,7 @@ function Profile() {
   );
   const [img, setImg] = useState(currentUser?.imageUrl || "");
   const [request, setRequest] = useState("");
+
   const [loading, setLoading] = useState(false);
   // const [file, setFile] = useState(null);
   const API_URL = "http://localhost:8000/api";
@@ -48,13 +49,26 @@ function Profile() {
           withCredentials: true,
         });
         setRequest(res.data.req);
-        console.log(res);
+        // console.log(res);
       } catch (error) {
         console.log(error);
       }
     };
     getUserProfile();
   }, []);
+
+  const handleApplyClick = async () => {
+    try {
+      const res = await axios.get(`${API_URL}/user/profile-completion`, {
+        withCredentials: true,
+      });
+      toast.success(res?.data?.message);
+      navigate("/apply-for-instructor");
+    } catch (error) {
+      console.log(error);
+      toast.error(error?.response?.data?.message);
+    }
+  };
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
@@ -134,11 +148,9 @@ function Profile() {
                   complete the verification. Thank you for your patience.
                 </p>
               ) : (
-                <Link to={"/apply-for-instructor"}>
-                  <Button size="sm" variant="outline">
-                    Apply as Instructor
-                  </Button>
-                </Link>
+                <Button size="sm" variant="outline" onClick={handleApplyClick}>
+                  Apply as Instructor
+                </Button>
               ))}
           </div>
         </CardHeader>
@@ -271,7 +283,6 @@ function Profile() {
               <Button
                 type="submit"
                 className="w-full md:w-auto"
-                onClick={handleSubmit}
                 disabled={loading}
               >
                 {loading ? (

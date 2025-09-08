@@ -32,13 +32,13 @@ function SingleCourse() {
   const [hover, setHover] = useState(0);
   const [loading, setLoading] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
+  // const [isPurchaseDialogOpen, setIsPurchaseDialogOpen] = useState(false);
 
   const [averageRating, setAverageRating] = useState(0);
   const [ratingsCount, setRatingsCount] = useState(0);
 
-  // const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
-  // const [paymentLoading, setPaymentLoading] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const API_URL = "http://localhost:8000/api";
   const { courseId } = useParams();
@@ -125,30 +125,30 @@ function SingleCourse() {
   };
 
   //handel enrollement
-  const handleEnrollment = async () => {
-    if (!currentUser) {
-      toast.error("You must be logged in to enroll!");
-      navigate("/login");
-      return;
-    }
+  // const handleEnrollment = async () => {
+  //   if (!currentUser) {
+  //     toast.error("You must be logged in to enroll!");
+  //     navigate("/login");
+  //     return;
+  //   }
 
-    const payload = {
-      courseId,
-      totalPrice: course.price,
-    };
-    try {
-      const res = await axios.post(`${API_URL}/enroll`, payload, {
-        withCredentials: true,
-      });
-      toast.success(res?.data?.message || "Enrolled succesfully!");
-      navigate(`/course/${courseId}/progress`);
-    } catch (error) {
-      console.log(error);
-      toast.error(error?.response?.data?.message || "Failed to enroll!");
-    }
-  };
+  //   const payload = {
+  //     courseId,
+  //     totalPrice: course.price,
+  //   };
+  //   try {
+  //     const res = await axios.post(`${API_URL}/enroll`, payload, {
+  //       withCredentials: true,
+  //     });
+  //     toast.success(res?.data?.message || "Enrolled succesfully!");
+  //     navigate(`/course/${courseId}/progress`);
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error?.response?.data?.message || "Failed to enroll!");
+  //   }
+  // };
 
-  //handle Payment
+  // handle Payment
   // const handlePayment = async () => {
   //   if (!currentUser) {
   //     toast.error("You must be logged in to purchase.");
@@ -168,47 +168,54 @@ function SingleCourse() {
   //       },
   //       { withCredentials: true }
   //     );
-
-  //     const { payment, purchasedCourseData } = res.data;
-
-  //     // eSewa form submission
-  //     const form = document.createElement("form");
-  //     form.method = "POST";
-  //     form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
-  //     form.target = "_blank";
-
-  //     const fields = {
-  //       amt: course.price,
-  //       psc: "0",
-  //       pdc: "0",
-  //       tAmt: course.price,
-  //       pid: purchasedCourseData._id,
-  //       scd: ESEWA_PRODUCT_CODE,
-  //       su: `${window.location.origin}/payment-success`,
-  //       fu: `${window.location.origin}/payment-failure`,
-  //     };
-
-  //     Object.entries(fields).forEach(([key, value]) => {
-  //       const input = document.createElement("input");
-  //       input.type = "hidden";
-  //       input.name = key;
-  //       input.value = value;
-  //       form.appendChild(input);
-  //     });
-
-  //     document.body.appendChild(form);
-  //     form.submit();
-  //   } catch (err) {
-  //     console.error(err);
-  //     toast.error(
-  //       err?.response?.data?.message || "Payment initialization failed"
-  //     );
+  //     console.log(res);
   //   } finally {
   //     setPaymentLoading(false);
   //   }
   // };
+  const handlePayment = async () => {
+    if (!currentUser) {
+      toast.error("Login required");
+      navigate("/login");
+      return;
+    }
 
-  // const purchased = true;
+    setPaymentLoading(true);
+    try {
+      // Initialize payment on backend
+      const res = await axios.post(
+        "http://localhost:8000/api/payment/initialize-payment",
+        { courseId, totalPrice: course.price },
+        { withCredentials: true }
+      );
+
+      const { payment } = res.data;
+
+      // Create dynamic form for eSewa
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
+      form.target = "_blank";
+
+      Object.entries(payment).forEach(([key, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+      document.body.removeChild(form);
+    } catch (err) {
+      console.error(err);
+      toast.error("Payment initialization failed");
+    } finally {
+      setPaymentLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-10">
       {/* Course Overview */}
@@ -268,25 +275,30 @@ function SingleCourse() {
                 <h1 className="text-white font-semibold text-xl">
                   Rs. {course?.price || "N/A"}
                 </h1>
-                {/*<Button
+                <Button
                   variant="outline"
                   className="cursor-pointer"
                   onClick={() => {
-                    if (isEnrolled) {
-                      navigate(`/course-progress/${courseId}`);
+                    if (
+                      isEnrolled ||
+                      currentUser?._id === course?.creator?._id
+                    ) {
+                      navigate(`/course/${courseId}/progress`);
                     } else {
                       setIsPaymentDialogOpen(true);
                     }
                   }}
                 >
-                  {isEnrolled ? "Go to Lessons" : "Enroll Now"}
+                  {isEnrolled || currentUser?._id === course?.creator?._id
+                    ? "Go to Lessons"
+                    : "Enroll Now"}
                 </Button>
-                */}
+
+                {/* 
                 <Button
                   variant="outline"
                   className="cursor-pointer"
                   onClick={() => {
-                    // Check if user is enrolled OR the creator
                     if (
                       isEnrolled ||
                       currentUser?._id === course?.creator?._id
@@ -301,7 +313,8 @@ function SingleCourse() {
                     ? "Go to Lessons"
                     : "Enroll Now"}
                 </Button>
-                <Dialog
+                */}
+                {/* <Dialog
                   open={isPurchaseDialogOpen}
                   onOpenChange={setIsPurchaseDialogOpen}
                 >
@@ -331,9 +344,8 @@ function SingleCourse() {
                       </Button>
                     </DialogFooter>
                   </DialogContent>
-                </Dialog>
+                </Dialog> */}
               </div>
-
               {isEnrolled && (
                 <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                   <DialogTrigger asChild>
@@ -390,7 +402,7 @@ function SingleCourse() {
                 </Dialog>
               )}
 
-              {/* <Dialog
+              <Dialog
                 open={isPaymentDialogOpen}
                 onOpenChange={setIsPaymentDialogOpen}
               >
@@ -398,17 +410,24 @@ function SingleCourse() {
                   <DialogHeader>
                     <DialogTitle>Complete Your Enrollment</DialogTitle>
                     <DialogDescription>
-                      Click below to pay with eSewa.
+                      Do you want to purchase this course for Rs. {course.price}
+                      ?
                     </DialogDescription>
                   </DialogHeader>
 
-                  <div className="flex flex-col gap-4 mt-4">
+                  <DialogFooter className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => setIsPaymentDialogOpen(false)}
+                    >
+                      Cancel
+                    </Button>
                     <Button onClick={handlePayment} disabled={paymentLoading}>
                       {paymentLoading ? "Processing..." : "Pay with eSewa"}
                     </Button>
-                  </div>
+                  </DialogFooter>
                 </DialogContent>
-              </Dialog> */}
+              </Dialog>
             </div>
           </div>
         </div>
