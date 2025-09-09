@@ -42,6 +42,7 @@ import Assignment from "@/pages/assignment/assignment";
 import PageNotFound from "@/components/PageNotFound";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import Courseprogress from "@/pages/lectures/CourseProgress";
+import CreatorCourses from "@/pages/admin/CreatorCourses";
 
 function AppRoutes() {
   return (
@@ -124,8 +125,6 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
-
-          
           //Instructor Dashboard
           <Route
             path="dashboard"
@@ -162,6 +161,8 @@ function AppRoutes() {
           <Route path="Add-Quiz" element={<AddQuestionsLayout />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="instructor-request" element={<InstructorReq />} />
+          <Route path="users/:creatorId" element={<CreatorCourses />} />
+
           <Route
             path="instructor-request/:reqId"
             element={<InstructorReqDetail />}

@@ -144,6 +144,8 @@ function AddCourse() {
                 <SelectItem value="design">Design</SelectItem>
                 <SelectItem value="marketing">Marketing</SelectItem>
                 <SelectItem value="loksewa">Loksewa</SelectItem>
+                <SelectItem value="education">Education</SelectItem>
+
                 <SelectItem value="bridge-course">Bridge Course</SelectItem>
 
                 <SelectItem value="other">Others</SelectItem>

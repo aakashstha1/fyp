@@ -1,5 +1,5 @@
 // utils/formatText.js
-export const fromatText = (str) => {
+export const formatText = (str) => {
   if (!str) return "N/A";
   return str
     .split("-") // replace "-" with space

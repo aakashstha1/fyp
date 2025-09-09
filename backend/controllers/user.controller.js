@@ -141,8 +141,11 @@ export const getAllUsers = async (req, res) => {
         .json({ success: false, message: "Access denied. Admins only." });
     }
 
-    // fetch all users
-    const users = await User.find().sort({ createdAt: -1 });
+    // fetch all users excluding admins
+    const users = await User.find({ role: { $ne: "admin" } }).sort({
+      createdAt: -1,
+    });
+
     res.status(200).json({
       success: true,
       total: users.length,

@@ -6,6 +6,7 @@ import {
   getCourseById,
   getCourseByUserId,
   getCourseLectures,
+  getCoursesByCreatorId,
   getPublishedCourse,
   getPublishedCourseById,
   getRecommendedCourses,
@@ -41,6 +42,7 @@ router.route("/published-course/:courseId").get(getPublishedCourseById);
 
 router.route("/my-courses").get(verifyToken, getCourseByUserId);
 router.route("/detail/:courseId").get(verifyToken, getCourseById);
+router.route("/creator/:creatorId").get(verifyToken, getCoursesByCreatorId);
 router
   .route("/update/:courseId")
   .put(verifyToken, upload.single("thumbnail"), updateCourse);

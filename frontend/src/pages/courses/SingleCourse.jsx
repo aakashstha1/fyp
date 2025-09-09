@@ -208,6 +208,7 @@ function SingleCourse() {
       document.body.appendChild(form);
       form.submit();
       document.body.removeChild(form);
+      navigate(`/course/${courseId}/progress`);
     } catch (err) {
       console.error(err);
       toast.error("Payment initialization failed");

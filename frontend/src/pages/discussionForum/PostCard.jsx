@@ -87,7 +87,6 @@ export default function PostCard({
         { title: editTitle, content: editContent, category: editCategory },
         { withCredentials: true }
       );
-
       // Update UI
       setEditingThread(false);
       post.title = res.data.thread.title;

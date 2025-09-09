@@ -61,6 +61,7 @@ export const initializePayment = async (req, res) => {
         product_code: process.env.ESEWA_PRODUCT_CODE,
         success_url: "http://localhost:8000/api/payment/complete-payment",
         failure_url: "http://localhost:8000/api/payment/failed",
+
         product_service_charge: 0,
         product_delivery_charge: 0,
         signature: paymentInitiate.signature,
