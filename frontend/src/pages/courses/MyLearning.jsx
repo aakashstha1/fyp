@@ -3,27 +3,42 @@ import { Skeleton } from "@/components/ui/skeleton";
 import React, { useEffect, useState } from "react";
 import CourseCard from "./CourseCard";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
 function MyLearning() {
   // const [loading, setLoading] = useState(false);
   const API_URL = "http://localhost:8000/api";
+  const [loading, setLoading] = useState(false);
 
   const [courses, setCourses] = useState([]);
 
   useEffect(() => {
     const fetchEnrolledCourses = async () => {
-      const res = await axios.get(`${API_URL}/enroll/enrolled-courses`, {
-        withCredentials: true,
-      });
-      
+      setLoading(true);
+      try {
+        const res = await axios.get(`${API_URL}/enroll/enrolled-courses`, {
+          withCredentials: true,
+        });
 
-      setCourses(res?.data?.enrolledCourses);
+        setCourses(res?.data?.enrolledCourses);
+      } catch (error) {
+        console.log(error);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchEnrolledCourses();
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        <Loader2 className="animate-spin h-6 w-6 mr-2" /> Loading courses...
+      </div>
+    );
+  }
   return (
     <div className="max-w-7xl mx-auto my-10 px-4 md:px-0">
       <h1 className="font-bold text-3xl">My Learning</h1>

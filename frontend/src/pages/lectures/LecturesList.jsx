@@ -78,29 +78,21 @@ function LectureList({
           <Card
             onClick={() => onSelect(assignment)}
             className={`transition-all duration-200 hover:shadow-md hover:scale-[1.02] cursor-pointer rounded-xl ${
-              assignment === currentLecture ? "bg-blue-100" : "bg-blue-50"
+              assignment === currentLecture ? "bg-gray-100" : "dark:bg-gray-800"
             }`}
           >
             <CardContent className="flex justify-between items-center">
               <div className="flex items-center gap-2">
-                <FileText
-                  size={22}
-                  className={
-                    assignmentCompleted ? "text-green-500" : "text-blue-500"
-                  }
-                />
+                {assignmentCompleted ? (
+                  <CheckSquare size={22} className="text-green-500" />
+                ) : (
+                  <PlaySquare size={22} className="text-gray-400" />
+                )}
+
                 <CardTitle className="text-base font-semibold text-gray-700">
                   {assignment.title || "Assignment"}
                 </CardTitle>
               </div>
-              {assignmentCompleted && (
-                <Badge
-                  variant="outline"
-                  className="bg-green-100 text-green-700 border-none text-xs rounded-full py-1 px-3"
-                >
-                  Completed
-                </Badge>
-              )}
             </CardContent>
           </Card>
         )}

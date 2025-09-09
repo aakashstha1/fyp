@@ -170,7 +170,7 @@ export const togglePublishCourse = async (req, res) => {
           (Array.isArray(course[field]) && course[field].length === 0)
         ) {
           return res.status(400).json({
-            message: `Cannot publish course. Field '${field}' is missing or empty.`,
+            message: `'${field}' field is empty.`,
           });
         }
       }

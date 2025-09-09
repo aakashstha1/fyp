@@ -84,12 +84,12 @@ function CourseProgress() {
           const lines = text.split("\n").filter((line) => line.trim() !== "");
 
           const parsed = lines.slice(1).map((line) => {
-            const cells = line.split(",");
+            const cells = line.split(",").map((cell) => cell.trim()); // trim extra spaces & \r
             return {
               id: cells[0],
               question: cells[1],
               options: [cells[2], cells[3], cells[4], cells[5]],
-              correct: cells[6],
+              correct: cells[6], // now 'C', 'B', etc., without \r
             };
           });
 
@@ -126,6 +126,10 @@ function CourseProgress() {
         checkCourseCompletion(updated, assignmentCompleted);
         return updated;
       });
+      const currentIndex = lectures.findIndex((lec) => lec._id === lectureId);
+      if (currentIndex >= 0 && currentIndex < lectures.length - 1) {
+        setCurrentLecture(lectures[currentIndex + 1]);
+      }
     } catch (error) {
       console.log("Error marking lecture complete:", error);
     }
@@ -138,19 +142,20 @@ function CourseProgress() {
       return;
     }
 
+    const currentAnswers = { ...answers }; // capture current state
+
     setDialogOpen(true);
     setCalculating(true);
 
     setTimeout(async () => {
       let score = 0;
       mcqData.forEach((q, idx) => {
-        if (answers[idx] && answers[idx] === q.correct) score++;
+        if (currentAnswers[idx] === q.correct) score++;
       });
 
       setResult({ score, total: mcqData.length });
       setCalculating(false);
 
-      // If full marks -> mark assignment completed like lecture
       if (score === mcqData.length && assignment?._id) {
         try {
           await axios.post(
@@ -168,13 +173,15 @@ function CourseProgress() {
       }
     }, 1000);
 
-    setAnswers({});
+    setAnswers({}); // reset after capturing
   };
 
   const handleAnswerChange = (qIndex, value) => {
-    setAnswers((prev) => ({ ...prev, [qIndex]: value }));
+    setAnswers((prev) => ({
+      ...prev,
+      [qIndex]: value,
+    }));
   };
-
   const handleRetry = () => {
     setDialogOpen(false);
     setResult(null);
@@ -262,11 +269,8 @@ function CourseProgress() {
                                 checked={
                                   answers[idx] === String.fromCharCode(65 + i)
                                 }
-                                onChange={() =>
-                                  handleAnswerChange(
-                                    idx,
-                                    String.fromCharCode(65 + i)
-                                  )
+                                onChange={(e) =>
+                                  handleAnswerChange(idx, e.target.value)
                                 }
                               />
                               <span>{opt}</span>

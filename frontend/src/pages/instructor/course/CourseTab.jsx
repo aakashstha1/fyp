@@ -90,7 +90,7 @@ function CourseTab() {
       setCourse({ ...course, isPublished: newStatus === "true" });
     } catch (error) {
       console.log(error);
-      toast.error("Action failed!");
+      toast.error(error?.response?.data?.message || "Failed to update!");
     }
   };
 
