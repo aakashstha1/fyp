@@ -67,6 +67,7 @@ export const initializePayment = async (req, res) => {
         signature: paymentInitiate.signature,
         signed_field_names: paymentInitiate.signed_field_names,
       },
+      message: "Course enrolled succesfully!",
     });
   } catch (error) {
     console.log(error);

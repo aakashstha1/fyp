@@ -40,7 +40,6 @@ function Signup() {
     setLoading(true);
     try {
       const res = await axios.post(`${API_URL}/auth/register`, form);
-      toast.success("Account created successfully!");
       setUserId(res.data.user._id);
       setStep(2);
     } catch (error) {
@@ -73,10 +72,11 @@ function Signup() {
       await axios.post(`${API_URL}/user/niches/${userId}`, {
         niches: selectedNiches,
       });
-      toast.success("Niches saved successfully!");
-      navigate("/");
+      toast.success("Account created successfully!");
+
+      navigate("/login");
     } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to save niches");
+      toast.error(error.response?.data?.message || "Failed to create user");
     } finally {
       setLoading(false);
     }
@@ -163,10 +163,7 @@ function Signup() {
                 </div>
               ))}
             </div>
-            <div className="mt-2 text-sm">
-              Selected ({selectedNiches.length}/3):{" "}
-              {selectedNiches.join(", ") || "None"}
-            </div>
+
             <button
               onClick={handleSaveNiches}
               disabled={loading || selectedNiches.length === 0}
