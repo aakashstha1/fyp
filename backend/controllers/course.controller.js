@@ -114,12 +114,16 @@ export const updateCourse = async (req, res) => {
         .json({ message: "Not authorized to update this course" });
     }
 
+    if (price !== undefined && price < 0) {
+      return res.status(400).json({ message: "Price cannot be negative" });
+    }
+
     // Update fields
     course.title = title || course.title;
     course.description = description || course.description;
     course.category = category || course.category;
     course.tags = tags || course.tags;
-    course.price = price || course.price;
+    course.price = price !== undefined ? price : course.price;
 
     if (imageFile) {
       const uploadResponse = await uploadMedia(imageFile.path);
@@ -147,6 +151,36 @@ export const togglePublishCourse = async (req, res) => {
     const course = await Course.findById(courseId);
     if (!course) {
       return res.status(404).json({ message: "Course not found!" });
+    }
+
+    // Only validate before publishing
+    if (publish === "true") {
+      const requiredFields = [
+        "title",
+        "description",
+        "category",
+        "tags",
+        "price",
+        "thumbnail",
+      ];
+
+      for (const field of requiredFields) {
+        if (
+          !course[field] ||
+          (Array.isArray(course[field]) && course[field].length === 0)
+        ) {
+          return res.status(400).json({
+            message: `'${field}' field is empty.`,
+          });
+        }
+      }
+
+      // Ensure at least one lecture exists
+      if (!course.lectures || course.lectures.length === 0) {
+        return res.status(400).json({
+          message: "Cannot publish course. Add at least one lecture.",
+        });
+      }
     }
 
     course.isPublished = publish === "true";
@@ -340,7 +374,6 @@ export const getRecommendedCourses = async (req, res) => {
   }
 };
 
-
 export const getCourseLectures = async (req, res) => {
   try {
     const { courseId } = req.params;
@@ -428,5 +461,30 @@ export const deleteCourse = async (req, res) => {
   } catch (error) {
     console.error("Error deleting course:", error);
     return res.status(500).json({ success: false, message: "Server Error" });
+  }
+};
+
+export const getCoursesByCreatorId = async (req, res) => {
+  try {
+    const { creatorId } = req.params;
+
+    const courses = await Course.find({ creator: creatorId }).populate(
+      "creator",
+      "name email imageUrl bio"
+    );
+
+    if (!courses || courses.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No courses found for this creator" });
+    }
+
+    return res.status(200).json({
+      message: "Courses fetched successfully",
+      courses,
+    });
+  } catch (error) {
+    console.error("Error fetching courses by creator:", error);
+    return res.status(500).json({ message: "Server Error" });
   }
 };

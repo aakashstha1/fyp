@@ -107,6 +107,8 @@ function CourseFilter({
             { id: "design", label: "Design" },
             { id: "marketing", label: "Marketing" },
             { id: "loksewa", label: "Loksewa" },
+            { id: "education", label: "Education" },
+
             { id: "bridge-course", label: "Bridge Course" },
 
             { id: "other", label: "Others" },

@@ -39,7 +39,7 @@ function CourseCard({ course }) {
         />
       </CardHeader>
       <CardContent className="space-y-2 px-3 pb-2">
-        <h1 className=" font-semibold text-lg truncate">{course.title}</h1>
+        <h1 className=" font-semibold text-lg truncate">{course?.title}</h1>
 
         <div className="flex items-center gap-2">
           <Avatar className="h-6 w-6">
@@ -55,7 +55,7 @@ function CourseCard({ course }) {
         </div>
 
         <h2 className="font-semibold">
-          Rs. {course.price?.toFixed(2) || "N/A"}
+          Rs. {course?.price?.toFixed(2) || "N/A"}
         </h2>
 
         <div className="flex items-center justify-between py-2">
@@ -74,7 +74,7 @@ function CourseCard({ course }) {
         </div>
 
         <div className="flex flex-wrap gap-1">
-          {(course.tags || []).slice(0, 2).map((tag, i) => (
+          {(course?.tags || []).slice(0, 2).map((tag, i) => (
             <span
               key={i}
               className="text-[10px] bg-gray-200 text-gray-700 px-2 py-0.5 rounded-full"

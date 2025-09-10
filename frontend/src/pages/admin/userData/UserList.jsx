@@ -2,9 +2,12 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import UserDatatable from "./userDataTable";
+import { Loader2 } from "lucide-react";
 
 function UserList() {
   const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [roleFilter, setRoleFilter] = useState("all");
   const [totalUsers, setTotalUsers] = useState(0);
 
@@ -13,6 +16,7 @@ function UserList() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
+        setLoading(true);
         const res = await axios.get(`${API_URL}/admin/user-list`, {
           withCredentials: true,
         });
@@ -21,7 +25,9 @@ function UserList() {
         setUsers(formatted);
         setTotalUsers(res?.data?.total || formatted.length);
       } catch (err) {
-        console.error("❌ Failed to fetch users:", err);
+        console.error("Failed to fetch users:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -36,6 +42,14 @@ function UserList() {
     roleFilter === "all"
       ? users
       : users.filter((u) => u.user.role === roleFilter);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        <Loader2 className="animate-spin h-6 w-6 mr-2" /> Loading users...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto">
@@ -66,7 +80,7 @@ function UserList() {
       <h1 className="pb-4 font-semibold">Total users: {totalUsers}</h1>
 
       {/* User Table */}
-      <UserDatatable data={filteredUsers} showRole={true} />
+      <UserDatatable data={filteredUsers}  />
     </div>
   );
 }

@@ -13,7 +13,7 @@ import { Link } from "react-router-dom";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 
-const UserDatatable = ({ data }) => {
+const ReqDataTable = ({ data }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 10;
 
@@ -44,7 +44,7 @@ const UserDatatable = ({ data }) => {
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Contact</TableHead>
-              <TableHead>Role</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead className="text-right w-32">Action</TableHead>
             </TableRow>
           </TableHeader>
@@ -83,13 +83,28 @@ const UserDatatable = ({ data }) => {
                     {req?.user?.phone || "N/A"}
                   </TableCell>
 
-                  <TableCell className="capitalize text-gray-700">
-                    {req?.user?.role || "N/A"}
+                  <TableCell>
+                    <Badge
+                      className={`w-24 justify-center text-white ${
+                        req?.status === "approved"
+                          ? "bg-green-500"
+                          : req?.status === "pending"
+                          ? "bg-yellow-500"
+                          : req?.status === "rejected"
+                          ? "bg-red-500"
+                          : "bg-gray-400"
+                      }`}
+                    >
+                      {req?.status
+                        ? req.status.charAt(0).toUpperCase() +
+                          req.status.slice(1)
+                        : "N/A"}
+                    </Badge>
                   </TableCell>
 
                   <TableCell className="text-right space-x-2">
-                    {req?.user?.role == "instructor" && (
-                      <Link to={`/admin/users/${req?.user?._id}`}>
+                    {req?.user?.role !== "admin" && (
+                      <Link to={`/admin/instructor-request/${req?._id}`}>
                         <Button
                           size="sm"
                           className="bg-blue-600 hover:bg-blue-700 rounded-md"
@@ -134,4 +149,4 @@ const UserDatatable = ({ data }) => {
   );
 };
 
-export default UserDatatable;
+export default ReqDataTable;

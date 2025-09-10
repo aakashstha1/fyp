@@ -53,6 +53,7 @@ function ForumView() {
           params: { category: cat },
           withCredentials: true,
         });
+        console.log(res);
 
         const formatted = (res.data.threads || []).map((t) => ({
           threadId: t._id,

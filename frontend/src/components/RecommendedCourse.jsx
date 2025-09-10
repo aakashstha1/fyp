@@ -58,13 +58,14 @@ function RecommendedCourse() {
                   <div className="flex items-center gap-2">
                     <Avatar>
                       <AvatarImage
-                        src={
-                          course.creator?.imageUrl ||
-                          "https://github.com/shadcn.png"
-                        }
+                        src={course.creator?.imageUrl}
                         className="object-cover"
                       />
-                      <AvatarFallback>IN</AvatarFallback>
+                      <AvatarFallback>
+                        {course?.creator?.name
+                          ? course.creator.name.charAt(0)
+                          : "U"}
+                      </AvatarFallback>
                     </Avatar>
                     <span>{course?.creator?.name || "Instructor"}</span>
                   </div>

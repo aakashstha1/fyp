@@ -3,10 +3,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import CourseDataTable from "./courseDataTable";
+import { Loader2 } from "lucide-react";
 
 function CourseList() {
   const [courses, setCourses] = useState([]);
   const [filteredCourses, setFilteredCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [sortBy, setSortBy] = useState("none");
   const [sortOrder, setSortOrder] = useState("high");
   const [totalCourses, setTotalCourses] = useState(0);
@@ -16,6 +19,7 @@ function CourseList() {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
+        setLoading(true);
         const res = await axios.get(`${API_URL}/admin/course-list`, {
           withCredentials: true,
         });
@@ -24,6 +28,8 @@ function CourseList() {
         setTotalCourses(res.data.courses.length || 0);
       } catch (err) {
         console.error("Failed to fetch courses:", err);
+      } finally {
+        setLoading(false);
       }
     };
     fetchCourses();
@@ -50,6 +56,14 @@ function CourseList() {
 
     setFilteredCourses(sorted);
   }, [sortBy, sortOrder, courses]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-64 text-gray-500">
+        <Loader2 className="animate-spin h-6 w-6 mr-2" /> Loading courses...
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-6xl mx-auto p-4">

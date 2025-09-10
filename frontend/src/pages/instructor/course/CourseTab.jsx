@@ -90,7 +90,7 @@ function CourseTab() {
       setCourse({ ...course, isPublished: newStatus === "true" });
     } catch (error) {
       console.log(error);
-      toast.error("Action failed!");
+      toast.error(error?.response?.data?.message || "Failed to update!");
     }
   };
 
@@ -265,6 +265,7 @@ function CourseTab() {
                     <SelectItem value="design">Design</SelectItem>
                     <SelectItem value="marketing">Marketing</SelectItem>
                     <SelectItem value="loksewa">Loksewa</SelectItem>
+                    <SelectItem value="education">Education</SelectItem>
                     <SelectItem value="bridge-course">Bridge Course</SelectItem>
                     <SelectItem value="other">Others</SelectItem>
                   </SelectGroup>

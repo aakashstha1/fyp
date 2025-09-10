@@ -77,6 +77,7 @@ function TopContributors() {
                     <AvatarImage
                       src={contributor?.imageUrl || ""}
                       alt={contributor?.name}
+                      className="object-cover"
                     />
                     <AvatarFallback>
                       {contributor?.name?.charAt(0).toUpperCase() || "U"}

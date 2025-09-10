@@ -26,7 +26,7 @@ function Courses() {
   const [debouncedSearch] = useDebounce(searchText, 700);
   const [loading, setLoading] = useState(false);
 
-  const [filterOpen, setFilterOpen] = useState(false); // ✅ mobile toggle
+  const [filterOpen, setFilterOpen] = useState(false); 
 
   const API_URL = "http://localhost:8000/api";
 

@@ -56,14 +56,4 @@ export const deleteVideo = async (publicId) => {
   }
 };
 
-// export const uploadPdf = async (file) => {
-//   try {
-//     const uploadResponse = await cloudinary.uploader.upload(file, {
-//       resource_type: "raw", // Important for PDFs
-//       folder: "pdfs", // Optional: you can organize files under a folder
-//     });
-//     return uploadResponse;
-//   } catch (error) {
-//     console.log(error);
-//   }
-// };
+
