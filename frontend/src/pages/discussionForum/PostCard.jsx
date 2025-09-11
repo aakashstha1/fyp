@@ -87,6 +87,7 @@ export default function PostCard({
         { title: editTitle, content: editContent, category: editCategory },
         { withCredentials: true }
       );
+      setComments((prev) => [res.data.comment, ...prev]);
       // Update UI
       setEditingThread(false);
       post.title = res.data.thread.title;
@@ -163,9 +164,15 @@ export default function PostCard({
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+          {/* <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
             {post.author?.charAt(0) || "U"}
-          </div>
+           
+          </div> */}
+          <img
+            src={post.profile}
+            alt={"profile"}
+            className="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm"
+          ></img>
           <div>
             <div className="text-sm font-medium text-gray-900 dark:text-white">
               {post.author}
@@ -301,10 +308,11 @@ export default function PostCard({
                   key={c._id}
                   className="flex items-start gap-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl p-3 shadow-sm"
                 >
-                  {/* Avatar */}
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold">
-                    {c.userId?.name?.charAt(0) || "U"}
-                  </div>
+                  <img
+                    src={c.userId?.imageUrl}
+                    alt=""
+                    className="w-8 h-8 rounded-full bg-gradient-to-tr from-blue-500 to-pink-500 flex items-center justify-center text-white text-sm font-bold"
+                  />
 
                   {/* Content */}
                   <div className="flex-1">
