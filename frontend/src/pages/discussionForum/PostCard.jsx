@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Heart, MessageCircle, Trash2, Edit2 } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Heart, MessageCircle, Trash2, Edit2, Ellipsis } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import axios from "axios";
 import ConfirmBox from "./ConfirmBox";
@@ -34,7 +34,7 @@ export default function PostCard({
   const [editTitle, setEditTitle] = useState(post.title);
   const [editContent, setEditContent] = useState(post.content);
   const [editCategory, setEditCategory] = useState(post.category);
-
+  const [threeDot, setThreeDot] = useState(false);
   // Comment editing
   const [editingId, setEditingId] = useState(null);
   const [editText, setEditText] = useState("");
@@ -158,6 +158,17 @@ export default function PostCard({
     });
     setShowConfirm(true);
   };
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setThreeDot(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
     <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-md hover:shadow-xl p-6 border border-gray-200 dark:border-gray-700 transition-all duration-200">
@@ -186,25 +197,42 @@ export default function PostCard({
         </div>
 
         {/* Thread Actions */}
-        <div className="flex gap-2">
-          {post.authorId === currentUser._id && !editingThread && (
-            <button
-              onClick={() => setEditingThread(true)}
-              className="p-1 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400"
-              title="Edit Thread"
-            >
-              <Edit2 size={18} />
-            </button>
-          )}
+        <div className="relative" ref={menuRef}>
+          <Ellipsis
+            className="cursor-pointer"
+            onClick={() => setThreeDot((prev) => !prev)}
+          />
 
-          {canDeleteThread && (
-            <button
-              onClick={handleDeleteThread}
-              className="text-red-600 hover:text-red-500 dark:text-red-500 dark:hover:text-red-400"
-              aria-label="Delete post"
-            >
-              <Trash2 size={18} />
-            </button>
+          {threeDot && (
+            <div className="absolute right-0 mt-2 bg-white dark:bg-gray-800 shadow-lg rounded-lg py-2 w-36 z-50 border border-gray-200 dark:border-gray-700">
+              {/* Edit */}
+              {post.authorId === currentUser._id && !editingThread && (
+                <button
+                  onClick={() => {
+                    setEditingThread(true);
+                    setThreeDot(false);
+                  }}
+                  className="flex items-center gap-2 w-full px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <Edit2 size={16} className="text-blue-500" />
+                  <span>Edit</span>
+                </button>
+              )}
+
+              {/* Delete */}
+              {canDeleteThread && (
+                <button
+                  onClick={() => {
+                    handleDeleteThread();
+                    setThreeDot(false);
+                  }}
+                  className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  <Trash2 size={16} />
+                  <span>Delete</span>
+                </button>
+              )}
+            </div>
           )}
           <ConfirmBox
             open={showConfirm}
