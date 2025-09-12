@@ -1,15 +1,11 @@
-"use client";
-
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import CreateThread from "./CreateThread";
 import PostCard from "./PostCard";
 import CategoryFilter from "./CategoryFilter";
 import { useAuth } from "@/contexts/AuthContext";
-
-// import { useAuth } from "@/contexts/AuthContext"; // uncomment if you have it
-// const { currentUser } = useAuth();
+import { LoaderCircle } from "lucide-react";
 
 const API = "http://localhost:8000/api/thread";
 
@@ -26,34 +22,38 @@ const CATEGORIES = [
 ];
 
 function ForumView() {
-  // MOCK currentUser if your context isn't wired here yet:
   const { currentUser } = useAuth();
 
   // create modal state
   const [showModal, setShowModal] = useState(false);
   const [createTitle, setCreateTitle] = useState("");
   const [createContent, setCreateContent] = useState("");
-  const [createCategory, setCreateCategory] = useState(CATEGORIES[1].id); // default any
+  const [createCategory, setCreateCategory] = useState(CATEGORIES[1].id);
 
   // list/filter state
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // pagination state
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+
   // feedback
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
+  const observer = useRef();
+
   const fetchThreads = useCallback(
-    async (cat = categoryFilter) => {
+    async (pageNum = 1, cat = categoryFilter, append = false) => {
       try {
         setLoading(true);
 
         const res = await axios.get(`${API}/getFilteredThreads`, {
-          params: { category: cat },
+          params: { category: cat, page: pageNum, limit: 5 },
           withCredentials: true,
         });
-        console.log(res);
 
         const formatted = (res.data.threads || []).map((t) => ({
           threadId: t._id,
@@ -61,12 +61,16 @@ function ForumView() {
           content: t.content,
           author: t.userId?.name ?? "Unknown",
           authorId: t.userId?._id,
+          profile: t.userId?.imageUrl,
           createdAt: t.createdAt,
-          likes: Array.isArray(t.likes) ? t.likes : [], // expecting array of userIds
+          likes: Array.isArray(t.likes) ? t.likes : [],
           comments: t.comments || [],
           category: t.category,
         }));
-        setPosts(formatted);
+
+        setPosts((prev) => (append ? [...prev, ...formatted] : formatted));
+
+        setHasMore(pageNum < (res.data.pagination?.totalPages || 1));
       } catch (err) {
         console.error("Failed to fetch threads:", err);
         setErrorMessage(
@@ -80,8 +84,9 @@ function ForumView() {
   );
 
   useEffect(() => {
-    fetchThreads();
-  }, [fetchThreads]);
+    setPage(1);
+    fetchThreads(1, categoryFilter, false);
+  }, [categoryFilter, fetchThreads]);
 
   // auto-hide messages
   useEffect(() => {
@@ -94,27 +99,45 @@ function ForumView() {
     }
   }, [successMessage, errorMessage]);
 
+  // IntersectionObserver for infinite scroll
+  const lastPostRef = useCallback(
+    (node) => {
+      if (loading) return;
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMore) {
+          setPage((prev) => {
+            const nextPage = prev + 1;
+            fetchThreads(nextPage, categoryFilter, true);
+            return nextPage;
+          });
+        }
+      });
+
+      if (node) observer.current.observe(node);
+    },
+    [loading, hasMore, fetchThreads, categoryFilter]
+  );
+
   // Create a new thread
   const handleCreate = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
 
-      // Backend expects category (mongoose requires it)
       const res = await axios.post(
         `${API}/create`,
         {
           title: createTitle,
           content: createContent,
           category: createCategory,
-          // userId is taken from token on backend via verifyToken; no need to send
         },
         { withCredentials: true }
       );
 
-      // Optimistically insert the new post at top
       const newPost = {
-        threadId: res.data.thread, // _id returned
+        threadId: res.data.thread,
         title: createTitle,
         content: createContent,
         author: currentUser.name,
@@ -157,7 +180,7 @@ function ForumView() {
     }
   };
 
-  // Like toggler: update state so UI changes instantly
+  // Like toggler
   const toggleLike = async (threadId) => {
     try {
       const res = await axios.post(
@@ -170,25 +193,18 @@ function ForumView() {
       setPosts((prev) =>
         prev.map((p) => {
           if (p.threadId !== threadId) return p;
-
-          // Optimistic toggle for current user
           const me = currentUser._id;
           const hasLiked = p.likes.includes(me);
           let nextLikes = hasLiked
             ? p.likes.filter((id) => id !== me)
             : [...p.likes, me];
 
-          // If API returns authoritative count, reconcile
           if (typeof newCount === "number") {
-            // try to keep membership consistent with count, but in most cases
-            // the toggle above + server count will already align:
             if (nextLikes.length !== newCount) {
-              // Just set the count via placeholder ids to avoid drift (optional)
               const dummy = Array(newCount).fill("_");
-              // Keep current user's like state correct:
               nextLikes = hasLiked
-                ? dummy.filter((_, i) => i !== 0) // user removed like
-                : [me, ...dummy.slice(1)]; // user added like
+                ? dummy.filter((_, i) => i !== 0)
+                : [me, ...dummy.slice(1)];
             }
           }
 
@@ -201,10 +217,9 @@ function ForumView() {
     }
   };
 
-  // Change filter & refetch
   const handleCategoryChange = async (cat) => {
     setCategoryFilter(cat);
-    await fetchThreads(cat);
+    setPage(1);
   };
 
   return (
@@ -220,7 +235,6 @@ function ForumView() {
 
         {/* Main */}
         <main>
-          {/* Create Button */}
           <Button
             onClick={() => setShowModal(true)}
             className="fixed bottom-8 right-8 px-6 py-3 rounded-full shadow-xl bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-lg font-medium"
@@ -243,25 +257,46 @@ function ForumView() {
           </div>
 
           {/* Posts */}
-          {loading ? (
-            <div className="text-gray-600 dark:text-gray-300">Loading…</div>
-          ) : posts.length === 0 ? (
-            <div className="text-gray-600 dark:text-gray-300">
-              No posts found.
+          <div className="space-y-6">
+            {posts.map((post, index) => {
+              if (index === posts.length - 1) {
+                return (
+                  <div ref={lastPostRef} key={post.threadId}>
+                    <PostCard
+                      post={post}
+                      currentUser={currentUser}
+                      onDelete={handleThreadDelete}
+                      onToggleLike={toggleLike}
+                      canDeleteThread={currentUser._id === post.authorId}
+                    />
+                  </div>
+                );
+              } else {
+                return (
+                  <PostCard
+                    key={post.threadId}
+                    post={post}
+                    currentUser={currentUser}
+                    onDelete={handleThreadDelete}
+                    onToggleLike={toggleLike}
+                    canDeleteThread={currentUser._id === post.authorId}
+                  />
+                );
+              }
+            })}
+          </div>
+
+          {/* Loading spinner when fetching next page */}
+          {loading && (
+            <div className="flex justify-center py-6">
+              <LoaderCircle className="animate-spin h-7 w-7 text-gray-500" />
             </div>
-          ) : (
-            <div className="space-y-6">
-              {posts.map((post) => (
-                <PostCard
-                  key={post.threadId}
-                  post={post}
-                  currentUser={currentUser}
-                  onDelete={handleThreadDelete}
-                  onToggleLike={toggleLike}
-                  canDeleteThread={currentUser._id === post.authorId}
-                />
-              ))}
-            </div>
+          )}
+
+          {!hasMore && !loading && posts.length > 0 && (
+            <p className="text-center text-gray-500 py-4">
+              No more post! 
+            </p>
           )}
         </main>
       </div>

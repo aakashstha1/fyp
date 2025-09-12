@@ -32,21 +32,60 @@ export const createThread = async (req, res) => {
   }
 };
 
+// export const getFilteredThreads = async (req, res) => {
+//   try {
+//     const { category = "all" } = req.query;
+
+//     const filter = {};
+//     if (category !== "all") filter.category = category;
+
+//     const threads = await Thread.find(filter)
+//       .populate("userId", "name imageUrl")
+//       .sort({
+//         createdAt: -1,
+//       });
+//     res.status(200).json({
+//       threads,
+//     });
+//   } catch (error) {
+//     console.log(error + "getAllthreads Error");
+//     return res.status(500).json({
+//       message: "server side error to get all threads",
+//     });
+//   }
+// };
+
 export const getFilteredThreads = async (req, res) => {
   try {
-    const { category = "all" } = req.query;
+    const { category = "all", page = 1, limit = 10 } = req.query;
 
     const filter = {};
     if (category !== "all") filter.category = category;
 
-    const threads = await Thread.find(filter).populate("userId", "name").sort({
-      createdAt: -1,
-    });
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [threads, totalThreads] = await Promise.all([
+      Thread.find(filter)
+        .populate("userId", "name imageUrl") // ✅ fix populate
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(parseInt(limit)),
+      Thread.countDocuments(filter),
+    ]);
+
+    const totalPages = Math.ceil(totalThreads / limit);
+
     res.status(200).json({
       threads,
+      pagination: {
+        totalThreads,
+        totalPages,
+        currentPage: parseInt(page),
+        limit: parseInt(limit),
+      },
     });
   } catch (error) {
-    console.log(error + "getAllthreads Error");
+    console.error("getFilteredThreads Error:", error);
     return res.status(500).json({
       message: "server side error to get all threads",
     });
@@ -160,7 +199,7 @@ export const addComment = async (req, res) => {
       threadId,
     });
     await newComment.save();
-    await newComment.populate("userId", "name");
+    await newComment.populate("userId", "name imageUrl");
 
     existThread.comments.push(newComment._id);
     await existThread.save();
@@ -186,7 +225,7 @@ export const getComment = async (req, res) => {
     }
 
     const comments = await Comment.find({ threadId })
-      .populate("userId", "name") // populate user's name
+      .populate("userId", "name imageUrl") // populate user's name
       .sort({ createdAt: -1 });
 
     if (!comments.length) {
@@ -250,10 +289,13 @@ export const updateComment = async (req, res) => {
     if (comment.userId.toString() !== userId) {
       return res.status(403).json({ message: "Unauthorized" });
     }
-
     comment.content = content || comment.content;
     await comment.save();
-    return res.status(200).json({ message: "Comment updated", comment });
+
+    await comment.populate("userId", "name imageUrl");
+    return res
+      .status(200)
+      .json({ message: "Comment updated successfully", comment });
   } catch (error) {
     console.error("updateComment Error:", error);
     return res.status(500).json({ message: "Server error" });
