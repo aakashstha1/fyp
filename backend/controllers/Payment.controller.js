@@ -135,12 +135,13 @@ export const completePayment = async (req, res) => {
       await course.save();
     }
     // Respond with success message
-    res.json({
-      success: true,
-      message: "Payment successful",
-      paymentData,
-      course,
-    });
+    // res.json({
+    //   success: true,
+    //   message: "Payment successful",
+    //   paymentData,
+    //   course,
+    // });
+    return res.redirect(`http://localhost:5173/course/${course._id}/progress`);
   } catch (error) {
     res.status(500).json({
       success: false,
