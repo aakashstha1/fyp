@@ -6,8 +6,6 @@ export const ProtectedRoute = ({ roles, children }) => {
   const { currentUser } = useAuth();
   const location = useLocation();
 
-
-
   if (!currentUser) {
     // Not logged in
     return <Navigate to="/login" replace />;
@@ -34,8 +32,6 @@ export const ProtectedRoute = ({ roles, children }) => {
 export const PublicRoute = ({ children }) => {
   const { currentUser } = useAuth();
 
-  
-
   if (currentUser) {
     if (currentUser.role === "admin")
       return <Navigate to="/admin/dashboard" replace />;
@@ -46,3 +42,4 @@ export const PublicRoute = ({ children }) => {
   }
   return children;
 };
+
