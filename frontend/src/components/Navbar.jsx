@@ -80,9 +80,9 @@ function Navbar() {
                 My Learning
               </NavLink>
 
-              <NavLink to="/quiz-start" className={navLinkClass}>
+              {/* <NavLink to="/quiz-start" className={navLinkClass}>
                 Play Quiz
-              </NavLink>
+              </NavLink> */}
 
               <DropdownMenu>
                 <DropdownMenuTrigger className="flex items-center gap-1 focus:outline-none cursor-pointer">
