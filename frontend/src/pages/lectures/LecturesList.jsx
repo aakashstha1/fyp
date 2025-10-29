@@ -57,14 +57,14 @@ function LectureList({
                   : "dark:bg-gray-800"
               }`}
             >
-              <CardContent className="flex justify-between items-center truncate">
+              <CardContent className="flex justify-between items-center truncate mr-5">
                 <div className="flex items-center gap-2">
                   {isCompleted ? (
                     <CheckSquare size={22} className="text-green-500" />
                   ) : (
                     <PlaySquare size={22} className="text-gray-400" />
                   )}
-                  <CardTitle className="text-base font-semibold text-gray-700 ">
+                  <CardTitle className="text-base font-semibold text-gray-700">
                     {`Lecture ${index + 1}: ${lecture.lectureTitle}`}
                   </CardTitle>
                 </div>

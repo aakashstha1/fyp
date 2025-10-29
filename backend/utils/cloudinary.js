@@ -16,7 +16,9 @@ export const uploadMedia = async (file) => {
 
     // Determine resource_type
     let resourceType = "image"; // default
-    if (ext === ".pdf" || ext === ".doc" || ext === ".docx" || ext === ".txt") {
+    if (
+      [".pdf", ".doc", ".docx", ".txt", ".csv", ".xls", ".xlsx"].includes(ext)
+    ) {
       resourceType = "raw"; // for documents
     } else if (
       ext === ".mp4" ||
@@ -55,5 +57,3 @@ export const deleteVideo = async (publicId) => {
     console.log(error);
   }
 };
-
-
