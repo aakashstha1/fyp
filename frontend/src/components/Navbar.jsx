@@ -41,11 +41,12 @@ function Navbar() {
     const res = await logout();
     toast.success(res?.data?.message || "Logged out successfully");
     // setOpen(false);
-    window.location.href = "/login";
+    // window.location.href = "/login";
+    navigate("/login");
   };
 
   return (
-    <div className="border-b h-16 flex items-center justify-between px-4 md:px-10">
+    <div className="border-b h-16 flex items-center justify-between px-4 md:px-10 sticky top-0 z-50 bg-white dark:bg-gray-950">
       {/* Logo */}
       <div
         className="flex items-center gap-2 cursor-pointer text-2xl font-bold"
@@ -105,7 +106,7 @@ function Navbar() {
         {currentUser ? (
           <div className="flex items-center gap-8">
             <DropdownMenu>
-              <DropdownMenuTrigger className="focus:outline-none cursor-pointer">
+              <DropdownMenuTrigger className="focus:outline-none cursor-pointer border-4 rounded-full hover:border-slate-300">
                 <Avatar>
                   <AvatarImage
                     src={currentUser?.imageUrl}

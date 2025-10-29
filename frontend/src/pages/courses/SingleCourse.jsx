@@ -195,7 +195,7 @@ function SingleCourse() {
       const form = document.createElement("form");
       form.method = "POST";
       form.action = "https://rc-epay.esewa.com.np/api/epay/main/v2/form";
-      form.target = "_blank";
+      // form.target = "_blank";
 
       Object.entries(payment).forEach(([key, value]) => {
         const input = document.createElement("input");
@@ -208,8 +208,8 @@ function SingleCourse() {
       document.body.appendChild(form);
       form.submit();
       document.body.removeChild(form);
-      toast.success(res?.data?.message || "Course enrolled succesfully!");
-      window.location.reload();
+      // toast.success(res?.data?.message || "Course enrolled succesfully!");
+      // window.location.reload();
     } catch (err) {
       console.error(err);
       toast.error("Payment initialization failed");
