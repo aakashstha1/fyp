@@ -77,7 +77,7 @@ function AppRoutes() {
             }
           />
           <Route path="courses" element={<Courses />} />
-          <Route path="quiz-start" element={<QuizViewer />} />
+          {/* <Route path="quiz-start" element={<QuizViewer />} /> */}
           <Route
             path="editor/:docId"
             element={
@@ -105,8 +105,8 @@ function AppRoutes() {
               </ProtectedRoute>
             }
           />
-          <Route path="ViewQuestion" element={<QuizViewer />} />
-          <Route path="leaderboard" element={<Leaderboard />} />
+          {/* <Route path="ViewQuestion" element={<QuizViewer />} /> */}
+          {/* <Route path="leaderboard" element={<Leaderboard />} /> */}
           <Route
             path="discussion"
             element={
