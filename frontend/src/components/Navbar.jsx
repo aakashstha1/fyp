@@ -35,7 +35,7 @@ function Navbar() {
   const navLinkClass = ({ isActive }) =>
     isActive
       ? "text-blue-600 font-semibold"
-      : "text-gray-500 hover:text-blue-400";
+      : "text-gray-500 hover:text-blue-400 ";
 
   const handleLogout = async () => {
     const res = await logout();
@@ -54,7 +54,7 @@ function Navbar() {
       >
         <FaBookOpenReader fill="#1a2539" />
         <div>
-          <span className="text-[#1a2539]">Edu</span>
+          <span className="text-[#1a2539] dark:text-[#F5F5F5]">Edu</span>
           <span className="text-amber-500">Pal</span>
         </div>
       </div>

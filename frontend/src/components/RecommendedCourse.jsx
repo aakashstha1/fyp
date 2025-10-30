@@ -32,7 +32,7 @@ function RecommendedCourse() {
         <div className="m-10">
           <div className="flex items-center mb-8 gap-3">
             <span className="w-1 h-8 bg-amber-500 rounded-sm"></span>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-bold text-gray-800 dark:text-[#F5F5F5]">
               Suggested Courses
             </h1>
           </div>

@@ -117,7 +117,9 @@ export const updateCourse = async (req, res) => {
     if (price !== undefined && price < 0) {
       return res.status(400).json({ message: "Price cannot be negative" });
     }
-
+    if (price == 0) {
+      return res.status(400).json({ message: "Price cannot be Zero" });
+    }
     // Update fields
     course.title = title || course.title;
     course.description = description || course.description;
