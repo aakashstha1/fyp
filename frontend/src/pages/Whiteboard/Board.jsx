@@ -193,7 +193,7 @@ const Board = () => {
             <Button variant="outline" onClick={() => navigate("/")}>
               Cancel
             </Button>
-            <Button disabled={isLoading} onClick={uploadImage}>
+            {/* <Button disabled={isLoading} onClick={uploadImage}>
               {isLoading ? (
                 <>
                   Uploading <Loader2 className="h-5 w-5 animate-spin ml-2" />
@@ -201,7 +201,7 @@ const Board = () => {
               ) : (
                 "Upload"
               )}
-            </Button>
+            </Button> */}
           </div>
         </div>
 

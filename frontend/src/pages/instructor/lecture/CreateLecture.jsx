@@ -21,6 +21,7 @@ import {
   Upload,
   CheckCircle,
   Eye,
+  Download,
 } from "lucide-react";
 import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -476,7 +477,7 @@ function CreateLecture() {
           </div>
 
           {/* Actions */}
-          <div className="flex items-center gap-3 pt-4 border-t">
+          <div className="flex items-center justify-between pt-4 border-t">
             <Button
               onClick={
                 assignment ? updateAssignmentHandler : createAssignmentHandler
@@ -498,6 +499,18 @@ function CreateLecture() {
                   {assignment ? "Update Assignment" : "Add Assignment"}
                 </>
               )}
+            </Button>
+            <Button
+              variant="outline"
+              disabled={assignmentUploading}
+              onClick={() => {
+                const link = document.createElement("a");
+                link.href = "/assignment-template.csv"; // file in public folder
+                link.download = "assignment-template.csv"; // name when downloaded
+                link.click();
+              }}
+            >
+              <Download className="mr-2 h-4 w-4" /> Download Format
             </Button>
           </div>
         </div>

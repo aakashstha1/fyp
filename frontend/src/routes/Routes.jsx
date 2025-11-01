@@ -43,10 +43,12 @@ import PageNotFound from "@/components/PageNotFound";
 import { ProtectedRoute, PublicRoute } from "@/components/ProtectedRoute";
 import Courseprogress from "@/pages/lectures/CourseProgress";
 import CreatorCourses from "@/pages/admin/CreatorCourses";
+import ScrollToTop from "@/ScrollToTop";
 
 function AppRoutes() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
