@@ -42,18 +42,15 @@ function HeroSection() {
         <div className="flex items-center rounded-full border bg-white shadow-md overflow-hidden">
           <Input
             type="search"
-            placeholder="Search..."
+            placeholder="Search course..."
             className="flex-1 h-12 px-4 text-base sm:text-lg border-0 focus-visible:ring-0"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
           />
-          <Button
-            className="h-12 rounded-none rounded-r-full px-4"
-            onClick={handleSearch}
-          >
-            <Search className="h-5 w-5" />
-          </Button>
+          <button className="cursor-pointer px-4" onClick={handleSearch}>
+            <Search className="h-5 w-5 hover:scale-110 ease-in-out duration-150" />
+          </button>
         </div>
       </div>
 

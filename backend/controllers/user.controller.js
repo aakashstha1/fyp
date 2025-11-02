@@ -36,6 +36,12 @@ export const updateProfile = async (req, res) => {
         .json({ success: false, message: "User not found" });
     }
 
+    if (phone && phone.toString().length !== 10) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid Phone number ",
+      });
+    }
     if (imageFile) {
       const uploadResponse = await uploadMedia(imageFile.path);
       user.imageUrl = uploadResponse.secure_url;
@@ -207,12 +213,12 @@ export const checkProfileCompletion = async (req, res) => {
 
     // Check if profile fields are complete
     if (
-      !user.name?.trim() ||
-      !user.bio?.trim() ||
-      !user.phone?.trim() ||
-      !user.gender?.trim() ||
-      !user.imageUrl ||
-      !user.email?.trim()
+      !user.name?.toString().trim() &&
+      !user.bio?.toString().trim() &&
+      !user.phone?.toString().trim() &&
+      !user.gender?.toString().trim() &&
+      !user.imageUrl &&
+      !user.email?.toString().trim()
     ) {
       return res.status(400).json({
         success: false,
